@@ -28,7 +28,8 @@ const FEATURE_LABELS = {
   supabase:     '🗄️ Supabase 연동',
   vercel:       '🚀 Vercel 배포 연동',
   manual:       '📖 매뉴얼 페이지',
-  svg_sitemap:  '🗺️ SVG 구조도'
+  svg_sitemap:  '🗺️ SVG 구조도',
+  chatbot:      '💬 챗봇 인터페이스(RAG)'
 };
 
 /* ── LocalStorage ────────────────────────────────────────── */
@@ -218,8 +219,12 @@ function getRelevantSkills(p, c) {
       when:'UI 개발 단계', condition:'UI/대시보드/모바일 기능', active:hasUI || f.length>0 },
     { phase:'P1', emoji:'🎨', name:'/theme-color-design',         short:'테마 색상 디자인',
       cmd:'/theme-color-design',     model:'haiku',
-      desc:'브랜드 컬러 팔레트 설계, 다크/라이트 테마, CSS 변수 자동 생성. 접근성 기준(WCAG) 준수.',
+      desc:'브랜드 컬러 팔레트 설계, 프리미엄 화이트 테마, CSS 변수 자동 생성. 접근성 기준(WCAG) 준수.',
       when:'UI 스타일링 단계', condition:'항상', active:true },
+    { phase:'P1', emoji:'🤖', name:'/chat-ui-builder',            short:'챗봇 UI (RAG)',
+      cmd:'/chat-ui-builder',        model:'haiku',
+      desc:'플로팅 버튼 + iframe 챗봇. Supabase pgvector RAG로 문서 기반 정확한 답변 생성.',
+      when:'챗봇/AI 기능 구현 단계', condition:'챗봇/RAG/지식베이스 기능', active:f.includes('chatbot')||f.includes('rag')||f.includes('ai_chat') },
     { phase:'P1', emoji:'🔌', name:'/api-builder-core',           short:'REST API 구축',
       cmd:'/api-builder-core',       model:'sonnet',
       desc:'REST API 설계, CRUD 구현, Zod 유효성 검사까지.',
@@ -372,7 +377,7 @@ function buildFooter(isHome) {
         <div class="footer-tagline">아이디어를 AI 개발 명령어로 변환하는<br>바이브 코딩 운영체계</div>
         <div class="footer-badge">
           <span style="width:7px;height:7px;border-radius:50%;background:#4ade80;display:inline-block;flex-shrink:0"></span>
-          20 Skills &nbsp;·&nbsp; 5 Squads &nbsp;·&nbsp; 66명 편제
+          21 Skills &nbsp;·&nbsp; 5 Squads &nbsp;·&nbsp; 66명 편제
         </div>
       </div>
 
@@ -405,7 +410,7 @@ function buildFooter(isHome) {
       <div class="footer-copy">© 2026 VCOS — Vibe Coding Operating System. Powered by Claude.</div>
       <div class="footer-chips">
         <span class="footer-chip">Claude Sonnet</span>
-        <span class="footer-chip">20 Skills</span>
+        <span class="footer-chip">21 Skills</span>
         <span class="footer-chip">5 Squads</span>
         <span class="footer-chip">66명 편제</span>
         <span class="footer-chip">Supabase</span>
