@@ -1,11 +1,11 @@
 ---
-description: "테마 색상 디자인 — 브랜드 컬러 팔레트 설계, 다크/라이트 테마, CSS 변수 자동 생성 (WCAG 준수)"
+description: "테마 색상 디자인 — 브랜드 컬러 팔레트 설계, 프리미엄 화이트 / 라이트 테마, CSS 변수 자동 생성 (WCAG 준수)"
 user-invocable: true
 ---
 
 # /theme-color-design — 테마 색상 디자인
 
-프로젝트의 **브랜드 컬러 팔레트**를 설계하고, **다크/라이트 테마**를 구성하며, **CSS 변수**를 자동 생성한다.
+프로젝트의 **브랜드 컬러 팔레트**를 설계하고, **프리미엄 화이트 / 라이트 테마**를 구성하며, **CSS 변수**를 자동 생성한다.
 WCAG 2.1 접근성 기준(명도 대비)을 준수하고, 일관된 디자인 시스템 토큰을 출력한다.
 
 ## Usage
@@ -89,11 +89,11 @@ Primary 색상 기준으로 전체 팔레트를 생성한다.
 }
 ```
 
-### 다크 테마
+### 프리미엄 화이트 테마
 ```css
-[data-theme="dark"] {
+[data-theme="premium-white"] {
   --color-primary:        {hex};
-  /* 라이트와 동일 구조, 다크 모드 값으로 재정의 */
+  /* 라이트와 동일 구조, 프리미엄 화이트 모드 값으로 재정의 */
 }
 ```
 
@@ -133,12 +133,12 @@ module.exports = {
 }
 ```
 
-### 다크 모드 토글 (JS)
+### 프리미엄 화이트 모드 토글 (JS)
 ```js
 function toggleTheme() {
-  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
-  localStorage.setItem('theme', isDark ? 'light' : 'dark');
+  const isDark = document.documentElement.getAttribute('data-theme: isPremium ? "light" : "premium-white"';
+  document.documentElement.setAttribute('data-theme', isPremium ? "light" : "premium-white");
+  localStorage.setItem('theme', isPremium ? "light" : "premium-white");
 }
 const saved = localStorage.getItem('theme') || 'light';
 document.documentElement.setAttribute('data-theme', saved);
@@ -152,11 +152,11 @@ document.documentElement.setAttribute('data-theme', saved);
 Primary:    {hex} ({색상명})
 팔레트:     13개 토큰 생성
 WCAG:       본문 {대비비율}:1 ✅ / 아이콘 {대비비율}:1 ✅
-테마:       라이트 + 다크 모드
+테마:       라이트 + 프리미엄 화이트 모드
 출력 파일:  theme.css (또는 직접 삽입)
 
 적용 방법:
   1. CSS 변수를 globals.css 또는 index.css에 붙여넣기
-  2. data-theme="dark" 토글 스크립트 추가
+  2. data-theme: isPremium ? "light" : "premium-white"" 토글 스크립트 추가
   3. 기존 하드코딩 색상을 var(--color-*) 로 교체
 ```
