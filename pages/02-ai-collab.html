@@ -11,35 +11,47 @@
 /* 단계 카드 */
 .step-card {
   background:var(--bg);
-  border:1.5px solid rgba(13,148,136,.22);
+  border:1.5px solid rgba(13,148,136,.25);
+  border-left:4px solid #0d9488;
   border-radius:var(--r-lg);
-  margin-bottom:18px;
+  margin-bottom:20px;
   overflow:hidden;
+  box-shadow:0 2px 12px rgba(13,148,136,.08), 0 1px 3px rgba(0,0,0,.06);
+  transition:box-shadow var(--med);
+}
+.step-card:hover {
+  box-shadow:0 4px 20px rgba(13,148,136,.14), 0 2px 6px rgba(0,0,0,.08);
 }
 .step-header {
-  display:flex;align-items:center;gap:12px;
-  padding:14px 20px;
-  background:linear-gradient(135deg,rgba(13,148,136,.08),rgba(13,148,136,.02));
-  border-bottom:1px solid rgba(13,148,136,.15);
+  display:flex;align-items:center;gap:14px;
+  padding:16px 20px;
+  background:linear-gradient(135deg,rgba(13,148,136,.10) 0%,rgba(13,148,136,.04) 60%,transparent 100%);
+  border-bottom:1px solid rgba(13,148,136,.18);
 }
 .step-num {
-  width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  width:36px;height:36px;border-radius:10px;flex-shrink:0;
   background:linear-gradient(135deg,#0d9488,#0f766e);
   color:#fff;font-size:16px;font-weight:800;
   display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 8px rgba(13,148,136,.4);
 }
 .step-title { font-size:16px;font-weight:700;color:var(--text) }
 .step-subtitle { font-size:13.5px;color:var(--text3);margin-top:2px }
-.step-body { padding:18px 20px }
+.step-body {
+  padding:20px 22px;
+  background:linear-gradient(180deg,rgba(13,148,136,.02) 0%,transparent 40%);
+}
 
 /* 인텐트 미리보기 */
 .intent-preview {
-  background:rgba(37,99,235,.05);
-  border:1px solid rgba(37,99,235,.2);
+  background:linear-gradient(135deg,rgba(37,99,235,.06),rgba(37,99,235,.02));
+  border:1.5px solid rgba(37,99,235,.22);
+  border-left:3px solid #2563eb;
   border-radius:var(--r-md);
-  padding:12px 14px;
+  padding:12px 16px;
   font-size:14.5px;color:var(--text2);line-height:1.7;
   margin-bottom:14px;
+  box-shadow:0 1px 6px rgba(37,99,235,.07);
 }
 .intent-label { font-size:13px;font-weight:700;color:#2563eb;margin-bottom:5px }
 
@@ -88,43 +100,90 @@
 /* 메모 3분할 */
 .memo-grid { display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:4px }
 @media(max-width:640px){ .memo-grid { grid-template-columns:1fr } }
+.memo-col {
+  background:var(--bg2);
+  border:1.5px solid var(--border);
+  border-radius:var(--r-md);
+  padding:12px 12px 10px;
+}
+.memo-col:nth-child(1) { border-top:3px solid #16a34a;background:linear-gradient(180deg,rgba(22,163,74,.05),transparent 40%) }
+.memo-col:nth-child(2) { border-top:3px solid #d97706;background:linear-gradient(180deg,rgba(217,119,6,.05),transparent 40%) }
+.memo-col:nth-child(3) { border-top:3px solid #2563eb;background:linear-gradient(180deg,rgba(37,99,235,.05),transparent 40%) }
 .memo-col-label {
-  font-size:13.5px;font-weight:700;margin-bottom:5px;
+  font-size:13.5px;font-weight:700;margin-bottom:8px;
   display:flex;align-items:center;gap:5px;
 }
 
-/* 루프 설정 */
-.loop-count-row { display:flex;gap:10px;margin-bottom:14px }
-.loop-btn {
-  flex:1;padding:10px 0;border-radius:var(--r-md);
-  border:1.5px solid var(--border);background:var(--bg);
-  color:var(--text2);font-size:15px;font-weight:700;cursor:pointer;
-  transition:all var(--fast);text-align:center;
-}
-.loop-btn:hover { border-color:#0d9488;color:#0d9488 }
-.loop-btn.active { background:#0d9488;border-color:#0d9488;color:#fff;box-shadow:0 2px 8px rgba(13,148,136,.3) }
 
-.question-list { display:flex;flex-direction:column;gap:7px }
+.question-list { display:flex;flex-direction:column;gap:8px }
 .q-item {
   display:flex;align-items:flex-start;gap:10px;
-  padding:9px 12px;border-radius:var(--r-md);
-  border:1.5px solid var(--border);background:var(--bg);
+  padding:11px 14px;border-radius:var(--r-md);
+  border:1.5px solid var(--border);
+  border-left:3px solid var(--border);
+  background:var(--bg);
   cursor:pointer;transition:all var(--fast);
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
 }
-.q-item:hover { border-color:rgba(13,148,136,.35) }
-.q-item.selected { border-color:#0d9488;background:rgba(13,148,136,.05) }
+.q-item:hover {
+  border-color:rgba(13,148,136,.35);
+  border-left-color:#0d9488;
+  background:rgba(13,148,136,.03);
+  box-shadow:0 2px 8px rgba(13,148,136,.09);
+}
+.q-item.selected {
+  border-color:#0d9488;
+  border-left:3px solid #0d9488;
+  background:linear-gradient(135deg,rgba(13,148,136,.08),rgba(13,148,136,.03));
+  box-shadow:0 2px 10px rgba(13,148,136,.15);
+}
+.q-item:not(.selected) .q-note-label::after {
+  content:' (체크 시 명령어에 반영)';
+  font-weight:400;color:var(--text3);
+}
+.q-item.selected .q-note-label::after {
+  content:' ✅ 명령어에 반영됨';
+  font-weight:700;color:#0d9488;
+}
 .q-check {
-  width:18px;height:18px;border-radius:4px;flex-shrink:0;margin-top:1px;
+  width:18px;height:18px;border-radius:4px;flex-shrink:0;margin-top:2px;
   border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;
   font-size:13px;transition:all var(--fast);
 }
 .q-item.selected .q-check { background:#0d9488;border-color:#0d9488;color:#fff }
+.q-content { flex:1 }
 .q-text { font-size:14.5px;color:var(--text2);line-height:1.5 }
+.q-answer-box {
+  display:block;margin-top:10px;
+  background:rgba(13,148,136,.06);border:1px solid rgba(13,148,136,.2);
+  border-radius:var(--r-md);padding:10px 12px;
+}
+.q-answer-label { font-size:11.5px;font-weight:700;color:#0d9488;margin-bottom:6px }
+.q-answer-text { font-size:13px;color:var(--text2);line-height:1.75;margin-bottom:10px }
+.q-note-label {
+  font-size:11.5px;font-weight:700;color:var(--text2);
+  margin-top:10px;margin-bottom:5px;
+  padding-top:10px;border-top:1px solid rgba(13,148,136,.2);
+}
+.q-note-textarea {
+  width:100%;box-sizing:border-box;
+  border:1.5px solid var(--border);border-radius:var(--r-md);
+  padding:8px 10px;font-size:13px;color:var(--text);
+  background:var(--bg);resize:vertical;font-family:inherit;
+  line-height:1.6;min-height:60px;
+  transition:border-color var(--fast);
+}
+.q-note-textarea:focus { outline:none;border-color:#0d9488;box-shadow:0 0 0 3px rgba(13,148,136,.1) }
+.q-note-textarea.filled { border-color:rgba(13,148,136,.4);background:rgba(13,148,136,.02) }
+.q-note-saved { font-size:11px;color:#0d9488;text-align:right;margin-top:3px;opacity:0;transition:opacity .3s }
+.q-note-saved.show { opacity:1 }
 
 /* 진행 상태 바 */
 .progress-bar-wrap {
-  background:rgba(13,148,136,.08);border:1px solid rgba(13,148,136,.2);
-  border-radius:var(--r-md);padding:14px 16px;margin-bottom:18px;
+  background:linear-gradient(135deg,rgba(13,148,136,.10),rgba(13,148,136,.04));
+  border:1.5px solid rgba(13,148,136,.25);
+  border-radius:var(--r-lg);padding:16px 18px;margin-bottom:20px;
+  box-shadow:0 2px 10px rgba(13,148,136,.08);
 }
 .progress-bar-label { font-size:14px;font-weight:700;color:#0f766e;margin-bottom:8px;display:flex;justify-content:space-between }
 .progress-bar-track { height:6px;background:rgba(13,148,136,.15);border-radius:3px;overflow:hidden }
@@ -221,19 +280,19 @@
   <div class="step-body">
 
     <div class="memo-grid">
-      <div>
+      <div class="memo-col">
         <div class="memo-col-label" style="color:#16a34a">✅ 결정된 것</div>
         <textarea class="collab-textarea" id="memoDecided" rows="5"
           placeholder="- 핵심 기능 3개로 범위 확정&#10;- 기술 스택: Vanilla JS + Supabase&#10;- MVP 우선 빠르게 구현"
           oninput="autoSave(this,'memoDecided'); updateProgress()"></textarea>
       </div>
-      <div>
+      <div class="memo-col">
         <div class="memo-col-label" style="color:#d97706">⏳ 미결 이슈</div>
         <textarea class="collab-textarea" id="memoPending" rows="5"
           placeholder="- 인증 방식 미정&#10;- 배포 환경 확인 필요&#10;- 모바일 대응 범위"
           oninput="autoSave(this,'memoPending'); updateProgress()"></textarea>
       </div>
-      <div>
+      <div class="memo-col">
         <div class="memo-col-label" style="color:#2563eb">📌 주요 맥락</div>
         <textarea class="collab-textarea" id="memoContext" rows="5"
           placeholder="- 사용자: 비개발자 대상&#10;- 기한: 2주 내 MVP&#10;- 참고: 기존 유사 프로젝트 있음"
@@ -251,44 +310,91 @@
   <div class="step-header">
     <div class="step-num">3</div>
     <div>
-      <div class="step-title">피드백 루프 계획 — 몇 회 돌릴지, 어떤 질문을 쓸지</div>
-      <div class="step-subtitle">첫 결과물이 나오면 바로 끝내지 않는다. 지금 질문을 미리 골라둔다</div>
+      <div class="step-title">사전 검토 — 개발 전에 리스크를 미리 파악한다</div>
+      <div class="step-subtitle">질문을 선택하고 내 프로젝트에 해당하는 내용을 입력하면 명령어에 자동 반영됩니다</div>
     </div>
   </div>
   <div class="step-body">
 
-    <div class="field-label">목표 피드백 루프 횟수</div>
-    <div class="loop-count-row" id="loopCountRow">
-      <button class="loop-btn" data-val="3" onclick="setLoop(3)">3회<br><span style="font-size:12px;font-weight:400">기본</span></button>
-      <button class="loop-btn" data-val="4" onclick="setLoop(4)">4회<br><span style="font-size:12px;font-weight:400">권장</span></button>
-      <button class="loop-btn" data-val="5" onclick="setLoop(5)">5회<br><span style="font-size:12px;font-weight:400">고품질</span></button>
-    </div>
-
-    <div class="field-label">사용할 피드백 질문 선택 (여러 개 가능)</div>
+    <div class="field-label">사용할 피드백 질문들</div>
     <div class="question-list" id="questionList">
-      <div class="q-item" onclick="toggleQ(this)" data-q="이 구조에서 나중에 문제가 될 수 있는 지점이 어디야?">
+      <div class="q-item" onclick="toggleQ(this)" data-q="이 구조에서 나중에 문제가 될 수 있는 지점이 어디야?" data-idx="0">
         <div class="q-check">✓</div>
-        <div class="q-text">이 구조에서 나중에 문제가 될 수 있는 지점이 어디야?</div>
+        <div class="q-content">
+          <div class="q-text">이 구조에서 나중에 문제가 될 수 있는 지점이 어디야?</div>
+          <div class="q-answer-box">
+            <div class="q-answer-label">💡 참고 답변</div>
+            <div class="q-answer-text">주로 3곳에서 터집니다. ① <strong>데이터 모델</strong> — 초기 스키마를 나중에 바꾸면 마이그레이션 비용이 큽니다. ② <strong>인증 레이어</strong> — 나중에 붙이면 전체 API를 수정해야 합니다. ③ <strong>상태 관리</strong> — 컴포넌트가 늘어날수록 props drilling이 복잡해집니다. 지금 확정할 것: 스키마, 인증 방식, 전역 상태 도구.</div>
+            <div class="q-note-label">✏️ 내 프로젝트에 해당하는 사항 (명령어에 반영됩니다)</div>
+            <textarea class="q-note-textarea" id="qnote_0" rows="2" placeholder="예: 스키마는 users/posts/comments 3개로 확정. 인증은 Supabase Auth 사용." oninput="saveQNote(0, this)" onclick="event.stopPropagation()"></textarea>
+            <div class="q-note-saved" id="qns_0">저장됨 ✓</div>
+          </div>
+        </div>
       </div>
-      <div class="q-item" onclick="toggleQ(this)" data-q="내가 놓친 게 있어?">
+      <div class="q-item" onclick="toggleQ(this)" data-q="내가 놓친 게 있어?" data-idx="1">
         <div class="q-check">✓</div>
-        <div class="q-text">내가 놓친 게 있어?</div>
+        <div class="q-content">
+          <div class="q-text">내가 놓친 게 있어?</div>
+          <div class="q-answer-box">
+            <div class="q-answer-label">💡 참고 답변</div>
+            <div class="q-answer-text">자주 빠지는 항목 체크: ① <strong>에러 처리</strong> — API 실패 시 사용자에게 뭘 보여줄지 ② <strong>로딩 상태</strong> — 비동기 중 UX ③ <strong>빈 상태</strong> — 데이터가 0개일 때 화면 ④ <strong>권한 분기</strong> — 비로그인/로그인/관리자 ⑤ <strong>모바일</strong> — 터치 인터랙션 설계.</div>
+            <div class="q-note-label">✏️ 내 프로젝트에 해당하는 사항 (명령어에 반영됩니다)</div>
+            <textarea class="q-note-textarea" id="qnote_1" rows="2" placeholder="예: 빈 상태 화면 필요 (대시보드). 관리자/일반 사용자 권한 분기 포함." oninput="saveQNote(1, this)" onclick="event.stopPropagation()"></textarea>
+            <div class="q-note-saved" id="qns_1">저장됨 ✓</div>
+          </div>
+        </div>
       </div>
-      <div class="q-item" onclick="toggleQ(this)" data-q="이걸 실제로 쓰다 보면 어떤 상황에서 망가질 것 같아?">
+      <div class="q-item" onclick="toggleQ(this)" data-q="이걸 실제로 쓰다 보면 어떤 상황에서 망가질 것 같아?" data-idx="2">
         <div class="q-check">✓</div>
-        <div class="q-text">이걸 실제로 쓰다 보면 어떤 상황에서 망가질 것 같아?</div>
+        <div class="q-content">
+          <div class="q-text">이걸 실제로 쓰다 보면 어떤 상황에서 망가질 것 같아?</div>
+          <div class="q-answer-box">
+            <div class="q-answer-label">💡 참고 답변</div>
+            <div class="q-answer-text">흔한 파괴 시나리오: ① <strong>동시 수정</strong> — 여러 명이 같은 데이터를 동시에 편집 ② <strong>중복 요청</strong> — 네트워크 지연 중 버튼 연타 ③ <strong>대용량</strong> — 목록 1,000개 이상일 때 성능 저하 ④ <strong>세션 만료</strong> — 오래 열어둔 탭에서 제출 ⑤ <strong>예외 입력</strong> — 특수문자·이모지·초장문.</div>
+            <div class="q-note-label">✏️ 내 프로젝트에 해당하는 사항 (명령어에 반영됩니다)</div>
+            <textarea class="q-note-textarea" id="qnote_2" rows="2" placeholder="예: 동시 수정 가능성 있음 — 낙관적 잠금 처리 필요. 버튼 중복 클릭 방지 필수." oninput="saveQNote(2, this)" onclick="event.stopPropagation()"></textarea>
+            <div class="q-note-saved" id="qns_2">저장됨 ✓</div>
+          </div>
+        </div>
       </div>
-      <div class="q-item" onclick="toggleQ(this)" data-q="엣지 케이스 중 내가 고려 안 한 게 뭐가 있어?">
+      <div class="q-item" onclick="toggleQ(this)" data-q="엣지 케이스 중 내가 고려 안 한 게 뭐가 있어?" data-idx="3">
         <div class="q-check">✓</div>
-        <div class="q-text">엣지 케이스 중 내가 고려 안 한 게 뭐가 있어?</div>
+        <div class="q-content">
+          <div class="q-text">엣지 케이스 중 내가 고려 안 한 게 뭐가 있어?</div>
+          <div class="q-answer-box">
+            <div class="q-answer-label">💡 참고 답변</div>
+            <div class="q-answer-text">놓치기 쉬운 케이스: ① <strong>첫 방문</strong> — 데이터가 전혀 없는 상태 ② <strong>단일 항목</strong> — 목록에 1개만 있을 때 ③ <strong>한계값</strong> — 최대 입력 길이, 최대 파일 크기 ④ <strong>특수문자·이모지</strong> — 제목·검색·URL에 포함될 때 ⑤ <strong>중단 후 복귀</strong> — 작업 중 나갔다 돌아오면 데이터가 어떻게 되는지.</div>
+            <div class="q-note-label">✏️ 내 프로젝트에 해당하는 사항 (명령어에 반영됩니다)</div>
+            <textarea class="q-note-textarea" id="qnote_3" rows="2" placeholder="예: 첫 방문 빈 대시보드 안내 문구 필요. 텍스트 입력 최대 500자 제한." oninput="saveQNote(3, this)" onclick="event.stopPropagation()"></textarea>
+            <div class="q-note-saved" id="qns_3">저장됨 ✓</div>
+          </div>
+        </div>
       </div>
-      <div class="q-item" onclick="toggleQ(this)" data-q="더 단순하게 만들 수 있는 부분이 있어?">
+      <div class="q-item" onclick="toggleQ(this)" data-q="더 단순하게 만들 수 있는 부분이 있어?" data-idx="4">
         <div class="q-check">✓</div>
-        <div class="q-text">더 단순하게 만들 수 있는 부분이 있어?</div>
+        <div class="q-content">
+          <div class="q-text">더 단순하게 만들 수 있는 부분이 있어?</div>
+          <div class="q-answer-box">
+            <div class="q-answer-label">💡 참고 답변</div>
+            <div class="q-answer-text">단순화 체크: ① <strong>기능 수</strong> — MVP에서 빼도 동작하는가? ② <strong>클릭 수</strong> — 핵심 작업이 3클릭 이내인가? ③ <strong>상태 종류</strong> — loading/success/error 외에 더 있는가? ④ <strong>API 수</strong> — 한 화면에 몇 개를 호출하는가? ⑤ <strong>중첩 깊이</strong> — 5단계 이상 중첩된 컴포넌트가 있는가?</div>
+            <div class="q-note-label">✏️ 내 프로젝트에 해당하는 사항 (명령어에 반영됩니다)</div>
+            <textarea class="q-note-textarea" id="qnote_4" rows="2" placeholder="예: 알림 기능은 MVP에서 제외. 핵심 기능 3개로만 시작." oninput="saveQNote(4, this)" onclick="event.stopPropagation()"></textarea>
+            <div class="q-note-saved" id="qns_4">저장됨 ✓</div>
+          </div>
+        </div>
       </div>
-      <div class="q-item" onclick="toggleQ(this)" data-q="사용자 입장에서 가장 불편할 것 같은 부분이 어디야?">
+      <div class="q-item" onclick="toggleQ(this)" data-q="사용자 입장에서 가장 불편할 것 같은 부분이 어디야?" data-idx="5">
         <div class="q-check">✓</div>
-        <div class="q-text">사용자 입장에서 가장 불편할 것 같은 부분이 어디야?</div>
+        <div class="q-content">
+          <div class="q-text">사용자 입장에서 가장 불편할 것 같은 부분이 어디야?</div>
+          <div class="q-answer-box">
+            <div class="q-answer-label">💡 참고 답변</div>
+            <div class="q-answer-text">UX 마찰 포인트: ① <strong>회원가입</strong> — 소셜 로그인 없이 이메일만 있으면 이탈률 높음 ② <strong>폼 오류</strong> — 제출 후에야 에러 표시 ③ <strong>뒤로가기</strong> — 입력값이 사라짐 ④ <strong>대기</strong> — 로딩 표시 없이 2초 이상 ⑤ <strong>모바일</strong> — 버튼이 너무 작거나 키보드에 가려짐.</div>
+            <div class="q-note-label">✏️ 내 프로젝트에 해당하는 사항 (명령어에 반영됩니다)</div>
+            <textarea class="q-note-textarea" id="qnote_5" rows="2" placeholder="예: Google 소셜 로그인 필수. 폼은 실시간 유효성 검사 적용." oninput="saveQNote(5, this)" onclick="event.stopPropagation()"></textarea>
+            <div class="q-note-saved" id="qns_5">저장됨 ✓</div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -302,10 +408,12 @@
 </div>
 
 </div></div>
-
+<div id="footerArea"></div>
 <script src="../vcos.js"></script>
 <script>
-buildNav(2);
+document.getElementById('navArea').innerHTML = buildNav('1', false);
+document.getElementById('progressBar').innerHTML = buildProgress('1');
+document.getElementById('footerArea').innerHTML = buildFooter(false);
 
 const STORAGE_KEY = 'vcosAiCollab';
 
@@ -339,13 +447,22 @@ function init() {
     }
   });
 
-  // 루프 횟수 복원
-  if (saved.loopCount) setLoop(saved.loopCount, true);
-
   // 질문 선택 복원
   if (saved.selectedQ) {
     document.querySelectorAll('.q-item').forEach(el => {
-      if (saved.selectedQ.includes(el.dataset.q)) el.classList.add('selected');
+      if (saved.selectedQ.includes(el.dataset.q)) {
+        el.classList.add('selected');
+        const box = el.querySelector('.q-answer-box');
+        if (box) box.classList.add('open');
+      }
+    });
+  }
+
+  // 질문 노트 복원
+  if (saved.qNotes) {
+    saved.qNotes.forEach((note, i) => {
+      const el = document.getElementById('qnote_' + i);
+      if (el && note) { el.value = note; el.classList.add('filled'); }
     });
   }
 
@@ -369,7 +486,6 @@ function updateProgress() {
     if (document.getElementById(id).value.trim()) filled++;
   });
   const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-  if (saved.loopCount) { filled++; total++; }
   const selectedQ = document.querySelectorAll('.q-item.selected').length;
   if (selectedQ > 0) { filled++; total++; }
 
@@ -395,7 +511,7 @@ function exportMemo() {
   const context  = document.getElementById('memoContext').value  || '(미입력)';
   const problem  = document.getElementById('realProblem').value  || '(미입력)';
   const saved    = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-  const loops    = saved.loopCount || 3;
+  const loops    = 5;
   const qs       = [...document.querySelectorAll('.q-item.selected')].map(el => '- ' + el.dataset.q).join('\n') || '(미선택)';
   const now      = new Date().toLocaleDateString('ko-KR');
 
@@ -426,20 +542,18 @@ ${qs}
   });
 }
 
-/* ── 루프 횟수 설정 ── */
-function setLoop(val, silent) {
-  document.querySelectorAll('.loop-btn').forEach(btn => {
-    btn.classList.toggle('active', parseInt(btn.dataset.val) === val);
-  });
-  if (!silent) {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-    saved.loopCount = val;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
-    updateProgress();
-  }
+/* ── 질문 노트 저장 ── */
+function saveQNote(idx, el) {
+  el.classList.toggle('filled', el.value.trim().length > 0);
+  const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  if (!saved.qNotes) saved.qNotes = Array(6).fill('');
+  saved.qNotes[idx] = el.value;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+  const si = document.getElementById('qns_' + idx);
+  if (si) { si.classList.add('show'); setTimeout(() => si.classList.remove('show'), 1500); }
 }
 
-/* ── 질문 토글 ── */
+/* ── 질문 토글 (선택 = 명령어 반영 여부) ── */
 function toggleQ(el) {
   el.classList.toggle('selected');
   const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');

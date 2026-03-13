@@ -108,7 +108,31 @@ const tk = calcTokenEstimate(c);
 const rs = calcRefineScores(c);
 const v4 = rs.v4;
 
-const cmd = (typeof generateCommand === 'function') ? generateCommand(p, c) : buildFallbackCommand(p, c);
+const _baseCmd = (typeof generateCommand === 'function') ? generateCommand(p, c) : buildFallbackCommand(p, c);
+
+/* ── AI 협업 사전 검토 사항 주입 ── */
+function buildCollabNotes() {
+  try {
+    const collab = JSON.parse(localStorage.getItem('vcosAiCollab') || '{}');
+    const qNotes = collab.qNotes || [];
+    const selectedQ = collab.selectedQ || [];
+    const qLabels = [
+      '구조적 리스크',
+      '누락 항목',
+      '파괴 시나리오',
+      '엣지 케이스',
+      '단순화 사항',
+      'UX 개선 사항'
+    ];
+    const lines = qNotes
+      .map((note, i) => note && note.trim() ? `  • [${qLabels[i]}] ${note.trim()}` : '')
+      .filter(Boolean);
+    if (!lines.length) return '';
+    return `\n\n## ⚠️ 사전 검토 사항 (AI 협업 준비 단계 입력)\n\n${lines.join('\n')}`;
+  } catch(e) { return ''; }
+}
+
+const cmd = _baseCmd + buildCollabNotes();
 
 function buildFallbackCommand(p, c) {
   const type = getProjectType(c.total);
@@ -204,6 +228,7 @@ document.getElementById('content').innerHTML = `
     <div class="checklist-item"><span class="check-icon">✅</span><span class="check-text">분대: ${squads.length}개 편성</span></div>
     <div class="checklist-item"><span class="check-icon">✅</span><span class="check-text">스킬: ${skills.length}개 선택</span></div>
     <div class="checklist-item"><span class="check-icon">✅</span><span class="check-text">목표 점수: ${v4}점</span></div>
+    ${(() => { try { const c2=JSON.parse(localStorage.getItem('vcosAiCollab')||'{}'); const n=(c2.qNotes||[]).filter(x=>x&&x.trim()).length; return n ? `<div class="checklist-item"><span class="check-icon">✅</span><span class="check-text">사전 검토: ${n}개 항목 반영</span></div>` : ''; } catch(e){return '';} })()}
   </div>
 </div>
 
