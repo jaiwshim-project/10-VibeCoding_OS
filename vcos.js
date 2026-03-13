@@ -22,7 +22,9 @@ const FEATURE_LABELS = {
   mobile:       '📱 모바일 반응형',
   multilang:    '🌐 다국어 지원',
   rag:          '🧠 RAG/지식베이스',
-  video:        '🎥 영상/미디어'
+  video:        '🎥 영상/미디어',
+  lms:          '🎓 LMS/학습 관리',
+  ecommerce:    '🛒 인터넷 쇼핑/커머스'
 };
 
 /* ── LocalStorage ────────────────────────────────────────── */
