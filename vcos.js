@@ -26,7 +26,9 @@ const FEATURE_LABELS = {
   lms:          '🎓 LMS/학습 관리',
   ecommerce:    '🛒 인터넷 쇼핑/커머스',
   supabase:     '🗄️ Supabase 연동',
-  vercel:       '🚀 Vercel 배포 연동'
+  vercel:       '🚀 Vercel 배포 연동',
+  manual:       '📖 매뉴얼 페이지',
+  svg_sitemap:  '🗺️ SVG 구조도'
 };
 
 /* ── LocalStorage ────────────────────────────────────────── */
