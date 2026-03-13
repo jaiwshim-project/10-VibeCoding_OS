@@ -154,11 +154,11 @@
       <div class="form-group">
         <label>기술 스택 선호</label>
         <div class="radio-group" id="techStack">
-          <span class="radio-btn active" data-val="Next.js + FastAPI">Next.js + FastAPI</span>
+          <span class="radio-btn" data-val="Next.js + FastAPI">Next.js + FastAPI</span>
           <span class="radio-btn" data-val="React + Node.js">React + Node.js</span>
           <span class="radio-btn" data-val="Vue + Django">Vue + Django</span>
           <span class="radio-btn" data-val="Vanilla HTML + Python">Vanilla HTML</span>
-          <span class="radio-btn" data-val="index.html + 독립된 페이지.html + Gemini">index.html + 독립된 페이지.html + Gemini</span>
+          <span class="radio-btn active" data-val="index.html + 독립된 페이지.html + Gemini">index.html + 독립된 페이지.html + Gemini</span>
           <span class="radio-btn" data-val="미정">미정</span>
         </div>
       </div>
@@ -374,7 +374,7 @@ function saveAndNext() {
     name,
     purpose: document.getElementById('projPurpose').value.trim(),
     users: [...userTags],
-    techStack: document.querySelector('#techStack .radio-btn.active')?.dataset.val || 'Next.js + FastAPI',
+    techStack: document.querySelector('#techStack .radio-btn.active')?.dataset.val || 'index.html + 독립된 페이지.html + Gemini',
     scale: parseInt(document.querySelector('#projScale .radio-btn.active')?.dataset.val) || 1,
     aiLevel: parseInt(document.querySelector('#aiLevel .radio-btn.active')?.dataset.val) || 0,
     features,
