@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VCOS — 06 Claude Code 명령어 생성</title>
+<title>VCOS — 명령어 생성 (리다이렉트)</title>
+<meta http-equiv="refresh" content="0; url=07-command.html">
 <link rel="stylesheet" href="../vcos.css">
 <style>
-/* 06 명령어 생성 */
+/* 07 명령어 생성 */
 .output-wrap { position:relative }
 .output-cmd {
   background:#0d1b2e;border:1.5px solid #1e3a5f;
@@ -54,17 +55,6 @@
 .checklist-item { display:flex;align-items:center;gap:8px;padding:5px 0 }
 .check-icon     { font-size:14px;flex-shrink:0 }
 .check-text     { font-size:12.5px;color:var(--text2);font-weight:500 }
-
-.phase2-banner {
-  background:linear-gradient(135deg,#fff7ed,#ffedd5);
-  border:1.5px solid rgba(234,88,12,.3);
-  border-left:4px solid #ea580c;
-  border-radius:var(--r-lg);padding:18px 20px;margin-top:28px;
-  display:flex;align-items:center;gap:16px;
-}
-.phase2-icon { font-size:36px;flex-shrink:0 }
-.phase2-title { font-size:15px;font-weight:800;color:#c2410c;margin-bottom:4px }
-.phase2-desc  { font-size:12.5px;color:var(--text2);line-height:1.6 }
 </style>
 </head>
 <body>
@@ -74,16 +64,16 @@
 <div class="progress-steps" id="progressBar"></div>
 
 <div class="page-title">
-  <div class="page-num" style="background:linear-gradient(135deg,#38bdf8,#0369a1);box-shadow:0 3px 12px rgba(3,105,161,.4)">6</div>
-  <div><div class="page-name">Claude Code 명령어 생성</div><div class="page-eng">Vibe Command Generator — 1~5 섹션 통합 → 완성 바이브 코딩 명령어</div></div>
+  <div class="page-num" style="background:linear-gradient(135deg,#38bdf8,#0369a1);box-shadow:0 3px 12px rgba(3,105,161,.4)">7</div>
+  <div><div class="page-name">Claude Code 명령어 생성</div><div class="page-eng">Vibe Command Generator — 1~6 섹션 통합 → 완성 바이브 코딩 명령어</div></div>
   <div class="page-badge">FINAL OUTPUT</div>
 </div>
 
 <div id="content"></div>
 
 <div class="page-nav">
-  <a href="05-token.html" class="btn btn-secondary">← 이전: 토큰 최적화</a>
-  <div class="page-nav-center">Section 6 / 6</div>
+  <a href="07-refinement.html" class="btn btn-secondary">← 이전: 고도화 엔진</a>
+  <div class="page-nav-center">Section 7 / 7</div>
   <a href="../index.html" class="btn btn-secondary">🏠 허브로 돌아가기</a>
 </div>
 
@@ -91,8 +81,8 @@
 <div id="footerArea"></div>
 <script src="../vcos.js"></script>
 <script>
-document.getElementById('navArea').innerHTML = buildNav('6', false);
-document.getElementById('progressBar').innerHTML = buildProgress('6');
+document.getElementById('navArea').innerHTML = buildNav('7', false);
+document.getElementById('progressBar').innerHTML = buildProgress('7');
 document.getElementById('footerArea').innerHTML = buildFooter(false);
 
 const p = requireProject('../pages/01-intent.html');
@@ -101,44 +91,11 @@ if (!p) throw new Error('no project');
 const c = calcComplexity(p);
 const type = getProjectType(c.total);
 const squads = buildSquads(p, c);
-const skills = (typeof getRelevantSkills === 'function')
-  ? getRelevantSkills(p, c).filter(s => s.active)
-  : [];
+const skills = getRelevantSkills(p, c).filter(s => s.active);
 const tk = calcTokenEstimate(c);
-const rs = calcRefineScores(c);
-const v4 = rs.v4;
+const [v1, v2, v3, v4] = calcRefineScores(c);
 
-const cmd = (typeof generateCommand === 'function') ? generateCommand(p, c) : buildFallbackCommand(p, c);
-
-function buildFallbackCommand(p, c) {
-  const type = getProjectType(c.total);
-  const feats = (p.features||[]).map(f => `- ${FEATURE_LABELS[f]||f}`).join('\n') || '- (기능 목록)';
-  const squadCmd = (c.total < 16) ? '/platoon-formation-v1' : '/platoon-formation-v2';
-  return `## 🚀 VCOS — VIBE CODING COMMAND
-
-PROJECT : ${p.name||''}
-TYPE    : ${type.label} (복잡도 ${c.total}점)
-STACK   : ${p.techStack||''}
-
-## 📋 PROJECT INTENT
-
-${p.purpose||''}
-
-핵심 기능:
-${feats}
-
-## 👥 ORGANIZATION
-
-분대 편성: ${squadCmd}
-투입 분대: ${squads.length}개
-
-## ⚡ EXECUTION
-
-1. ${squadCmd} 실행
-2. 핵심 기능 순서대로 구현
-3. 완성 후 /review-evaluate 최소 3회 실행
-4. ${rs.v4}점 달성 시 프로덕션 배포`;
-}
+const cmd = generateCommand(p, c);
 
 let activeTab = 'full';
 
@@ -155,21 +112,21 @@ function getTabContent() {
     return `## 📋 PROJECT INTENT\n\nProject : ${p.name||''}\nPurpose : ${p.purpose||''}\nUsers   : ${Array.isArray(p.users)?p.users.join(', '):''}\nType    : ${type.label}\nStack   : ${p.techStack||''}\n\n## 🎯 MISSION\n\n${p.purpose||p.name+' 플랫폼'}\n\n핵심 기능:\n${feats}`;
   }
   if (activeTab === 'squad') {
-    const squadCmd = (c.total < 16) ? '/platoon-formation-v1' : '/platoon-formation-v2';
-    const squadDesc = squads.filter(s=>s.id!=='hq').map(s => `- ${s.name}: ${s.role}`).join('\n');
-    return `## 👥 AI DEVELOPMENT ORGANIZATION\n\n소대 편성 명령: ${squadCmd}\n투입 분대: ${squads.length}개\n\n${squadDesc}`;
+    const squadDesc = squads.filter(s=>s.id!=='hq').map(s => `- ${s.name}: ${s.role}\n  요원: ${s.agents.map(a=>a.name).join(', ')}`).join('\n\n');
+    return `## 👥 AI DEVELOPMENT ORGANIZATION\n\n소대 편성 명령: ${type.type === 'Small' || type.type === 'Medium' ? '/platoon-formation-v1' : '/platoon-formation-v2'}\n투입 분대: ${squads.length}개 / 총 요원: ${squads.reduce((s,q)=>s+q.agents.length,0)}명\n\n${squadDesc}`;
   }
   if (activeTab === 'skills') {
-    if (!skills.length) return '## ⚡ SKILL EXECUTION STRATEGY\n\n스킬 데이터 없음';
-    return `## ⚡ SKILL EXECUTION STRATEGY\n\n프로젝트 적용 스킬 (${skills.length}개):\n\n${skills.map(s=>`${s.emoji||'⚡'} ${s.name}\n   시점: ${s.when||''}\n   모델: ${s.model||''}\n   명령: ${s.cmd||''}`).join('\n\n')}`;
+    return `## ⚡ SKILL EXECUTION STRATEGY\n\n프로젝트 적용 스킬 (${skills.length}개):\n\n${skills.map(s=>`${s.emoji} ${s.name}\n   시점: ${s.when}\n   모델: ${s.model}\n   명령: ${s.cmd}`).join('\n\n')}`;
   }
   return cmd;
 }
 
 function renderCmd() {
-  document.getElementById('cmdOutput').textContent = getTabContent();
+  const content = getTabContent();
+  document.getElementById('cmdOutput').textContent = content;
 }
 
+// Download handler
 function downloadCmd() {
   const blob = new Blob([cmd], { type:'text/plain;charset=utf-8' });
   const a = document.createElement('a');
@@ -178,16 +135,7 @@ function downloadCmd() {
   a.click();
 }
 
-function copyText(text, btn) {
-  navigator.clipboard.writeText(text).then(() => {
-    const orig = btn.textContent;
-    btn.textContent = '✅ 복사됨!';
-    setTimeout(() => btn.textContent = orig, 1800);
-  });
-}
-
 const savedTime = p.savedAt ? new Date(p.savedAt).toLocaleString('ko-KR') : '알 수 없음';
-const squadCmd = (c.total < 16) ? '/platoon-formation-v1' : '/platoon-formation-v2';
 
 document.getElementById('content').innerHTML = `
 <div class="ready-box">
@@ -195,7 +143,7 @@ document.getElementById('content').innerHTML = `
     <span style="font-size:24px">✅</span>
     <div>
       <div style="font-size:14px;font-weight:700;color:var(--green)">바이브 코딩 명령어 생성 완료!</div>
-      <div style="font-size:11px;color:var(--text2);margin-top:2px">1~5 섹션 데이터를 통합하여 Claude Code 실행 명령어를 생성했습니다. 복사 후 터미널에 붙여넣으세요.</div>
+      <div style="font-size:11px;color:var(--text2);margin-top:2px">1~6 섹션 데이터를 통합하여 Claude Code 실행 명령어를 생성했습니다. 복사 후 터미널에 붙여넣으세요.</div>
     </div>
   </div>
   <div style="display:flex;flex-wrap:wrap;gap:8px">
@@ -204,6 +152,7 @@ document.getElementById('content').innerHTML = `
     <div class="checklist-item"><span class="check-icon">✅</span><span class="check-text">분대: ${squads.length}개 편성</span></div>
     <div class="checklist-item"><span class="check-icon">✅</span><span class="check-text">스킬: ${skills.length}개 선택</span></div>
     <div class="checklist-item"><span class="check-icon">✅</span><span class="check-text">목표 점수: ${v4}점</span></div>
+    <div class="checklist-item"><span class="check-icon">✅</span><span class="check-text">예상 비용: $${tk.total}</span></div>
   </div>
 </div>
 
@@ -227,6 +176,11 @@ document.getElementById('content').innerHTML = `
     <div class="summary-icon">🧩</div>
     <div class="summary-label">활성 스킬</div>
     <div class="summary-val">${skills.length}개</div>
+  </div>
+  <div class="summary-item">
+    <div class="summary-icon">💰</div>
+    <div class="summary-label">예상 비용</div>
+    <div class="summary-val">$${tk.total}</div>
   </div>
   <div class="summary-item">
     <div class="summary-icon">⭐</div>
@@ -261,9 +215,9 @@ document.getElementById('content').innerHTML = `
       { n:'1', text:`터미널에서 <code style="background:var(--bg);padding:1px 5px;border-radius:3px;font-size:11px">cd 프로젝트_폴더</code> 실행` },
       { n:'2', text:`<code style="background:var(--bg);padding:1px 5px;border-radius:3px;font-size:11px">claude</code> 명령어로 Claude Code 실행` },
       { n:'3', text:`위 명령어를 전체 복사해서 Claude Code에 붙여넣기` },
-      { n:'4', text:`분대 편성: <code style="background:var(--bg);padding:1px 5px;border-radius:3px;font-size:11px">${squadCmd}</code>` },
-      { n:'5', text:`개발 진행 → 결과물 완성` },
-      { n:'6', text:`결과물 완성 후 → <strong style="color:#ea580c">Phase 2 고도화 엔진</strong> 적용` }
+      { n:'4', text:`분대 편성: <code style="background:var(--bg);padding:1px 5px;border-radius:3px;font-size:11px">${type.type==='Small'||type.type==='Medium' ? '/platoon-formation-v1' : '/platoon-formation-v2'}</code>` },
+      { n:'5', text:`개발 완료 후: <code style="background:var(--bg);padding:1px 5px;border-radius:3px;font-size:11px">/review-evaluate</code> 실행 (최소 3회)` },
+      { n:'6', text:`${v4}점 이상 달성 시 프로덕션 배포` }
     ].map(step => `
       <div style="display:flex;gap:10px;margin-bottom:8px;align-items:flex-start">
         <div style="width:20px;height:20px;border-radius:50%;background:var(--accent2);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">${step.n}</div>
@@ -294,19 +248,7 @@ document.getElementById('content').innerHTML = `
   </div>
 </div>
 
-<div class="phase2-banner">
-  <div class="phase2-icon">🔥</div>
-  <div style="flex:1">
-    <div class="phase2-title">Phase 2 — 결과물 고도화 엔진</div>
-    <div class="phase2-desc">위 명령어로 결과물을 완성한 후, 고도화 엔진을 적용하세요.<br>
-      /review-evaluate를 최소 3회 실행하여 <strong>${v4}점 이상</strong>을 달성하고 프로덕션 품질로 끌어올립니다.</div>
-    <div style="margin-top:12px">
-      <a href="06-refinement.html" class="btn btn-sm" style="background:#ea580c;color:#fff;border:none;box-shadow:0 2px 8px rgba(234,88,12,.4)">🚀 고도화 엔진 바로가기 →</a>
-    </div>
-  </div>
-</div>
-
-<div style="text-align:center;margin-top:24px;padding:20px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)">
+<div style="text-align:center;margin-top:28px;padding:20px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)">
   <div style="font-size:13px;color:var(--text2)">저장 시각: ${savedTime}</div>
   <div style="font-size:12px;color:var(--text3);margin-top:4px">Generated by VCOS — Vibe Coding Operating System</div>
   <div style="margin-top:12px;display:flex;justify-content:center;gap:8px;flex-wrap:wrap">

@@ -322,18 +322,19 @@ function calcRefineScores(c) {
 
 /* ── Navigation ──────────────────────────────────────────── */
 const NAV_ITEMS = [
-  { num:'1', label:'인텐트 입력', file:'01-intent.html' },
-  { num:'2', label:'복잡도 분석', file:'02-complexity.html' },
-  { num:'3', label:'분대 편성',   file:'03-squad.html' },
-  { num:'4', label:'스킬 전략',   file:'04-skills.html' },
-  { num:'5', label:'토큰 최적화', file:'05-token.html' },
-  { num:'6', label:'명령어 생성', file:'06-command.html' }
+  { num:'1', label:'인텐트 입력',   file:'01-intent.html' },
+  { num:'2', label:'AI 협업 준비',  file:'02-ai-collab.html' },
+  { num:'3', label:'복잡도 분석',   file:'03-complexity.html' },
+  { num:'4', label:'분대 편성',     file:'04-squad.html' },
+  { num:'5', label:'스킬 전략',     file:'05-skills.html' },
+  { num:'6', label:'토큰 최적화',   file:'06-token.html' },
+  { num:'7', label:'명령어 생성',   file:'07-command.html' }
 ];
 
 function buildNav(activeNum, isHome) {
   const prefix    = isHome ? 'pages/' : '';
   const homeHref  = isHome ? 'index.html' : '../index.html';
-  const refineHref = `${prefix}06-refinement.html`;
+  const refineHref = `${prefix}07-refinement.html`;
   const isRefine   = String(activeNum) === 'R';
 
   const links = NAV_ITEMS.map(item => {
@@ -375,7 +376,7 @@ function buildFooter(isHome) {
     `<li><a href="${prefix}${item.file}"><span class="fn">${item.num}</span>${item.label}</a></li>`
   ).join('');
 
-  const refineHrefFooter = `${prefix}06-refinement.html`;
+  const refineHrefFooter = `${prefix}07-refinement.html`;
 
   return `<footer class="vcos-footer">
   <div class="footer-inner">
@@ -386,7 +387,7 @@ function buildFooter(isHome) {
         <div class="footer-tagline">아이디어를 AI 개발 명령어로 변환하는<br>바이브 코딩 운영체계</div>
         <div class="footer-badge">
           <span style="width:7px;height:7px;border-radius:50%;background:#4ade80;display:inline-block;flex-shrink:0"></span>
-          21 Skills &nbsp;·&nbsp; 5 Squads &nbsp;·&nbsp; 66명 편제
+          25 Skills &nbsp;·&nbsp; 5 Squads &nbsp;·&nbsp; 66명 편제
         </div>
       </div>
 
@@ -407,13 +408,13 @@ function buildFooter(isHome) {
         <div style="display:flex;flex-direction:row;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:7px">
           <a href="${homeHref}" class="footer-btn footer-btn-primary">🏠 홈으로</a>
           <a href="${prefix}01-intent.html" class="footer-btn footer-btn-ghost">✏️ 새 프로젝트</a>
-          <a href="${prefix}06-command.html" class="footer-btn footer-btn-ghost">⚡ 명령어 생성</a>
+          <a href="${prefix}07-command.html" class="footer-btn footer-btn-ghost">⚡ 명령어 생성</a>
           <a href="${refineHrefFooter}" class="footer-btn footer-btn-ghost" style="border-color:rgba(234,88,12,.4);color:rgba(255,165,100,.9)">🔥 고도화 엔진</a>
           <a href="${isHome?'pages/sitemap.html':'../pages/sitemap.html'}" class="footer-btn footer-btn-ghost" style="border-color:rgba(8,145,178,.4);color:rgba(103,232,249,.9)">🗺 구조도</a>
           <a href="${prefix}manual.html" class="footer-btn footer-btn-ghost" style="border-color:rgba(124,58,237,.4);color:rgba(167,139,250,.9)">📖 매뉴얼</a>
         </div>
         <div style="display:flex;flex-direction:row;flex-wrap:wrap;gap:7px;align-items:center">
-          <a href="${isHome?'pages/skills-map.html':'../pages/skills-map.html'}" class="footer-btn footer-btn-ghost" style="border-color:rgba(234,88,12,.5);color:rgba(255,200,100,.95);background:rgba(234,88,12,.08);font-weight:700">⚡ 21 스킬 구조도</a>
+          <a href="${isHome?'pages/skills-map.html':'../pages/skills-map.html'}" class="footer-btn footer-btn-ghost" style="border-color:rgba(234,88,12,.5);color:rgba(255,200,100,.95);background:rgba(234,88,12,.08);font-weight:700">⚡ 25 스킬 구조도</a>
         </div>
       </div>
 
@@ -422,7 +423,7 @@ function buildFooter(isHome) {
       <div class="footer-copy">© 2026 VCOS — Vibe Coding Operating System. Powered by Claude.</div>
       <div class="footer-chips">
         <span class="footer-chip">Claude Sonnet</span>
-        <span class="footer-chip">21 Skills</span>
+        <span class="footer-chip">25 Skills</span>
         <span class="footer-chip">5 Squads</span>
         <span class="footer-chip">66명 편제</span>
         <span class="footer-chip">Supabase</span>

@@ -221,8 +221,8 @@
     Phase 1으로 명령어를 만들고, Phase 2로 완성된 결과물을 97점으로 고도화하세요.
   </div>
   <div class="hero-stats">
-    <div class="hero-stat"><div class="hero-stat-val">6</div><div class="hero-stat-lbl">Phase 1 단계</div></div>
-    <div class="hero-stat"><div class="hero-stat-val">21</div><div class="hero-stat-lbl">내장 스킬</div></div>
+    <div class="hero-stat"><div class="hero-stat-val">7</div><div class="hero-stat-lbl">Phase 1 단계</div></div>
+    <div class="hero-stat"><div class="hero-stat-val">25</div><div class="hero-stat-lbl">내장 스킬</div></div>
     <div class="hero-stat"><div class="hero-stat-val">66</div><div class="hero-stat-lbl">AI 에이전트</div></div>
     <div class="hero-stat"><div class="hero-stat-val">97+</div><div class="hero-stat-lbl">목표 품질 점수</div></div>
   </div>
@@ -253,7 +253,7 @@
 <!-- ③ Phase 1 단계별 가이드 -->
 <div class="manual-section-title">
   <div class="manual-section-num" style="background:linear-gradient(135deg,#1d4ed8,#2563eb)">1</div>
-  <div><div class="manual-section-name">Phase 1 — 6단계 상세 가이드</div><div class="manual-section-sub">각 단계에서 무엇을 입력하고 어떤 결과가 나오는지 확인하세요</div></div>
+  <div><div class="manual-section-name">Phase 1 — 7단계 상세 가이드</div><div class="manual-section-sub">각 단계에서 무엇을 입력하고 어떤 결과가 나오는지 확인하세요</div></div>
 </div>
 
 <div id="phase1Steps"></div>
@@ -360,7 +360,7 @@
 </div>
 
 <div class="card" style="margin-bottom:20px">
-  <div class="card-title">🛠️ 21가지 내장 스킬 목록</div>
+  <div class="card-title">🛠️ 25가지 내장 스킬 목록</div>
   <div style="font-size:13px;color:var(--text3);margin-bottom:12px">Phase 1(빌드)과 Phase 2(고도화) 스킬이 자동 분류되어 적용됩니다.</div>
   <div id="skillGrid"></div>
 </div>
@@ -388,12 +388,13 @@ document.getElementById('footerArea').innerHTML = buildFooter(false);
 
 /* ── 워크플로우 시각화 ── */
 const P1_STEPS = [
-  { num:'1', icon:'✍️', name:'인텐트 입력', color:'#2563eb', file:'01-intent.html' },
-  { num:'2', icon:'📊', name:'복잡도 분석', color:'#d97706', file:'02-complexity.html' },
-  { num:'3', icon:'🎖️', name:'분대 편성',   color:'#dc2626', file:'03-squad.html' },
-  { num:'4', icon:'🛠️', name:'스킬 전략',   color:'#16a34a', file:'04-skills.html' },
-  { num:'5', icon:'🤖', name:'토큰 최적화', color:'#7c3aed', file:'05-token.html' },
-  { num:'6', icon:'⚡', name:'명령어 생성', color:'#0369a1', file:'06-command.html' },
+  { num:'1', icon:'✍️', name:'인텐트 입력',   color:'#2563eb', file:'01-intent.html' },
+  { num:'2', icon:'🤝', name:'AI 협업 준비',  color:'#0d9488', file:'02-ai-collab.html' },
+  { num:'3', icon:'📊', name:'복잡도 분석',   color:'#d97706', file:'03-complexity.html' },
+  { num:'4', icon:'🎖️', name:'분대 편성',     color:'#dc2626', file:'04-squad.html' },
+  { num:'5', icon:'🛠️', name:'스킬 전략',     color:'#16a34a', file:'05-skills.html' },
+  { num:'6', icon:'🤖', name:'토큰 최적화',   color:'#7c3aed', file:'06-token.html' },
+  { num:'7', icon:'⚡', name:'명령어 생성',   color:'#0369a1', file:'07-command.html' },
 ];
 
 document.getElementById('wfSteps1').innerHTML = P1_STEPS.map((s, i) => `
@@ -409,7 +410,7 @@ document.getElementById('wfSteps1').innerHTML = P1_STEPS.map((s, i) => `
 
 document.getElementById('wfSteps2').innerHTML = `
   <div class="wf-step">
-    <a href="06-refinement.html" class="wf-p2-box">
+    <a href="07-refinement.html" class="wf-p2-box">
       <div style="font-size:11px;font-weight:800;color:#ea580c;margin-bottom:4px">P2</div>
       <div style="font-size:24px">📁</div>
       <div style="font-size:10.5px;color:#ea580c;font-weight:700;margin-top:4px">폴더 지정</div>
@@ -443,13 +444,22 @@ const steps = [
     title:'프로젝트 인텐트 입력', subtitle:'01-intent.html',
     desc:'프로젝트의 핵심 정보를 입력하면 이후 모든 단계가 자동으로 생성됩니다.',
     inputs:['프로젝트 이름 (필수)','플랫폼 목적 / 목표','타겟 사용자 태그','기술 스택 선택','AI 기능 수준'],
-    outputs:['localStorage에 JSON 자동 저장','2~6단계 자동 분석 기반 데이터'],
-    features:['🔒 기본 포함 기능 5개 (항상 구현)', '➕ 추가 기능 16개 (선택)','📂 참고 폴더 경로 지정 가능'],
-    tip:'기본 포함 기능(프로젝트 구조·라우팅·반응형·에러처리·환경설정)은 항상 구현됩니다. 필요 없으면 체크 해제하세요.'
+    outputs:['localStorage에 JSON 자동 저장','3~7단계 자동 분석 기반 데이터'],
+    features:['🔒 기본 포함 기능 8개 (항상 구현)', '➕ 추가 기능 20가지 (선택)','📂 참고 폴더 경로 지정 가능'],
+    tip:'기본 포함 기능(프로젝트 구조·라우팅·반응형·에러처리·환경설정·매뉴얼 페이지·SVG 구조도·챗봇 인터페이스(RAG))은 항상 구현됩니다. 필요 없으면 체크 해제하세요.'
   },
   {
-    num:'2', color:'#d97706', bgColor:'rgba(215,119,6,.9)', icon:'📊',
-    title:'복잡도 분석', subtitle:'02-complexity.html',
+    num:'2', color:'#0d9488', bgColor:'rgba(13,148,136,.9)', icon:'🤝',
+    title:'AI 협업 준비', subtitle:'02-ai-collab.html',
+    desc:'AI와 함께 진짜 문제를 정의하고, 맥락을 기록하고, 피드백 루프를 계획합니다.',
+    inputs:['프로젝트 인텐트 (1단계에서 자동 읽기)','AI와의 대화 결과 직접 입력'],
+    outputs:['진짜 문제 정의','맥락 기록 (결정/미결/주요 맥락)','회의록 복사 (세션 이어가기용)'],
+    features:['인텐트 자동 불러오기','AI 질문 프롬프트 제공','회의록 내보내기'],
+    tip:'이 단계를 건너뛰고 바로 개발하면 방향이 틀렸을 때 돌아오는 비용이 큽니다. 10분 투자로 전체 방향을 잡으세요.'
+  },
+  {
+    num:'3', color:'#d97706', bgColor:'rgba(215,119,6,.9)', icon:'📊',
+    title:'복잡도 분석', subtitle:'03-complexity.html',
     desc:'6개 축(UI·Backend·AI·통합·데이터·보안)을 기반으로 프로젝트 복잡도를 자동 계산합니다.',
     inputs:['인텐트 데이터 자동 읽기 (별도 입력 없음)'],
     outputs:['총 복잡도 점수 (0~30)','Small / Medium / Large / Enterprise 분류','분대 규모 결정 기준'],
@@ -457,8 +467,8 @@ const steps = [
     tip:'복잡도가 높을수록 더 많은 분대(Alpha~Echo)가 편성됩니다. 복잡도 10 이상이면 Delta/Echo 분대가 추가됩니다.'
   },
   {
-    num:'3', color:'#dc2626', bgColor:'rgba(220,38,38,.9)', icon:'🎖️',
-    title:'분대 편성', subtitle:'03-squad.html',
+    num:'4', color:'#dc2626', bgColor:'rgba(220,38,38,.9)', icon:'🎖️',
+    title:'분대 편성', subtitle:'04-squad.html',
     desc:'복잡도에 따라 HQ 본부 + 최대 5개 분대, 총 66명의 AI 에이전트가 자동 배치됩니다.',
     inputs:['복잡도 데이터 자동 읽기'],
     outputs:['HQ 본부 (소대장+연락병+용병4)','Alpha 분대 (복잡도 8+)','Bravo / Charlie 분대 (항상)','Delta / Echo 분대 (복잡도 16+)'],
@@ -466,17 +476,17 @@ const steps = [
     tip:'용병 AI(Gemini, Perplexity, Grok, ChatGPT)는 HQ 본부에 편제되어 Claude 부족한 부분을 보완합니다.'
   },
   {
-    num:'4', color:'#16a34a', bgColor:'rgba(22,163,74,.9)', icon:'🛠️',
-    title:'스킬 전략', subtitle:'04-skills.html',
-    desc:'21개 내장 스킬 중 프로젝트 특성에 맞는 스킬이 자동 선택되어 Phase 1/2로 분류됩니다.',
+    num:'5', color:'#16a34a', bgColor:'rgba(22,163,74,.9)', icon:'🛠️',
+    title:'스킬 전략', subtitle:'05-skills.html',
+    desc:'25개 내장 스킬 중 프로젝트 특성에 맞는 스킬이 자동 선택되어 Phase 1/2로 분류됩니다.',
     inputs:['프로젝트 피처 목록','복잡도 수준'],
     outputs:['Phase 1 활성 스킬 목록 (빌드 단계)','Phase 2 활성 스킬 목록 (고도화 단계)','비활성 스킬 (해당 없음)'],
     features:['스킬별 활성화 조건 표시','비활성 포함 전체 보기 토글','명령어에 자동 반영'],
     tip:'선택한 기능(결제, AI, RAG 등)이 있으면 해당 스킬이 자동 활성화됩니다. 직접 토글로 조정도 가능합니다.'
   },
   {
-    num:'5', color:'#7c3aed', bgColor:'rgba(124,58,237,.9)', icon:'🤖',
-    title:'토큰 최적화', subtitle:'05-token.html',
+    num:'6', color:'#7c3aed', bgColor:'rgba(124,58,237,.9)', icon:'🤖',
+    title:'토큰 최적화', subtitle:'06-token.html',
     desc:'3계층 AI 모델 정책으로 비용을 최소화하면서 최적의 품질을 유지합니다.',
     inputs:['복잡도 및 분대 데이터 자동 읽기'],
     outputs:['Haiku 60% / Sonnet 35% / Opus 5% 배분','예상 토큰/비용 자동 계산','용병 AI 활용 전략'],
@@ -484,9 +494,9 @@ const steps = [
     tip:'Opus는 아키텍처 설계와 최종 검토에만 사용합니다. 반복 작업은 모두 Haiku로 처리해 비용을 절감하세요.'
   },
   {
-    num:'6', color:'#0369a1', bgColor:'rgba(3,105,161,.9)', icon:'⚡',
-    title:'명령어 생성', subtitle:'06-command.html',
-    desc:'1~5단계 모든 데이터를 통합하여 Claude Code에 바로 붙여넣을 수 있는 완성 명령어를 생성합니다.',
+    num:'7', color:'#0369a1', bgColor:'rgba(3,105,161,.9)', icon:'⚡',
+    title:'명령어 생성', subtitle:'07-command.html',
+    desc:'1~6단계 모든 데이터를 통합하여 Claude Code에 바로 붙여넣을 수 있는 완성 명령어를 생성합니다.',
     inputs:['전체 단계 데이터 자동 통합'],
     outputs:['Claude Code 바이브 코딩 명령어','분대 실행 명령어 세트','스킬 실행 순서 포함'],
     features:['원클릭 복사 기능','텍스트 파일 다운로드','실행 전 체크리스트'],
@@ -595,31 +605,35 @@ document.getElementById('modelTiers').innerHTML = [
   </div>
 `).join('');
 
-/* ── 스킬 목록 (21개, 설명 포함) ── */
+/* ── 스킬 목록 (25개, 설명 포함) ── */
 const skills = [
   /* ── Phase 1 빌드 ── */
-  { icon:'🪖', name:'/platoon-formation-v2',       phase:'P1', model:'opus',   desc:'HQ 본부 + 최대 5분대(Alpha~Echo) 66명 자동 편성. 복잡도에 따라 필요한 분대만 투입하여 개발 시작.' },
-  { icon:'🤖', name:'/deploy-subagent-core',        phase:'P1', model:'sonnet', desc:'병렬 서브에이전트 편성으로 복잡 기능을 동시에 개발. 속도 3~5배 향상.' },
-  { icon:'⚡', name:'/deploy-skill-core',           phase:'P1', model:'sonnet', desc:'프로젝트에 최적화된 스킬 조합 선택 및 실행 전략을 자동 수립.' },
-  { icon:'🎨', name:'/ui-ux-builder-core',          phase:'P1', model:'sonnet', desc:'사용자 경험 설계부터 UI 컴포넌트 구현까지 올인원. 대시보드·모바일 포함.' },
-  { icon:'🎨', name:'/theme-color-design',          phase:'P1', model:'haiku',  desc:'브랜드 컬러 팔레트 설계, 프리미엄 화이트 테마, CSS 변수 자동 생성. WCAG 2.1 접근성 준수.' },
-  { icon:'🤖', name:'/chat-ui-builder',             phase:'P1', model:'haiku',  desc:'오른쪽 하단 플로팅 버튼 + iframe 챗봇. Supabase pgvector RAG로 문서 기반 정확한 답변 생성.' },
-  { icon:'🔌', name:'/api-builder-core',            phase:'P1', model:'sonnet', desc:'REST API 설계, CRUD 구현, Zod 유효성 검사까지. 인증·결제·실시간 기능에 자동 활성.' },
-  { icon:'🗄️', name:'/db-schema-core',             phase:'P1', model:'sonnet', desc:'데이터베이스 스키마 설계, RLS 정책 설정, 마이그레이션 스크립트 자동 생성.' },
-  { icon:'🖼️', name:'/create-image-core',          phase:'P1', model:'haiku',  desc:'SVG / HTML / Mermaid / Pillow 기반 이미지·다이어그램 자동 생성.' },
-  { icon:'📄', name:'/doc-generator-core',          phase:'P1', model:'haiku',  desc:'PDF / DOCX / PPTX / XLSX / HWP 문서 자동 생성. Medium+ 복잡도에 활성.' },
-  { icon:'🔍', name:'/find-skills-core',            phase:'P1', model:'haiku',  desc:'오픈 생태계에서 추가 스킬 검색 및 설치. Large/Enterprise 복잡도에서 활성.' },
-  { icon:'🎥', name:'/youtube-generate-core',       phase:'P1', model:'sonnet', desc:'소재 파일 → 리서치 → 대본 → 영상 재료 → 블로그 올인원 영상 콘텐츠 자동화.' },
+  { icon:'🪖', name:'/platoon-formation-v2',       phase:'P1', model:'opus',   desc:'HQ 본부 + Alpha~Echo 최대 5개 분대, 총 66명을 자동 편성합니다. 복잡도 점수에 따라 필요한 분대만 선택 투입하고, 용병 AI(Gemini·Perplexity·Grok·ChatGPT) 4명이 HQ에 배속되어 Claude의 취약 영역을 보완합니다. 대규모 프로젝트의 시작점입니다.' },
+  { icon:'🪖', name:'/platoon-formation-v1',       phase:'P1', model:'sonnet', desc:'소대 편제의 기본형으로, 소대장·연락병·Alpha/Bravo/Charlie 3개 분대로 구성됩니다. 복잡도가 낮은 Small~Medium 프로젝트에 적합하며 편성 속도가 빠릅니다. 처음 VCOS를 사용하거나 빠른 MVP가 필요한 경우 이 스킬로 시작하세요.' },
+  { icon:'🤝', name:'/ai-collab-core',             phase:'P1', model:'sonnet', desc:'개발 전 AI와 3가지 원칙을 실행합니다. ① 만들어달라 전에 뭐가 문제야로 시작, ② 기록 전담 에이전트로 결정·미결·맥락 분리 관리, ③ 피드백 루프로 첫 결과물에서 멈추지 않기. 방향 오류를 초반에 잡아 재작업 비용을 줄입니다.' },
+  { icon:'🤖', name:'/deploy-subagent-core',        phase:'P1', model:'sonnet', desc:'독립 실행 가능한 기능들을 병렬 서브에이전트로 분리해 동시에 개발합니다. 순차 개발 대비 속도 3~5배 향상이 가능하며, 각 에이전트는 독립된 컨텍스트에서 작업해 간섭 없이 품질을 유지합니다. 복잡도 Medium 이상 프로젝트에 자동 활성됩니다.' },
+  { icon:'⚡', name:'/deploy-skill-core',           phase:'P1', model:'sonnet', desc:'프로젝트 피처와 복잡도를 분석해 최적의 스킬 조합을 자동 선택하고 실행 순서를 수립합니다. Phase 1 빌드 스킬과 Phase 2 고도화 스킬을 분리하여 각 단계에서 필요한 것만 활성화합니다. 스킬 간 의존성과 우선순위를 자동으로 관리합니다.' },
+  { icon:'🎨', name:'/ui-ux-builder-core',          phase:'P1', model:'sonnet', desc:'사용자 경험 설계부터 UI 컴포넌트 구현까지 올인원으로 처리합니다. 반응형 레이아웃, 대시보드, 모바일 뷰, 접근성 기준을 자동 적용하며, 프로젝트의 정보 구조(IA)와 사용자 흐름을 먼저 설계한 뒤 컴포넌트를 구현하는 순서로 진행합니다.' },
+  { icon:'🎨', name:'/theme-color-design',          phase:'P1', model:'haiku',  desc:'브랜드 정체성에 맞는 컬러 팔레트를 설계하고 CSS 변수로 자동 생성합니다. 프리미엄 화이트 테마와 다크 모드를 동시에 구성하며, WCAG 2.1 명암비 기준을 준수해 접근성을 확보합니다. 버튼·카드·헤더 등 모든 UI 요소에 일관된 색상 시스템을 적용합니다.' },
+  { icon:'🤖', name:'/chat-ui-builder',             phase:'P1', model:'haiku',  desc:'화면 오른쪽 하단 플로팅 버튼을 누르면 열리는 iframe 챗봇을 구현합니다. Supabase pgvector 기반 RAG로 문서를 벡터화하여 정확한 컨텍스트 답변을 생성하며, 기본 포함 기능으로 모든 프로젝트에 자동 탑재됩니다. 챗봇 UI와 백엔드 RAG 파이프라인을 함께 구축합니다.' },
+  { icon:'🔌', name:'/api-builder-core',            phase:'P1', model:'sonnet', desc:'REST API 엔드포인트 설계부터 CRUD 구현, Zod 스키마 유효성 검사까지 자동화합니다. 인증·결제·실시간 기능 선택 시 해당 API가 자동 활성되며, 에러 처리·Rate Limiting·API 문서화(Swagger)도 함께 생성합니다. 프론트엔드 연동용 타입 정의도 포함됩니다.' },
+  { icon:'🗄️', name:'/db-schema-core',             phase:'P1', model:'sonnet', desc:'프로젝트 요구사항을 분석해 최적화된 데이터베이스 스키마를 설계합니다. Supabase RLS(Row Level Security) 정책을 자동 설정하고 마이그레이션 스크립트를 생성합니다. 인덱스 전략, 관계 설정, 시드 데이터까지 포함하여 개발 환경을 즉시 구동 가능한 상태로 만듭니다.' },
+  { icon:'🖼️', name:'/create-image-core',          phase:'P1', model:'haiku',  desc:'SVG·HTML Canvas·Mermaid·Python Pillow 4가지 방식으로 이미지와 다이어그램을 자동 생성합니다. 아키텍처 다이어그램, 플로우차트, 데이터 시각화, 인포그래픽, UI 목업 등 다양한 용도에 대응합니다. 코드로 생성되므로 수정·재생성이 자유롭고 버전 관리가 가능합니다.' },
+  { icon:'📄', name:'/doc-generator-core',          phase:'P1', model:'haiku',  desc:'프로젝트 데이터를 기반으로 PDF·DOCX·PPTX·XLSX·HWP 형식의 문서를 자동 생성합니다. 보고서, 제안서, 발표자료, 데이터 시트 등 업무용 문서를 템플릿 없이 자동 구성합니다. 복잡도 Medium 이상에서 활성되며 문서 생성 API를 함께 구축합니다.' },
+  { icon:'🔍', name:'/find-skills-core',            phase:'P1', model:'haiku',  desc:'Claude Code 오픈 스킬 생태계(skills.sh)에서 프로젝트에 맞는 추가 스킬을 검색하고 설치합니다. 내장 25개 스킬 외에 커뮤니티 스킬을 탐색해 기능을 확장할 수 있습니다. Large/Enterprise 복잡도에서 자동 활성되며 스킬 의존성도 함께 관리합니다.' },
+  { icon:'🎥', name:'/youtube-generate-core',       phase:'P1', model:'sonnet', desc:'소재 파일 하나로 유튜브 영상 제작 전 과정을 자동화합니다. 키워드 리서치 → 대본 작성 → 섬네일·자막 재료 생성 → SEO 최적화 블로그 포스팅까지 올인원으로 처리합니다. 콘텐츠 마케팅이 필요한 프로젝트에 활성되며 다국어 자막도 지원합니다.' },
   /* ── Phase 2 고도화 ── */
-  { icon:'🔄', name:'/review-evaluate-core',        phase:'P2', model:'opus',   desc:'5기준(아키텍처·코드·보안·성능·유지보수) 자동 평가 후 97점 달성까지 반복 개선. 최소 3회 실행.' },
-  { icon:'🛡️', name:'/security-audit-core',        phase:'P2', model:'sonnet', desc:'OWASP Top 10 기반 보안 취약점 자동 탐지 및 패치. 인증·결제 기능에 자동 활성.' },
-  { icon:'🧪', name:'/e2e-test-core',               phase:'P2', model:'sonnet', desc:'Playwright 기반 사용자 시나리오 E2E 테스트 자동 작성 및 실행.' },
-  { icon:'🔬', name:'/api-test-core',               phase:'P2', model:'sonnet', desc:'Jest / Supertest + 부하 테스트 자동화. API 단위·통합·성능 테스트 일괄 처리.' },
-  { icon:'🔧', name:'/troubleshoot-core',           phase:'P2', model:'sonnet', desc:'근본 원인 분석(RCA) 기반 버그 수정 및 문제 해결. 오류 발생 시 언제든 사용.' },
-  { icon:'📈', name:'/performance-check-core',      phase:'P2', model:'sonnet', desc:'Core Web Vitals, Lighthouse 점수 최적화, 번들 분석. Large/Enterprise에서 활성.' },
-  { icon:'🚀', name:'/cicd-setup-core',             phase:'P2', model:'sonnet', desc:'GitHub Actions 파이프라인 구축 및 자동 배포 설정. Medium+ 복잡도에 활성.' },
-  { icon:'📊', name:'/exploratory-data-analysis',   phase:'P2', model:'haiku',  desc:'데이터셋 탐색, 통계 분석, 시각화, 인사이트 도출. 대시보드·RAG·파일업로드 기능에 활성.' },
-  { icon:'🏗️', name:'/cpc-setup',                  phase:'P2', model:'sonnet', desc:'Supabase + Vercel + 소대 등록 + 연락병 배포 인프라 구축. Enterprise 복잡도에 활성.' },
+  { icon:'🔄', name:'/review-evaluate-core',        phase:'P2', model:'opus',   desc:'아키텍처·코드 품질·보안·성능·유지보수성 5가지 기준으로 결과물을 자동 평가하고 개선합니다. V1(70점)에서 시작해 최소 3회 반복 실행으로 V4(97점) 달성을 목표로 합니다. 각 회차마다 점수와 개선 항목을 리포트하며, Phase 2의 핵심 엔진입니다.' },
+  { icon:'🛡️', name:'/security-audit-core',        phase:'P2', model:'sonnet', desc:'OWASP Top 10 기준으로 SQL 인젝션·XSS·CSRF 등 주요 보안 취약점을 자동 탐지하고 패치합니다. 인증·결제·개인정보 처리 기능이 있는 프로젝트에 자동 활성되며, 보안 감사 보고서와 수정 코드를 함께 제공합니다. 프로덕션 배포 전 필수 실행을 권장합니다.' },
+  { icon:'🧪', name:'/e2e-test-core',               phase:'P2', model:'sonnet', desc:'Playwright를 사용해 실제 사용자 시나리오 기반의 E2E 테스트를 자동 작성하고 실행합니다. 주요 사용자 플로우(회원가입·결제·핵심 기능)를 커버하는 테스트 스크립트를 생성하며, CI 파이프라인과 연동해 배포 시 자동 검증합니다. 크로스 브라우저 테스트도 지원합니다.' },
+  { icon:'🔬', name:'/api-test-core',               phase:'P2', model:'sonnet', desc:'Jest·Supertest 기반의 API 단위·통합 테스트와 k6·Artillery 부하 테스트를 자동화합니다. 모든 엔드포인트의 성공·실패·엣지 케이스를 커버하는 테스트 스위트를 생성하며, 동시 접속 시나리오로 병목 구간을 사전에 식별합니다. 테스트 커버리지 리포트도 함께 제공합니다.' },
+  { icon:'🔧', name:'/troubleshoot-core',           phase:'P2', model:'sonnet', desc:'근본 원인 분석(RCA) 방법론으로 버그의 표면 증상이 아닌 원인을 찾아 수정합니다. 에러 로그 분석, 스택 트레이스 역추적, 재현 조건 파악을 단계적으로 수행하며 수정 후 재발 방지 조치까지 포함합니다. 개발 중 오류 발생 시 언제든 즉시 호출할 수 있습니다.' },
+  { icon:'📈', name:'/performance-check-core',      phase:'P2', model:'sonnet', desc:'Core Web Vitals(LCP·FID·CLS)와 Lighthouse 점수를 분석해 성능을 최적화합니다. 번들 크기 분석, 이미지 최적화, 코드 스플리팅, 캐싱 전략을 자동 적용하며 API 응답 속도와 데이터베이스 쿼리 성능도 함께 개선합니다. Large/Enterprise 복잡도에서 활성됩니다.' },
+  { icon:'🚀', name:'/cicd-setup-core',             phase:'P2', model:'sonnet', desc:'GitHub Actions 기반의 CI/CD 파이프라인을 자동 구축합니다. 테스트 자동화·린트 검사·빌드·스테이징 배포·프로덕션 배포를 단계별로 설정하며, Vercel·Netlify·AWS 등 주요 배포 플랫폼과 연동합니다. 브랜치 전략과 환경 변수 관리도 함께 구성합니다.' },
+  { icon:'📊', name:'/exploratory-data-analysis',   phase:'P2', model:'haiku',  desc:'데이터셋을 탐색하고 통계 분석, 시각화, 인사이트 도출을 자동화합니다. Pandas·Matplotlib·Seaborn을 활용해 데이터 분포, 이상값, 상관관계를 파악하며, 분석 결과를 대시보드나 리포트 형식으로 출력합니다. RAG·파일업로드·대시보드 기능 선택 시 자동 활성됩니다.' },
+  { icon:'🏗️', name:'/cpc-setup',                  phase:'P2', model:'sonnet', desc:'Claude Platoons Control 인프라를 구축합니다. Supabase에 소대 데이터베이스를 생성하고, Vercel에 연락병 Agent Server를 배포하며, 소대원 등록과 권한 설정을 자동으로 완료합니다. Enterprise 복잡도 프로젝트에서 활성되며 cpc-add-project와 cpc-engage의 전제 조건입니다.' },
+  { icon:'➕', name:'/cpc-add-project',             phase:'P2', model:'sonnet', desc:'CPC 인프라에 새 프로젝트를 등록합니다. Supabase에 프로젝트 소대를 생성하고 전용 Agent Server를 Vercel에 자동 배포합니다. 여러 프로젝트를 동시에 관리할 때 사용하며, 각 프로젝트가 독립된 에이전트 채널을 갖도록 분리합니다. cpc-setup 완료 후 사용하세요.' },
+  { icon:'⚡', name:'/cpc-engage',                  phase:'P2', model:'sonnet', desc:'등록된 CPC 소대장을 자동 인식하고 Agent Server를 즉시 가동합니다. 소대장 AI가 프로젝트 컨텍스트를 파악하고 자율적으로 개발 태스크를 수행하는 지속 가능한 파이프라인을 구성합니다. 장기 프로젝트에서 AI 에이전트를 상시 대기 상태로 유지할 때 사용합니다.' },
 ];
 
 const modelColor = { haiku:'#15803d', sonnet:'#2563eb', opus:'#7c3aed' };
@@ -655,13 +669,13 @@ const faqs = [
   { q:'Phase 1과 Phase 2의 차이가 무엇인가요?',
     a:'Phase 1은 결과물을 만들기 전 단계입니다. 프로젝트 정보를 입력하면 AI 분대 편성, 스킬 전략, Claude Code 명령어가 자동 생성됩니다. Phase 2는 개발이 완료된 결과물 폴더에 적용하는 고도화 단계입니다. /review-evaluate를 3회 이상 실행하면 V1(70점)에서 V4(97점)까지 자동으로 코드 품질이 향상됩니다.' },
   { q:'저장된 데이터는 어디에 보관되나요?',
-    a:'브라우저의 localStorage에 저장됩니다. 키 이름은 "vcosProject"이며 01-intent.html에서 저장한 JSON을 02~06 단계가 자동으로 읽어 분석합니다. 브라우저를 닫아도 데이터가 유지되며, "불러오기" 버튼으로 이전 프로젝트를 복원할 수 있습니다.' },
+    a:'브라우저의 localStorage에 저장됩니다. 키 이름은 "vcosProject"이며 01-intent.html에서 저장한 JSON을 03~07 단계가 자동으로 읽어 분석합니다. 브라우저를 닫아도 데이터가 유지되며, "불러오기" 버튼으로 이전 프로젝트를 복원할 수 있습니다.' },
   { q:'기본 포함 기능과 추가 기능 선택의 차이는 무엇인가요?',
     a:'기본 포함 기능(프로젝트 구조 설정, 라우팅, 반응형 레이아웃, 에러 처리, 환경 설정, 매뉴얼 페이지, SVG 구조도, 챗봇 인터페이스(RAG))은 모든 프로젝트에 항상 자동으로 구현됩니다. 추가 기능(사용자 인증, AI 채팅, 결제 등 20가지)은 선택한 경우에만 개발 명령어에 포함됩니다. 기본 기능 중 원하지 않는 것이 있으면 체크를 해제하여 제외할 수 있습니다.' },
-  { q:'21개 스킬은 모두 사용되나요?',
-    a:'아니요. 프로젝트 피처와 복잡도에 따라 관련 스킬만 자동 활성화됩니다. 예를 들어 결제 기능이 없으면 결제 관련 스킬은 비활성화됩니다. 04-스킬 전략 페이지에서 "비활성 포함 전체 보기" 버튼으로 모든 스킬을 확인하고 수동으로 조정할 수 있습니다.' },
+  { q:'25개 스킬은 모두 사용되나요?',
+    a:'아니요. 프로젝트 피처와 복잡도에 따라 관련 스킬만 자동 활성화됩니다. 예를 들어 결제 기능이 없으면 결제 관련 스킬은 비활성화됩니다. 05-스킬 전략 페이지에서 "비활성 포함 전체 보기" 버튼으로 모든 스킬을 확인하고 수동으로 조정할 수 있습니다.' },
   { q:'Phase 2 고도화를 사용하려면 Phase 1을 먼저 해야 하나요?',
-    a:'아니요. Phase 2는 Phase 1 데이터와 완전히 독립적으로 작동합니다. 고도화 엔진 페이지(06-refinement.html)에서 개발이 완료된 폴더 경로만 입력하면 바로 사용할 수 있습니다. Phase 1을 거치지 않고 다른 방법으로 개발한 프로젝트에도 Phase 2를 적용할 수 있습니다.' },
+    a:'아니요. Phase 2는 Phase 1 데이터와 완전히 독립적으로 작동합니다. 고도화 엔진 페이지(07-refinement.html)에서 개발이 완료된 폴더 경로만 입력하면 바로 사용할 수 있습니다. Phase 1을 거치지 않고 다른 방법으로 개발한 프로젝트에도 Phase 2를 적용할 수 있습니다.' },
   { q:'명령어를 복사한 후 어떻게 사용하나요?',
     a:'1) Claude Code 터미널을 열고, 2) 생성된 명령어를 붙여넣기(Ctrl+V)한 후, 3) Enter를 누르면 AI가 자동으로 개발을 시작합니다. 개발이 완료되면 결과물 폴더를 Phase 2 고도화 엔진에 입력하여 코드 품질을 97점 수준으로 향상시키세요.' },
 ];

@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VCOS — 02 AI 협업 준비</title>
+<link rel="stylesheet" href="../vcos.css">
+<style>
+.page-num { background:linear-gradient(135deg,#0d9488,#0f766e) !important; color:#fff !important; box-shadow:0 3px 12px rgba(13,148,136,.4) !important }
+
+/* 단계 카드 */
+.step-card {
+  background:var(--bg);
+  border:1.5px solid rgba(13,148,136,.22);
+  border-radius:var(--r-lg);
+  margin-bottom:18px;
+  overflow:hidden;
+}
+.step-header {
+  display:flex;align-items:center;gap:12px;
+  padding:14px 20px;
+  background:linear-gradient(135deg,rgba(13,148,136,.08),rgba(13,148,136,.02));
+  border-bottom:1px solid rgba(13,148,136,.15);
+}
+.step-num {
+  width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,#0d9488,#0f766e);
+  color:#fff;font-size:16px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+}
+.step-title { font-size:16px;font-weight:700;color:var(--text) }
+.step-subtitle { font-size:13.5px;color:var(--text3);margin-top:2px }
+.step-body { padding:18px 20px }
+
+/* 인텐트 미리보기 */
+.intent-preview {
+  background:rgba(37,99,235,.05);
+  border:1px solid rgba(37,99,235,.2);
+  border-radius:var(--r-md);
+  padding:12px 14px;
+  font-size:14.5px;color:var(--text2);line-height:1.7;
+  margin-bottom:14px;
+}
+.intent-label { font-size:13px;font-weight:700;color:#2563eb;margin-bottom:5px }
+
+/* 질문 프롬프트 박스 */
+.prompt-copy-box {
+  display:flex;gap:8px;align-items:stretch;margin-bottom:14px;
+}
+.prompt-text {
+  flex:1;background:rgba(13,148,136,.06);
+  border:1px solid rgba(13,148,136,.22);
+  border-radius:var(--r-md);
+  padding:10px 14px;font-size:14.5px;color:var(--text2);
+  line-height:1.7;font-style:italic;
+}
+.btn-copy {
+  padding:0 14px;border-radius:var(--r-md);
+  background:rgba(13,148,136,.12);border:1px solid rgba(13,148,136,.3);
+  color:#0f766e;font-size:14px;font-weight:700;cursor:pointer;
+  white-space:nowrap;transition:all var(--fast);flex-shrink:0;
+}
+.btn-copy:hover { background:rgba(13,148,136,.22) }
+.btn-copy.copied { background:#0d9488;color:#fff;border-color:#0d9488 }
+
+/* 레이블 */
+.field-label {
+  font-size:14px;font-weight:700;color:var(--text2);
+  margin-bottom:6px;margin-top:14px;
+  display:flex;align-items:center;gap:6px;
+}
+.field-label:first-child { margin-top:0 }
+.required-dot { width:6px;height:6px;border-radius:50%;background:#0d9488;flex-shrink:0 }
+
+/* 텍스트에어리어 */
+.collab-textarea {
+  width:100%;box-sizing:border-box;
+  border:1.5px solid var(--border);border-radius:var(--r-md);
+  padding:10px 12px;font-size:15px;color:var(--text);
+  background:var(--bg);resize:vertical;
+  font-family:inherit;line-height:1.6;
+  transition:border-color var(--fast);
+  min-height:72px;
+}
+.collab-textarea:focus { outline:none;border-color:#0d9488;box-shadow:0 0 0 3px rgba(13,148,136,.1) }
+.collab-textarea.filled { border-color:rgba(13,148,136,.4);background:rgba(13,148,136,.02) }
+
+/* 메모 3분할 */
+.memo-grid { display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:4px }
+@media(max-width:640px){ .memo-grid { grid-template-columns:1fr } }
+.memo-col-label {
+  font-size:13.5px;font-weight:700;margin-bottom:5px;
+  display:flex;align-items:center;gap:5px;
+}
+
+/* 루프 설정 */
+.loop-count-row { display:flex;gap:10px;margin-bottom:14px }
+.loop-btn {
+  flex:1;padding:10px 0;border-radius:var(--r-md);
+  border:1.5px solid var(--border);background:var(--bg);
+  color:var(--text2);font-size:15px;font-weight:700;cursor:pointer;
+  transition:all var(--fast);text-align:center;
+}
+.loop-btn:hover { border-color:#0d9488;color:#0d9488 }
+.loop-btn.active { background:#0d9488;border-color:#0d9488;color:#fff;box-shadow:0 2px 8px rgba(13,148,136,.3) }
+
+.question-list { display:flex;flex-direction:column;gap:7px }
+.q-item {
+  display:flex;align-items:flex-start;gap:10px;
+  padding:9px 12px;border-radius:var(--r-md);
+  border:1.5px solid var(--border);background:var(--bg);
+  cursor:pointer;transition:all var(--fast);
+}
+.q-item:hover { border-color:rgba(13,148,136,.35) }
+.q-item.selected { border-color:#0d9488;background:rgba(13,148,136,.05) }
+.q-check {
+  width:18px;height:18px;border-radius:4px;flex-shrink:0;margin-top:1px;
+  border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;
+  font-size:13px;transition:all var(--fast);
+}
+.q-item.selected .q-check { background:#0d9488;border-color:#0d9488;color:#fff }
+.q-text { font-size:14.5px;color:var(--text2);line-height:1.5 }
+
+/* 진행 상태 바 */
+.progress-bar-wrap {
+  background:rgba(13,148,136,.08);border:1px solid rgba(13,148,136,.2);
+  border-radius:var(--r-md);padding:14px 16px;margin-bottom:18px;
+}
+.progress-bar-label { font-size:14px;font-weight:700;color:#0f766e;margin-bottom:8px;display:flex;justify-content:space-between }
+.progress-bar-track { height:6px;background:rgba(13,148,136,.15);border-radius:3px;overflow:hidden }
+.progress-bar-fill { height:100%;background:linear-gradient(90deg,#0d9488,#2dd4bf);border-radius:3px;transition:width .4s }
+
+/* 복사 버튼 */
+.btn-export {
+  width:100%;padding:11px;border-radius:var(--r-md);
+  background:rgba(13,148,136,.1);border:1.5px solid rgba(13,148,136,.3);
+  color:#0f766e;font-size:15px;font-weight:700;cursor:pointer;
+  margin-top:10px;transition:all var(--fast);
+}
+.btn-export:hover { background:rgba(13,148,136,.18) }
+
+.save-indicator {
+  font-size:13px;color:#0d9488;text-align:right;margin-top:4px;
+  opacity:0;transition:opacity .3s;
+}
+.save-indicator.show { opacity:1 }
+</style>
+</head>
+<body>
+<div class="vcos-header"><div id="navArea"></div></div>
+<div class="container"><div class="page-body">
+
+<div class="progress-steps" id="progressBar"></div>
+
+<div class="page-title">
+  <div class="page-num">2</div>
+  <div>
+    <div class="page-name">AI 협업 준비</div>
+    <div class="page-eng">AI Collaboration Setup — 문제 정의 → 맥락 기록 → 피드백 루프 설정</div>
+  </div>
+  <div class="page-badge" style="background:rgba(13,148,136,.1);color:#0f766e;border-color:rgba(13,148,136,.3)">WORKSHEET</div>
+</div>
+
+<!-- 진행률 -->
+<div class="progress-bar-wrap">
+  <div class="progress-bar-label">
+    <span>협업 준비 완성도</span>
+    <span id="progressPct">0%</span>
+  </div>
+  <div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
+</div>
+
+<!-- ── STEP 1: 문제 정의 ── -->
+<div class="step-card">
+  <div class="step-header">
+    <div class="step-num">1</div>
+    <div>
+      <div class="step-title">'만들어달라'가 아니라 '뭐가 문제야'부터</div>
+      <div class="step-subtitle">인텐트를 입력했더라도, 그게 진짜 문제인지 AI와 먼저 확인한다</div>
+    </div>
+  </div>
+  <div class="step-body">
+
+    <!-- 인텐트 미리보기 -->
+    <div class="intent-preview" id="intentPreview">
+      <div class="intent-label">📋 1단계에서 입력한 인텐트</div>
+      <span id="intentText" style="color:var(--text3);font-style:italic">인텐트를 먼저 입력해주세요 (Section 1)</span>
+    </div>
+
+    <!-- 복사 프롬프트 -->
+    <div class="field-label">AI에게 물어볼 질문 (복사해서 사용)</div>
+    <div class="prompt-copy-box">
+      <div class="prompt-text" id="promptQ1">"나는 지금 [인텐트] 프로젝트를 만들려고 하는데, 진짜 해결해야 할 문제가 뭔 것 같아? 내가 놓치고 있는 관점이 있어?"</div>
+      <button class="btn-copy" onclick="copyPrompt('promptQ1', this)">복사</button>
+    </div>
+
+    <div class="field-label"><span class="required-dot"></span> AI와 대화한 결과 — 진짜 문제는?</div>
+    <textarea class="collab-textarea" id="realProblem" rows="3"
+      placeholder="예: 처음엔 '기능 추가'라고 생각했는데, 대화해보니 실제로는 사용자 온보딩 단계에서 이탈이 많아서 생기는 문제였음..."
+      oninput="autoSave(this,'realProblem'); updateProgress()"></textarea>
+    <div class="save-indicator" id="si_realProblem">저장됨 ✓</div>
+
+    <div class="field-label"><span class="required-dot"></span> 처음 인텐트와 다르게 정제된 점 (없으면 '없음')</div>
+    <textarea class="collab-textarea" id="refinedIntent" rows="2"
+      placeholder="예: 범위를 줄임 / 핵심 기능 우선순위 재조정 / 타겟 사용자를 좁힘..."
+      oninput="autoSave(this,'refinedIntent'); updateProgress()"></textarea>
+    <div class="save-indicator" id="si_refinedIntent">저장됨 ✓</div>
+
+  </div>
+</div>
+
+<!-- ── STEP 2: 맥락 기록 ── -->
+<div class="step-card">
+  <div class="step-header">
+    <div class="step-num">2</div>
+    <div>
+      <div class="step-title">기록 전담 에이전트 — 맥락을 지금 정리한다</div>
+      <div class="step-subtitle">세션이 끊겨도 이 기록을 붙여넣으면 맥락이 이어진다</div>
+    </div>
+  </div>
+  <div class="step-body">
+
+    <div class="memo-grid">
+      <div>
+        <div class="memo-col-label" style="color:#16a34a">✅ 결정된 것</div>
+        <textarea class="collab-textarea" id="memoDecided" rows="5"
+          placeholder="- 핵심 기능 3개로 범위 확정&#10;- 기술 스택: Vanilla JS + Supabase&#10;- MVP 우선 빠르게 구현"
+          oninput="autoSave(this,'memoDecided'); updateProgress()"></textarea>
+      </div>
+      <div>
+        <div class="memo-col-label" style="color:#d97706">⏳ 미결 이슈</div>
+        <textarea class="collab-textarea" id="memoPending" rows="5"
+          placeholder="- 인증 방식 미정&#10;- 배포 환경 확인 필요&#10;- 모바일 대응 범위"
+          oninput="autoSave(this,'memoPending'); updateProgress()"></textarea>
+      </div>
+      <div>
+        <div class="memo-col-label" style="color:#2563eb">📌 주요 맥락</div>
+        <textarea class="collab-textarea" id="memoContext" rows="5"
+          placeholder="- 사용자: 비개발자 대상&#10;- 기한: 2주 내 MVP&#10;- 참고: 기존 유사 프로젝트 있음"
+          oninput="autoSave(this,'memoContext'); updateProgress()"></textarea>
+      </div>
+    </div>
+
+    <button class="btn-export" onclick="exportMemo()">📋 회의록 형태로 복사 (다음 세션 시작 시 붙여넣기용)</button>
+
+  </div>
+</div>
+
+<!-- ── STEP 3: 피드백 루프 설정 ── -->
+<div class="step-card">
+  <div class="step-header">
+    <div class="step-num">3</div>
+    <div>
+      <div class="step-title">피드백 루프 계획 — 몇 회 돌릴지, 어떤 질문을 쓸지</div>
+      <div class="step-subtitle">첫 결과물이 나오면 바로 끝내지 않는다. 지금 질문을 미리 골라둔다</div>
+    </div>
+  </div>
+  <div class="step-body">
+
+    <div class="field-label">목표 피드백 루프 횟수</div>
+    <div class="loop-count-row" id="loopCountRow">
+      <button class="loop-btn" data-val="3" onclick="setLoop(3)">3회<br><span style="font-size:12px;font-weight:400">기본</span></button>
+      <button class="loop-btn" data-val="4" onclick="setLoop(4)">4회<br><span style="font-size:12px;font-weight:400">권장</span></button>
+      <button class="loop-btn" data-val="5" onclick="setLoop(5)">5회<br><span style="font-size:12px;font-weight:400">고품질</span></button>
+    </div>
+
+    <div class="field-label">사용할 피드백 질문 선택 (여러 개 가능)</div>
+    <div class="question-list" id="questionList">
+      <div class="q-item" onclick="toggleQ(this)" data-q="이 구조에서 나중에 문제가 될 수 있는 지점이 어디야?">
+        <div class="q-check">✓</div>
+        <div class="q-text">이 구조에서 나중에 문제가 될 수 있는 지점이 어디야?</div>
+      </div>
+      <div class="q-item" onclick="toggleQ(this)" data-q="내가 놓친 게 있어?">
+        <div class="q-check">✓</div>
+        <div class="q-text">내가 놓친 게 있어?</div>
+      </div>
+      <div class="q-item" onclick="toggleQ(this)" data-q="이걸 실제로 쓰다 보면 어떤 상황에서 망가질 것 같아?">
+        <div class="q-check">✓</div>
+        <div class="q-text">이걸 실제로 쓰다 보면 어떤 상황에서 망가질 것 같아?</div>
+      </div>
+      <div class="q-item" onclick="toggleQ(this)" data-q="엣지 케이스 중 내가 고려 안 한 게 뭐가 있어?">
+        <div class="q-check">✓</div>
+        <div class="q-text">엣지 케이스 중 내가 고려 안 한 게 뭐가 있어?</div>
+      </div>
+      <div class="q-item" onclick="toggleQ(this)" data-q="더 단순하게 만들 수 있는 부분이 있어?">
+        <div class="q-check">✓</div>
+        <div class="q-text">더 단순하게 만들 수 있는 부분이 있어?</div>
+      </div>
+      <div class="q-item" onclick="toggleQ(this)" data-q="사용자 입장에서 가장 불편할 것 같은 부분이 어디야?">
+        <div class="q-check">✓</div>
+        <div class="q-text">사용자 입장에서 가장 불편할 것 같은 부분이 어디야?</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="page-nav">
+  <a href="01-intent.html" class="btn btn-secondary">← 이전: 인텐트 입력</a>
+  <div class="page-nav-center">Section 2 / 7</div>
+  <a href="03-complexity.html" class="btn btn-primary" id="nextBtn">다음: 복잡도 분석 →</a>
+</div>
+
+</div></div>
+
+<script src="../vcos.js"></script>
+<script>
+buildNav(2);
+
+const STORAGE_KEY = 'vcosAiCollab';
+
+/* ── 초기화 ── */
+function init() {
+  // 인텐트 불러오기
+  try {
+    const p = JSON.parse(localStorage.getItem('vcosProject') || '{}');
+    if (p.name || p.purpose) {
+      const parts = [];
+      if (p.name)    parts.push('프로젝트명: ' + p.name);
+      if (p.purpose) parts.push('목적: ' + p.purpose);
+      document.getElementById('intentText').textContent = parts.join(' / ');
+      document.getElementById('intentText').style.fontStyle = 'normal';
+      document.getElementById('intentText').style.color = 'var(--text)';
+
+      // 프롬프트에 인텐트 반영
+      const q = document.getElementById('promptQ1');
+      if (p.name) q.textContent = q.textContent.replace('[인텐트]', p.name);
+    }
+  } catch(e) {}
+
+  // 저장된 값 복원
+  const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  const fields = ['realProblem','refinedIntent','memoDecided','memoPending','memoContext'];
+  fields.forEach(id => {
+    if (saved[id]) {
+      const el = document.getElementById(id);
+      el.value = saved[id];
+      el.classList.add('filled');
+    }
+  });
+
+  // 루프 횟수 복원
+  if (saved.loopCount) setLoop(saved.loopCount, true);
+
+  // 질문 선택 복원
+  if (saved.selectedQ) {
+    document.querySelectorAll('.q-item').forEach(el => {
+      if (saved.selectedQ.includes(el.dataset.q)) el.classList.add('selected');
+    });
+  }
+
+  updateProgress();
+}
+
+/* ── 자동 저장 ── */
+function autoSave(el, key) {
+  el.classList.toggle('filled', el.value.trim().length > 0);
+  const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  saved[key] = el.value;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+  const si = document.getElementById('si_' + key);
+  if (si) { si.classList.add('show'); setTimeout(() => si.classList.remove('show'), 1500); }
+}
+
+/* ── 진행률 계산 ── */
+function updateProgress() {
+  let filled = 0, total = 5;
+  ['realProblem','refinedIntent','memoDecided','memoPending','memoContext'].forEach(id => {
+    if (document.getElementById(id).value.trim()) filled++;
+  });
+  const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  if (saved.loopCount) { filled++; total++; }
+  const selectedQ = document.querySelectorAll('.q-item.selected').length;
+  if (selectedQ > 0) { filled++; total++; }
+
+  const pct = Math.round((filled / total) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+}
+
+/* ── 프롬프트 복사 ── */
+function copyPrompt(id, btn) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '복사됨 ✓';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '복사'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+/* ── 회의록 내보내기 ── */
+function exportMemo() {
+  const decided = document.getElementById('memoDecided').value || '(미입력)';
+  const pending  = document.getElementById('memoPending').value  || '(미입력)';
+  const context  = document.getElementById('memoContext').value  || '(미입력)';
+  const problem  = document.getElementById('realProblem').value  || '(미입력)';
+  const saved    = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  const loops    = saved.loopCount || 3;
+  const qs       = [...document.querySelectorAll('.q-item.selected')].map(el => '- ' + el.dataset.q).join('\n') || '(미선택)';
+  const now      = new Date().toLocaleDateString('ko-KR');
+
+  const memo = `## VCOS AI 협업 준비 — ${now}
+
+### 🔍 진짜 문제 정의
+${problem}
+
+### ✅ 결정된 것
+${decided}
+
+### ⏳ 미결 이슈
+${pending}
+
+### 📌 주요 맥락
+${context}
+
+### 🔄 피드백 루프 계획
+목표 횟수: ${loops}회
+사용할 질문:
+${qs}
+
+---
+이어서 진행해줘.`;
+
+  navigator.clipboard.writeText(memo).then(() => {
+    alert('📋 회의록이 클립보드에 복사됐습니다.\n다음 세션 시작 시 붙여넣기 하면 됩니다.');
+  });
+}
+
+/* ── 루프 횟수 설정 ── */
+function setLoop(val, silent) {
+  document.querySelectorAll('.loop-btn').forEach(btn => {
+    btn.classList.toggle('active', parseInt(btn.dataset.val) === val);
+  });
+  if (!silent) {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    saved.loopCount = val;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+    updateProgress();
+  }
+}
+
+/* ── 질문 토글 ── */
+function toggleQ(el) {
+  el.classList.toggle('selected');
+  const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  saved.selectedQ = [...document.querySelectorAll('.q-item.selected')].map(e => e.dataset.q);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+  updateProgress();
+}
+
+init();
+</script>
+</body>
+</html>
