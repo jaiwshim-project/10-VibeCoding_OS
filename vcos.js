@@ -395,13 +395,16 @@ function buildFooter(isHome) {
       </div>
 
       <div style="width:100%">
-        <div style="display:flex;flex-direction:row;flex-wrap:wrap;gap:7px;align-items:center">
+        <div style="display:flex;flex-direction:row;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:7px">
           <a href="${homeHref}" class="footer-btn footer-btn-primary">🏠 홈으로</a>
           <a href="${prefix}01-intent.html" class="footer-btn footer-btn-ghost">✏️ 새 프로젝트</a>
           <a href="${prefix}06-command.html" class="footer-btn footer-btn-ghost">⚡ 명령어 생성</a>
           <a href="${refineHrefFooter}" class="footer-btn footer-btn-ghost" style="border-color:rgba(234,88,12,.4);color:rgba(255,165,100,.9)">🔥 고도화 엔진</a>
           <a href="${isHome?'pages/sitemap.html':'../pages/sitemap.html'}" class="footer-btn footer-btn-ghost" style="border-color:rgba(8,145,178,.4);color:rgba(103,232,249,.9)">🗺 구조도</a>
           <a href="${prefix}manual.html" class="footer-btn footer-btn-ghost" style="border-color:rgba(124,58,237,.4);color:rgba(167,139,250,.9)">📖 매뉴얼</a>
+        </div>
+        <div style="display:flex;flex-direction:row;flex-wrap:wrap;gap:7px;align-items:center">
+          <a href="${isHome?'pages/skills-map.html':'../pages/skills-map.html'}" class="footer-btn footer-btn-ghost" style="border-color:rgba(234,88,12,.5);color:rgba(255,200,100,.95);background:rgba(234,88,12,.08);font-weight:700">⚡ 21 스킬 구조도</a>
         </div>
       </div>
 
