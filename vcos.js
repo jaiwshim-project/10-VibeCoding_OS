@@ -24,7 +24,9 @@ const FEATURE_LABELS = {
   rag:          '🧠 RAG/지식베이스',
   video:        '🎥 영상/미디어',
   lms:          '🎓 LMS/학습 관리',
-  ecommerce:    '🛒 인터넷 쇼핑/커머스'
+  ecommerce:    '🛒 인터넷 쇼핑/커머스',
+  supabase:     '🗄️ Supabase 연동',
+  vercel:       '🚀 Vercel 배포 연동'
 };
 
 /* ── LocalStorage ────────────────────────────────────────── */
