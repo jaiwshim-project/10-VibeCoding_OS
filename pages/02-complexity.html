@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VCOS — 02 복잡도 분석</title>
+<link rel="stylesheet" href="../vcos.css">
+<style>
+/* 02 복잡도 분석 */
+.page-num-02 { background:linear-gradient(135deg,#f59e0b,#d97706) !important; color:#fff !important; box-shadow:0 3px 12px rgba(217,119,6,.35) !important }
+.type-card {
+  border-radius:var(--r-lg);padding:20px;border:2px solid;
+  text-align:center;margin-bottom:14px;
+  background:var(--bg);box-shadow:var(--shadow-sm);
+  transition:transform var(--med),box-shadow var(--med);
+}
+.type-card:hover { transform:translateY(-2px);box-shadow:var(--shadow-md) }
+.stage-item { display:flex;gap:10px;margin-bottom:9px;align-items:flex-start }
+.stage-dot {
+  width:24px;height:24px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:800;color:#fff;flex-shrink:0;margin-top:1px;
+}
+.stage-content { flex:1 }
+.stage-name { font-size:12.5px;font-weight:700;color:var(--text) }
+.stage-desc { font-size:11px;color:var(--text3);margin-top:2px;line-height:1.5 }
+.radar-wrap { display:flex;justify-content:center;padding:10px 0 }
+</style>
+</head>
+<body>
+<div class="vcos-header"><div id="navArea"></div></div>
+<div class="container"><div class="page-body">
+
+<div class="progress-steps" id="progressBar"></div>
+
+<div class="page-title">
+  <div class="page-num" style="background:linear-gradient(135deg,#f59e0b,#d97706);box-shadow:0 3px 12px rgba(217,119,6,.4)">2</div>
+  <div><div class="page-name">복잡도 분석</div><div class="page-eng">Project Complexity AI — 6축 분석으로 프로젝트 규모 자동 판정</div></div>
+  <div class="page-badge">AUTO GENERATED</div>
+</div>
+
+<div id="content"></div>
+
+<div class="page-nav">
+  <a href="01-intent.html" class="btn btn-secondary">← 이전: 인텐트 입력</a>
+  <div class="page-nav-center">Section 2 / 6</div>
+  <a href="03-squad.html" class="btn btn-primary">다음: 분대 편성 →</a>
+</div>
+
+</div></div>
+<div id="footerArea"></div>
+<script src="../vcos.js"></script>
+<script>
+document.getElementById('navArea').innerHTML = buildNav('2', false);
+document.getElementById('progressBar').innerHTML = buildProgress('2');
+document.getElementById('footerArea').innerHTML = buildFooter(false);
+
+const p = requireProject('../pages/01-intent.html');
+if (!p) throw new Error('no project');
+
+const c = calcComplexity(p);
+const type = getProjectType(c.total);
+const pct = Math.min(100, Math.round(c.total / 30 * 100));
+
+const axes = [
+  { label:'UI 복잡도',     val:c.ui,          desc:'대시보드, 모바일, 다국어, 미디어' },
+  { label:'Backend 복잡도', val:c.backend,     desc:'인증, 결제, 실시간, 알림' },
+  { label:'AI 복잡도',     val:c.ai,          desc:'AI 수준, 추천, RAG' },
+  { label:'통합 복잡도',   val:c.integration, desc:'외부 API, 지도, 결제 게이트웨이' },
+  { label:'데이터 복잡도', val:c.data,        desc:'RAG, 파일 업로드, 검색' },
+  { label:'보안 복잡도',   val:c.security,    desc:'인증, 결제, 데이터 보호' }
+];
+
+const typeInfo = {
+  Small:      { stages:['Bravo: 핵심 개발','Charlie: QA + 문서화','Refinement: 고도화'],
+                colors:['#58a6ff','#3fb950','#e3b341'],
+                desc:'소규모. Bravo+Charlie 2개 분대로 충분합니다. 빠른 개발 가능.' },
+  Medium:     { stages:['Alpha: 아키텍처 설계','Bravo: 핵심 개발','Charlie: QA + 문서화','Refinement: 고도화'],
+                colors:['#f85149','#58a6ff','#3fb950','#e3b341'],
+                desc:'중규모. Alpha+Bravo+Charlie 3개 분대 운영. 설계 단계 필요.' },
+  Large:      { stages:['Echo: 기술 리서치','Alpha: 아키텍처','Bravo: 개발','Charlie: QA','Delta: 최적화/보안','Refinement: 고도화'],
+                colors:['#39d353','#f85149','#58a6ff','#3fb950','#f0883e','#e3b341'],
+                desc:'대규모. 5개 분대 풀가동. 성능/보안 전담 Delta 분대 투입.' },
+  Enterprise: { stages:['Echo: 리서치 + RAG','Alpha: 엔터프라이즈 아키텍처','Bravo: 개발 (2팀)','Charlie: QA + 보안','Delta: 성능/보안 강화','Refinement: 고도화'],
+                colors:['#39d353','#f85149','#58a6ff','#3fb950','#f0883e','#e3b341'],
+                desc:'엔터프라이즈 수준. 전 분대 + 용병 AI 총동원. 철저한 설계 우선.' }
+};
+const ti = typeInfo[type.type];
+
+document.getElementById('content').innerHTML = `
+<div class="stat-row">
+  <div class="stat-box"><div class="stat-val" style="color:${type.color}">${c.total}</div><div class="stat-lbl">총 복잡도 점수</div></div>
+  <div class="stat-box"><div class="stat-val">${c.featureCount}</div><div class="stat-lbl">선택 기능 수</div></div>
+  <div class="stat-box"><div class="stat-val">${p.aiLevel}</div><div class="stat-lbl">AI 수준</div></div>
+  <div class="stat-box"><div class="stat-val">${p.scale}</div><div class="stat-lbl">프로젝트 규모</div></div>
+  <div class="stat-box"><div class="stat-val" style="color:${type.color}">${pct}%</div><div class="stat-lbl">복잡도 퍼센트</div></div>
+</div>
+
+<div class="grid-2">
+  <div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title">6축 복잡도 분석</div>
+      ${axes.map(a => `
+        <div class="axis-row">
+          <div class="axis-label">${a.label}</div>
+          <div class="axis-bar"><div class="axis-fill" style="width:${a.val*20}%"></div></div>
+          <div class="axis-num">${a.val}/5</div>
+        </div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:8px;padding-left:130px">${a.desc}</div>
+      `).join('')}
+      <div class="meter" style="height:10px;margin-top:8px">
+        <div class="meter-fill" style="width:${pct}%;background:${type.color}"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:4px">
+        <span>0 — Small</span><span>8 — Medium</span><span>16 — Large</span><span>24+ Enterprise</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">선택된 기능 목록</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        ${(p.features||[]).map(f => `<span class="badge badge-blue">${FEATURE_LABELS[f]||f}</span>`).join('') || '<span style="font-size:12px;color:var(--text3)">선택된 기능 없음</span>'}
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="type-card" style="background:${type.color}18;border-color:${type.color}60">
+      <div style="font-size:32px;margin-bottom:6px">
+        ${{Small:'🟢',Medium:'🟡',Large:'🟠',Enterprise:'🔴'}[type.type]}
+      </div>
+      <div style="font-size:22px;font-weight:800;color:${type.color}">${type.label}</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:8px;line-height:1.6">${ti.desc}</div>
+    </div>
+    <div class="card">
+      <div class="card-title">권장 개발 단계</div>
+      ${ti.stages.map((s,i) => `
+        <div class="stage-item">
+          <div class="stage-dot" style="background:${ti.colors[i]}">${i+1}</div>
+          <div class="stage-content">
+            <div class="stage-name">${s}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="card" style="margin-top:14px">
+      <div class="card-title">투입 예정 분대</div>
+      ${buildSquads(p, c).map(sq => `
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+          <div style="width:10px;height:10px;border-radius:50%;background:${sq.color};flex-shrink:0"></div>
+          <div style="font-size:12px;font-weight:600;color:var(--text)">${sq.emoji} ${sq.name}</div>
+          <div style="font-size:11px;color:var(--text2)">— ${sq.role}</div>
+        </div>
+      `).join('')}
+    </div>
+  </div>
+</div>
+`;
+</script>
+</body>
+</html>

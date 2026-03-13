@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1400" height="940" viewBox="0 0 1400 940" xmlns="http://www.w3.org/2000/svg"
+     font-family="'Segoe UI',Arial,sans-serif">
+<defs>
+  <linearGradient id="bgG" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#eef2ff"/><stop offset="100%" stop-color="#f8fafc"/>
+  </linearGradient>
+  <linearGradient id="topG" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" stop-color="#1e3a8a"/><stop offset="50%" stop-color="#1d4ed8"/><stop offset="100%" stop-color="#1e3a8a"/>
+  </linearGradient>
+  <linearGradient id="vhG" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#1d4ed8"/><stop offset="100%" stop-color="#2563eb"/>
+  </linearGradient>
+  <linearGradient id="chG" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#15803d"/><stop offset="100%" stop-color="#16a34a"/>
+  </linearGradient>
+  <linearGradient id="thG" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#1e1b4b"/><stop offset="100%" stop-color="#312e81"/>
+  </linearGradient>
+  <filter id="ps">
+    <feDropShadow dx="0" dy="3" stdDeviation="10" flood-color="#94a3b8" flood-opacity="0.22"/>
+  </filter>
+  <filter id="cs">
+    <feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#94a3b8" flood-opacity="0.18"/>
+  </filter>
+  <marker id="mA" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+    <polygon points="0 0,10 3.5,0 7" fill="#7c3aed"/>
+  </marker>
+</defs>
+
+<!-- BG -->
+<rect width="1400" height="940" fill="url(#bgG)"/>
+<pattern id="dp" width="24" height="24" patternUnits="userSpaceOnUse">
+  <circle cx="12" cy="12" r="1" fill="#c7d2fe" opacity="0.6"/>
+</pattern>
+<rect width="1400" height="940" fill="url(#dp)"/>
+
+<!-- ══ TOP BAR ══ -->
+<rect width="1400" height="68" fill="url(#topG)"/>
+<rect y="66" width="1400" height="2" fill="#3b82f6" opacity="0.7"/>
+<rect x="28" y="14" width="42" height="40" rx="8" fill="rgba(255,255,255,0.18)"/>
+<text x="49" y="42" font-size="15" font-weight="900" fill="#fff" text-anchor="middle">VC</text>
+<text x="84" y="29" font-size="9" fill="rgba(255,255,255,0.75)" font-weight="700" letter-spacing="2.5">VIBE CODING OPERATING SYSTEM</text>
+<text x="84" y="52" font-size="19" font-weight="800" fill="#fff">VCOS  ↔  CCO
+  <tspan font-size="12" font-weight="400" fill="rgba(255,255,255,0.82)">  통합 아키텍처 — 바이브 코딩 완전 파이프라인</tspan>
+</text>
+<rect x="1040" y="16" width="112" height="28" rx="14" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>
+<text x="1096" y="35" font-size="11" fill="#fff" text-anchor="middle" font-weight="700">🎯 전략 생성기</text>
+<rect x="1164" y="16" width="116" height="28" rx="14" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>
+<text x="1222" y="35" font-size="11" fill="#fff" text-anchor="middle" font-weight="700">📊 실시간 관제</text>
+<rect x="1292" y="16" width="92" height="28" rx="14" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>
+<text x="1338" y="35" font-size="11" fill="#fff" text-anchor="middle" font-weight="700">🔄 순서 관계</text>
+
+<!-- ══ PHASE TIMELINE ══ -->
+<rect x="28" y="82" width="1344" height="56" rx="10" fill="#fff" stroke="#c7d2fe" stroke-width="1.5" filter="url(#cs)"/>
+
+<rect x="42" y="90" width="142" height="36" rx="7" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+<text x="113" y="104" font-size="8.5" fill="#1d4ed8" text-anchor="middle" font-weight="800" letter-spacing="0.5">PHASE 1</text>
+<text x="113" y="119" font-size="11" fill="#1e3a8a" text-anchor="middle" font-weight="700">🎯 전략 수립 (VCOS)</text>
+<text x="197" y="113" font-size="16" fill="#7c3aed" text-anchor="middle" font-weight="800">›</text>
+
+<rect x="208" y="90" width="130" height="36" rx="7" fill="#faf5ff" stroke="#c4b5fd" stroke-width="1.5"/>
+<text x="273" y="104" font-size="8.5" fill="#7c3aed" text-anchor="middle" font-weight="800" letter-spacing="0.5">PHASE 2</text>
+<text x="273" y="119" font-size="11" fill="#4c1d95" text-anchor="middle" font-weight="700">📋 명령어 생성</text>
+<text x="351" y="113" font-size="16" fill="#7c3aed" text-anchor="middle" font-weight="800">›</text>
+
+<rect x="362" y="90" width="136" height="36" rx="7" fill="#fefce8" stroke="#fcd34d" stroke-width="1.5"/>
+<text x="430" y="104" font-size="8.5" fill="#92400e" text-anchor="middle" font-weight="800" letter-spacing="0.5">PHASE 3</text>
+<text x="430" y="119" font-size="11" fill="#78350f" text-anchor="middle" font-weight="700">⌨️ 터미널 실행</text>
+<text x="511" y="113" font-size="16" fill="#7c3aed" text-anchor="middle" font-weight="800">›</text>
+
+<rect x="522" y="90" width="150" height="36" rx="7" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"/>
+<text x="597" y="104" font-size="8.5" fill="#c2410c" text-anchor="middle" font-weight="800" letter-spacing="0.5">PHASE 4</text>
+<text x="597" y="119" font-size="11" fill="#7c2d12" text-anchor="middle" font-weight="700">🤖 AI 분대 개발</text>
+<text x="685" y="113" font-size="16" fill="#7c3aed" text-anchor="middle" font-weight="800">›</text>
+
+<rect x="696" y="90" width="136" height="36" rx="7" fill="#fef2f2" stroke="#fca5a5" stroke-width="1.5"/>
+<text x="764" y="104" font-size="8.5" fill="#b91c1c" text-anchor="middle" font-weight="800" letter-spacing="0.5">PHASE 5</text>
+<text x="764" y="119" font-size="11" fill="#7f1d1d" text-anchor="middle" font-weight="700">⭐ 고도화 루프</text>
+<text x="845" y="113" font-size="16" fill="#7c3aed" text-anchor="middle" font-weight="800">›</text>
+
+<rect x="856" y="90" width="152" height="36" rx="7" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+<text x="932" y="104" font-size="8.5" fill="#15803d" text-anchor="middle" font-weight="800" letter-spacing="0.5">PHASE 6</text>
+<text x="932" y="119" font-size="11" fill="#14532d" text-anchor="middle" font-weight="700">📊 CCO 모니터링</text>
+<text x="1021" y="113" font-size="16" fill="#7c3aed" text-anchor="middle" font-weight="800">›</text>
+
+<rect x="1032" y="90" width="128" height="36" rx="7" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="1.5"/>
+<text x="1096" y="104" font-size="8.5" fill="#047857" text-anchor="middle" font-weight="800" letter-spacing="0.5">PHASE 7</text>
+<text x="1096" y="119" font-size="11" fill="#064e3b" text-anchor="middle" font-weight="700">🚀 프로덕션 배포</text>
+
+<!-- ══════════════════════════════════
+     VCOS PANEL
+══════════════════════════════════ -->
+<rect x="18" y="152" width="428" height="760" rx="14" fill="#fff" stroke="#93c5fd" stroke-width="2" filter="url(#ps)"/>
+<!-- Header -->
+<rect x="18" y="152" width="428" height="62" rx="14" fill="url(#vhG)"/>
+<rect x="18" y="190" width="428" height="24" fill="#1d4ed8"/>
+<rect x="32" y="161" width="36" height="36" rx="8" fill="rgba(255,255,255,0.22)"/>
+<text x="50" y="184" font-size="14" font-weight="900" fill="#fff" text-anchor="middle">V</text>
+<text x="78" y="173" font-size="9.5" fill="rgba(255,255,255,0.92)" font-weight="700" letter-spacing="1.5">VIBE CODING OPERATING SYSTEM</text>
+<text x="78" y="197" font-size="16" font-weight="900" fill="#fff">VCOS <tspan font-size="11" font-weight="400" fill="rgba(255,255,255,0.85)">전략 수립 · 명령어 생성기</tspan></text>
+<!-- Subtitle -->
+<text x="32" y="229" font-size="10.5" fill="#1e40af" font-weight="600">🎯 개발 전 전략을 자동 생성 — 입력 → 분석 → 명령어 출력</text>
+
+<!-- S1 -->
+<rect x="32" y="238" width="400" height="48" rx="7" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+<rect x="32" y="238" width="5" height="48" rx="3" fill="#1d4ed8"/>
+<text x="46" y="257" font-size="9" fill="#1d4ed8" font-weight="800">S1</text>
+<text x="62" y="257" font-size="13" font-weight="800" fill="#1e3a8a">프로젝트 인텐트 입력</text>
+<text x="62" y="275" font-size="10.5" fill="#1e40af">목적 · 타겟 · 기능 16종 · AI 수준 · 기술스택 선택</text>
+<rect x="360" y="244" width="64" height="20" rx="10" fill="#fee2e2" stroke="#f87171" stroke-width="1"/>
+<text x="392" y="258" font-size="9.5" fill="#b91c1c" text-anchor="middle" font-weight="800">필수 입력</text>
+
+<!-- S2 -->
+<rect x="32" y="292" width="400" height="48" rx="7" fill="#fefce8" stroke="#fcd34d" stroke-width="1.5"/>
+<rect x="32" y="292" width="5" height="48" rx="3" fill="#d97706"/>
+<text x="46" y="311" font-size="9" fill="#92400e" font-weight="800">S2</text>
+<text x="62" y="311" font-size="13" font-weight="800" fill="#78350f">복잡도 분석</text>
+<text x="62" y="329" font-size="10.5" fill="#92400e">6축 점수(UI·Backend·AI·통합·데이터·보안) → Small/Medium/Large/Enterprise</text>
+<rect x="352" y="298" width="72" height="20" rx="10" fill="#fef3c7" stroke="#fcd34d" stroke-width="1"/>
+<text x="388" y="312" font-size="9.5" fill="#92400e" text-anchor="middle" font-weight="800">자동 생성</text>
+
+<!-- S3 -->
+<rect x="32" y="346" width="400" height="48" rx="7" fill="#fef2f2" stroke="#fca5a5" stroke-width="1.5"/>
+<rect x="32" y="346" width="5" height="48" rx="3" fill="#dc2626"/>
+<text x="46" y="365" font-size="9" fill="#b91c1c" font-weight="800">S3</text>
+<text x="62" y="365" font-size="13" font-weight="800" fill="#7f1d1d">분대 편성</text>
+<text x="62" y="383" font-size="10.5" fill="#b91c1c">HQ · Alpha · Bravo · Charlie · Delta · Echo  복잡도별 자동 편성</text>
+<rect x="352" y="352" width="72" height="20" rx="10" fill="#fee2e2" stroke="#f87171" stroke-width="1"/>
+<text x="388" y="366" font-size="9.5" fill="#b91c1c" text-anchor="middle" font-weight="800">자동 편성</text>
+
+<!-- S4 -->
+<rect x="32" y="400" width="400" height="48" rx="7" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+<rect x="32" y="400" width="5" height="48" rx="3" fill="#16a34a"/>
+<text x="46" y="419" font-size="9" fill="#15803d" font-weight="800">S4</text>
+<text x="62" y="419" font-size="13" font-weight="800" fill="#14532d">스킬 전략</text>
+<text x="62" y="437" font-size="10.5" fill="#166534">21개 스킬 중 프로젝트 최적 스킬 자동 선택 · 실행 순서 제공</text>
+<rect x="352" y="406" width="72" height="20" rx="10" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
+<text x="388" y="420" font-size="9.5" fill="#15803d" text-anchor="middle" font-weight="800">자동 선택</text>
+
+<!-- S5 -->
+<rect x="32" y="454" width="400" height="48" rx="7" fill="#faf5ff" stroke="#c4b5fd" stroke-width="1.5"/>
+<rect x="32" y="454" width="5" height="48" rx="3" fill="#7c3aed"/>
+<text x="46" y="473" font-size="9" fill="#6d28d9" font-weight="800">S5</text>
+<text x="62" y="473" font-size="13" font-weight="800" fill="#4c1d95">토큰 최적화</text>
+<text x="62" y="491" font-size="10.5" fill="#5b21b6">Haiku(60%) · Sonnet(35%) · Opus(5%) + 용병 AI 4종 배치</text>
+<rect x="340" y="460" width="84" height="20" rx="10" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1"/>
+<text x="382" y="474" font-size="9.5" fill="#5b21b6" text-anchor="middle" font-weight="800">비용 최적화</text>
+
+<!-- S6 -->
+<rect x="32" y="508" width="400" height="48" rx="7" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"/>
+<rect x="32" y="508" width="5" height="48" rx="3" fill="#ea580c"/>
+<text x="46" y="527" font-size="9" fill="#c2410c" font-weight="800">S6</text>
+<text x="62" y="527" font-size="13" font-weight="800" fill="#7c2d12">고도화 엔진</text>
+<text x="62" y="545" font-size="10.5" fill="#c2410c">V1(70점) → V4(95점+) · /review-evaluate 최소 3회 루프</text>
+<rect x="352" y="514" width="72" height="20" rx="10" fill="#ffedd5" stroke="#fdba74" stroke-width="1"/>
+<text x="388" y="528" font-size="9.5" fill="#c2410c" text-anchor="middle" font-weight="800">95점 목표</text>
+
+<!-- S7 highlighted -->
+<rect x="32" y="562" width="400" height="54" rx="7" fill="#1d4ed8" stroke="#1d4ed8" stroke-width="2"/>
+<rect x="32" y="562" width="5" height="54" rx="3" fill="#93c5fd"/>
+<text x="46" y="583" font-size="9" fill="#bfdbfe" font-weight="800">S7</text>
+<text x="62" y="583" font-size="13.5" font-weight="800" fill="#fff">Claude Code 명령어 생성</text>
+<text x="62" y="601" font-size="11" fill="#bfdbfe">1~6 섹션 통합 → 완성 바이브 코딩 명령어 복사/다운로드</text>
+<rect x="346" y="569" width="78" height="20" rx="10" fill="rgba(255,255,255,0.25)" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+<text x="385" y="583" font-size="9.5" fill="#fff" text-anchor="middle" font-weight="800">✓ 최종 출력</text>
+
+<!-- VCOS Key Char box -->
+<rect x="32" y="628" width="400" height="100" rx="7" fill="#f0f7ff" stroke="#93c5fd" stroke-width="1.5"/>
+<text x="48" y="648" font-size="10" fill="#1e40af" font-weight="800" letter-spacing="0.5">VCOS 핵심 특성</text>
+<line x1="48" y1="653" x2="416" y2="653" stroke="#bfdbfe" stroke-width="1"/>
+<text x="48" y="670" font-size="11.5" fill="#1e3a8a" font-weight="600">📥  방향: 사전(Before) — 개발 시작 전 전략 수립</text>
+<text x="48" y="688" font-size="11.5" fill="#1e3a8a" font-weight="600">💾  데이터: localStorage 실시간 계산 (완전 동적)</text>
+<text x="48" y="706" font-size="11.5" fill="#1e3a8a" font-weight="600">🌑  테마: 다크 (GitHub 개발자 스타일)</text>
+<text x="48" y="724" font-size="11.5" fill="#1e3a8a" font-weight="600">🔢  흐름: 선형 위자드 (1 → 2 → 3 → 4 → 5 → 6 → 7)</text>
+
+<!-- Output example code box -->
+<rect x="32" y="738" width="400" height="162" rx="7" fill="#f7f3ec" stroke="#c4a97a" stroke-width="1.5"/>
+<text x="48" y="758" font-size="10" fill="#1e3a8a" font-weight="800" letter-spacing="0.5">OUTPUT EXAMPLE — 생성 명령어</text>
+<line x1="48" y1="763" x2="416" y2="763" stroke="#d4c8b6" stroke-width="1"/>
+<text x="48" y="779" font-size="10.5" fill="#6b7280" font-family="'Courier New',monospace"># AI 도슨트 플랫폼 — VCOS Command</text>
+<text x="48" y="795" font-size="10.5" fill="#166534" font-family="'Courier New',monospace">Project  : AI 도슨트 플랫폼</text>
+<text x="48" y="811" font-size="10.5" fill="#166534" font-family="'Courier New',monospace">Type     : Large Project (score: 18)</text>
+<text x="48" y="827" font-size="10.5" fill="#92400e" font-family="'Courier New',monospace">/platoon-formation-v2</text>
+<text x="48" y="843" font-size="10.5" fill="#7c3aed" font-family="'Courier New',monospace">/api-builder  /db-schema  /security-audit</text>
+<text x="48" y="859" font-size="10.5" fill="#b91c1c" font-family="'Courier New',monospace">/review-evaluate  →  목표: 95점+</text>
+<text x="48" y="877" font-size="10.5" fill="#6b7280" font-family="'Courier New',monospace">예상비용: $4.20 | 분대: 5개 | 스킬: 14개</text>
+
+<!-- ══════════════════════════════════
+     TERMINAL PANEL
+══════════════════════════════════ -->
+<rect x="462" y="152" width="476" height="760" rx="14" fill="#f7f3ec" stroke="#7c3aed" stroke-width="2" filter="url(#ps)"/>
+<!-- Header — keep dark for terminal aesthetics -->
+<rect x="462" y="152" width="476" height="56" rx="14" fill="url(#thG)"/>
+<rect x="462" y="180" width="476" height="28" fill="#1e1b4b"/>
+<circle cx="484" cy="179" r="7" fill="#f87171"/>
+<circle cx="504" cy="179" r="7" fill="#fbbf24"/>
+<circle cx="524" cy="179" r="7" fill="#4ade80"/>
+<text x="700" y="171" font-size="12" fill="rgba(255,255,255,0.9)" text-anchor="middle" font-weight="700">Claude Code Terminal</text>
+<text x="700" y="189" font-size="10" fill="rgba(255,255,255,0.6)" text-anchor="middle">~/my-project $ claude</text>
+
+<!-- Terminal body (cream bg, dark text) -->
+<text x="482" y="222" font-size="10.5" fill="#64748b" font-family="'Courier New',monospace">$ claude</text>
+<text x="482" y="239" font-size="10.5" fill="#166534" font-family="'Courier New',monospace">✓ Claude Code v1.x initialized</text>
+<line x1="482" y1="248" x2="920" y2="248" stroke="#d4ccc0" stroke-width="1.5"/>
+
+<text x="482" y="265" font-size="10.5" fill="#92400e" font-family="'Courier New',monospace" font-weight="700"># ① VCOS 명령어 붙여넣기 ↓</text>
+<text x="482" y="282" font-size="11" fill="#1e40af" font-family="'Courier New',monospace" font-weight="700">/platoon-formation-v2</text>
+<text x="482" y="299" font-size="10.5" fill="#166534" font-family="'Courier New',monospace">  ✓ HQ 본부 활성화 (소대장: Opus)</text>
+<text x="482" y="316" font-size="10.5" fill="#166534" font-family="'Courier New',monospace">  ✓ Alpha 분대 — 아키텍처 설계 (3명)</text>
+<text x="482" y="333" font-size="10.5" fill="#166534" font-family="'Courier New',monospace">  ✓ Bravo 분대 — 핵심 개발 (5명)</text>
+<text x="482" y="350" font-size="10.5" fill="#166534" font-family="'Courier New',monospace">  ✓ Charlie 분대 — QA · 문서화 (4명)</text>
+<text x="482" y="367" font-size="10.5" fill="#166534" font-family="'Courier New',monospace">  ✓ Delta 분대 — 보안 · 성능 (3명)</text>
+<line x1="482" y1="377" x2="920" y2="377" stroke="#d4ccc0" stroke-width="1.5"/>
+
+<text x="482" y="394" font-size="10.5" fill="#92400e" font-family="'Courier New',monospace" font-weight="700"># ② 스킬 순차 실행 ↓</text>
+<text x="482" y="411" font-size="11" fill="#1e40af" font-family="'Courier New',monospace" font-weight="700">/db-schema</text>
+<text x="482" y="428" font-size="10.5" fill="#166534" font-family="'Courier New',monospace">  ✓ Supabase 스키마 14개 테이블 생성</text>
+<text x="482" y="445" font-size="11" fill="#1e40af" font-family="'Courier New',monospace" font-weight="700">/api-builder</text>
+<text x="482" y="462" font-size="10.5" fill="#166534" font-family="'Courier New',monospace">  ✓ RESTful API 엔드포인트 28개 생성</text>
+<text x="482" y="479" font-size="11" fill="#1e40af" font-family="'Courier New',monospace" font-weight="700">/ui-ux-builder</text>
+<text x="482" y="496" font-size="10.5" fill="#166534" font-family="'Courier New',monospace">  ✓ UI 컴포넌트 32개 구현 완료</text>
+<text x="482" y="513" font-size="11" fill="#1e40af" font-family="'Courier New',monospace" font-weight="700">/security-audit</text>
+<text x="482" y="530" font-size="10.5" fill="#166534" font-family="'Courier New',monospace">  ✓ OWASP Top 10 취약점 0건</text>
+<line x1="482" y1="540" x2="920" y2="540" stroke="#d4ccc0" stroke-width="1.5"/>
+
+<text x="482" y="557" font-size="10.5" fill="#92400e" font-family="'Courier New',monospace" font-weight="700"># ③ 고도화 루프 ↓</text>
+<text x="482" y="574" font-size="11" fill="#1e40af" font-family="'Courier New',monospace" font-weight="700">/review-evaluate</text>
+<text x="482" y="591" font-size="10.5" fill="#b91c1c" font-family="'Courier New',monospace">  V1: 74점 ░░░░░░░░░░░░░░░░░░  개선 중...</text>
+<text x="482" y="608" font-size="10.5" fill="#92400e" font-family="'Courier New',monospace">  V2: 83점 █████████████░░░░░  계속...</text>
+<text x="482" y="625" font-size="10.5" fill="#4d7c0f" font-family="'Courier New',monospace">  V3: 91점 ████████████████░░  마지막...</text>
+<text x="482" y="642" font-size="10.5" fill="#166534" font-family="'Courier New',monospace" font-weight="700">  V4: 96점 ██████████████████  ✓ 목표 달성!</text>
+<line x1="482" y1="652" x2="920" y2="652" stroke="#d4ccc0" stroke-width="1.5"/>
+
+<!-- CCO connect signal -->
+<rect x="480" y="662" width="422" height="52" rx="6" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+<text x="492" y="681" font-size="11" fill="#166534" font-weight="700" font-family="'Courier New',monospace">📡 CCO 자동 연동 시작</text>
+<text x="492" y="700" font-size="10.5" fill="#15803d" font-family="'Courier New',monospace">  ✓ Dashboard 업데이트 · Analytics 동기화 완료</text>
+
+<!-- Bridge description -->
+<rect x="480" y="724" width="422" height="176" rx="7" fill="#f0ece4" stroke="#c4b89a" stroke-width="1.5"/>
+<text x="496" y="744" font-size="10" fill="#1e3a8a" font-weight="800" letter-spacing="0.5">CLAUDE CODE — 핵심 브릿지 역할</text>
+<line x1="496" y1="750" x2="886" y2="750" stroke="#d4ccc0" stroke-width="1.5"/>
+<text x="496" y="768" font-size="12" fill="#1e293b" font-weight="600">🔗  VCOS 명령어를 받아 AI 분대 가동</text>
+<text x="496" y="787" font-size="12" fill="#1e293b" font-weight="600">🤖  21개 스킬 순서대로 자동 호출</text>
+<text x="496" y="806" font-size="12" fill="#1e293b" font-weight="600">⭐  /review-evaluate 품질 루프 실행</text>
+<text x="496" y="825" font-size="12" fill="#1e293b" font-weight="600">📡  실행 데이터 실시간 → CCO 전달</text>
+<text x="496" y="844" font-size="12" fill="#92400e" font-weight="700">⚡  Haiku 먼저 → 필요시 Sonnet → Opus만</text>
+<text x="496" y="863" font-size="12" fill="#b91c1c" font-weight="700">🚫  Opus = 오케스트레이터만!  직접 코딩 금지</text>
+<text x="496" y="882" font-size="12" fill="#6d28d9" font-weight="600">🔄  VCOS 전략대로 모델 자동 라우팅 적용</text>
+
+<!-- ══════════════════════════════════
+     CCO PANEL
+══════════════════════════════════ -->
+<rect x="954" y="152" width="428" height="760" rx="14" fill="#fff" stroke="#86efac" stroke-width="2" filter="url(#ps)"/>
+<!-- Header -->
+<rect x="954" y="152" width="428" height="62" rx="14" fill="url(#chG)"/>
+<rect x="954" y="190" width="428" height="24" fill="#15803d"/>
+<rect x="968" y="161" width="36" height="36" rx="8" fill="rgba(255,255,255,0.22)"/>
+<text x="986" y="184" font-size="14" font-weight="900" fill="#fff" text-anchor="middle">C</text>
+<text x="1014" y="173" font-size="9.5" fill="rgba(255,255,255,0.92)" font-weight="700" letter-spacing="1.5">CLAUDE CODE ORCHESTRATION</text>
+<text x="1014" y="197" font-size="16" font-weight="900" fill="#fff">CCO <tspan font-size="11" font-weight="400" fill="rgba(255,255,255,0.85)">실시간 관제 · 모니터링 대시보드</tspan></text>
+<!-- Subtitle -->
+<text x="968" y="229" font-size="10.5" fill="#166534" font-weight="600">📊 개발 진행 중·완료 후 관제 — 에이전트 · 토큰 · 실행 흐름 모니터링</text>
+
+<!-- P1 Dashboard -->
+<rect x="968" y="238" width="400" height="48" rx="7" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+<rect x="968" y="238" width="5" height="48" rx="3" fill="#16a34a"/>
+<text x="982" y="257" font-size="9" fill="#15803d" font-weight="800">P1</text>
+<text x="998" y="257" font-size="13" font-weight="800" fill="#14532d">Dashboard</text>
+<text x="998" y="275" font-size="10.5" fill="#166534">Active Agents · 토큰 사용량 · 시스템 상태 · 실시간 현황</text>
+<rect x="1296" y="244" width="64" height="20" rx="10" fill="#dcfce7" stroke="#6ee7b7" stroke-width="1"/>
+<text x="1328" y="258" font-size="9.5" fill="#15803d" text-anchor="middle" font-weight="800">실시간</text>
+
+<!-- P2 Planning -->
+<rect x="968" y="292" width="400" height="48" rx="7" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+<rect x="968" y="292" width="5" height="48" rx="3" fill="#2563eb"/>
+<text x="982" y="311" font-size="9" fill="#1d4ed8" font-weight="800">P2</text>
+<text x="998" y="311" font-size="13" font-weight="800" fill="#1e3a8a">Planning</text>
+<text x="998" y="329" font-size="10.5" fill="#1e40af">마스터 플랜 · 개발 단계 · Task 관리 · 진행 상황 추적</text>
+<rect x="1288" y="298" width="72" height="20" rx="10" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+<text x="1324" y="312" font-size="9.5" fill="#1d4ed8" text-anchor="middle" font-weight="800">진행 관리</text>
+
+<!-- P3 Execution -->
+<rect x="968" y="346" width="400" height="48" rx="7" fill="#fefce8" stroke="#fcd34d" stroke-width="1.5"/>
+<rect x="968" y="346" width="5" height="48" rx="3" fill="#d97706"/>
+<text x="982" y="365" font-size="9" fill="#92400e" font-weight="800">P3</text>
+<text x="998" y="365" font-size="13" font-weight="800" fill="#78350f">Execution</text>
+<text x="998" y="383" font-size="10.5" fill="#92400e">실행 세트 관리 · 명령어 실행 현황 · 에러 로그 · 배치 작업</text>
+<rect x="1288" y="352" width="72" height="20" rx="10" fill="#fef9c3" stroke="#fcd34d" stroke-width="1"/>
+<text x="1324" y="366" font-size="9.5" fill="#92400e" text-anchor="middle" font-weight="800">실행 추적</text>
+
+<!-- P4 Agents -->
+<rect x="968" y="400" width="400" height="48" rx="7" fill="#fef2f2" stroke="#fca5a5" stroke-width="1.5"/>
+<rect x="968" y="400" width="5" height="48" rx="3" fill="#dc2626"/>
+<text x="982" y="419" font-size="9" fill="#b91c1c" font-weight="800">P4</text>
+<text x="998" y="419" font-size="13" font-weight="800" fill="#7f1d1d">Agents</text>
+<text x="998" y="437" font-size="10.5" fill="#b91c1c">오케스트레이션 에이전트 상태 · 모델 배분 · 역할 관리</text>
+<rect x="1284" y="406" width="76" height="20" rx="10" fill="#fee2e2" stroke="#f87171" stroke-width="1"/>
+<text x="1322" y="420" font-size="9.5" fill="#b91c1c" text-anchor="middle" font-weight="800">에이전트</text>
+
+<!-- P5 Analytics -->
+<rect x="968" y="454" width="400" height="48" rx="7" fill="#faf5ff" stroke="#c4b5fd" stroke-width="1.5"/>
+<rect x="968" y="454" width="5" height="48" rx="3" fill="#7c3aed"/>
+<text x="982" y="473" font-size="9" fill="#6d28d9" font-weight="800">P5</text>
+<text x="998" y="473" font-size="13" font-weight="800" fill="#4c1d95">Analytics</text>
+<text x="998" y="491" font-size="10.5" fill="#5b21b6">토큰 비용 분석 · 모델별 사용량 · 비용 추이 · 최적화 인사이트</text>
+<rect x="1284" y="460" width="76" height="20" rx="10" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1"/>
+<text x="1322" y="474" font-size="9.5" fill="#5b21b6" text-anchor="middle" font-weight="800">비용 분석</text>
+
+<!-- P6 Settings -->
+<rect x="968" y="508" width="400" height="48" rx="7" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<rect x="968" y="508" width="5" height="48" rx="3" fill="#475569"/>
+<text x="982" y="527" font-size="9" fill="#334155" font-weight="800">P6</text>
+<text x="998" y="527" font-size="13" font-weight="800" fill="#1e293b">Settings</text>
+<text x="998" y="545" font-size="10.5" fill="#334155">API 키 · 모델 설정 · Pro/Beginner 모드 · 알림 설정</text>
+<rect x="1284" y="514" width="76" height="20" rx="10" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1"/>
+<text x="1322" y="528" font-size="9.5" fill="#334155" text-anchor="middle" font-weight="800">환경 설정</text>
+
+<!-- P7 Manual highlighted -->
+<rect x="968" y="562" width="400" height="54" rx="7" fill="#15803d" stroke="#15803d" stroke-width="2"/>
+<rect x="968" y="562" width="5" height="54" rx="3" fill="#86efac"/>
+<text x="982" y="583" font-size="9" fill="#bbf7d0" font-weight="800">P7</text>
+<text x="998" y="583" font-size="13.5" font-weight="800" fill="#fff">Manual (사용법)</text>
+<text x="998" y="601" font-size="11" fill="#bbf7d0">단계별 사용 가이드 · 데모 시나리오 · Diff 기반 수정 시스템</text>
+<rect x="1290" y="569" width="70" height="20" rx="10" fill="rgba(255,255,255,0.25)" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+<text x="1325" y="583" font-size="9.5" fill="#fff" text-anchor="middle" font-weight="800">문서/가이드</text>
+
+<!-- CCO Key Char box -->
+<rect x="968" y="628" width="400" height="100" rx="7" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+<text x="984" y="648" font-size="10" fill="#166534" font-weight="800" letter-spacing="0.5">CCO 핵심 특성</text>
+<line x1="984" y1="653" x2="1352" y2="653" stroke="#bbf7d0" stroke-width="1"/>
+<text x="984" y="670" font-size="11.5" fill="#14532d" font-weight="600">📤  방향: 사후(During/After) — 개발 진행 중 관제</text>
+<text x="984" y="688" font-size="11.5" fill="#14532d" font-weight="600">📊  데이터: 정적 Mock + 시각적 대시보드</text>
+<text x="984" y="706" font-size="11.5" fill="#14532d" font-weight="600">☀️  테마: 라이트 (기업형 대시보드 스타일)</text>
+<text x="984" y="724" font-size="11.5" fill="#14532d" font-weight="600">🔀  흐름: 비선형 (메뉴 자유 접근 가능)</text>
+
+<!-- CCO Dashboard Mockup -->
+<rect x="968" y="738" width="400" height="162" rx="7" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+<text x="984" y="758" font-size="10" fill="#166534" font-weight="800" letter-spacing="0.5">DASHBOARD SNAPSHOT</text>
+<line x1="984" y1="763" x2="1352" y2="763" stroke="#d1fae5" stroke-width="1"/>
+
+<!-- stat cards -->
+<rect x="984" y="770" width="84" height="44" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+<text x="1026" y="789" font-size="18" fill="#1d4ed8" font-weight="900" text-anchor="middle">12</text>
+<text x="1026" y="805" font-size="9" fill="#1e40af" text-anchor="middle" font-weight="700">Active Agents</text>
+
+<rect x="1078" y="770" width="84" height="44" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+<text x="1120" y="789" font-size="18" fill="#15803d" font-weight="900" text-anchor="middle">$2.1</text>
+<text x="1120" y="805" font-size="9" fill="#14532d" text-anchor="middle" font-weight="700">Token Cost</text>
+
+<rect x="1172" y="770" width="84" height="44" rx="6" fill="#fefce8" stroke="#fcd34d" stroke-width="1"/>
+<text x="1214" y="789" font-size="18" fill="#b45309" font-weight="900" text-anchor="middle">96</text>
+<text x="1214" y="805" font-size="9" fill="#92400e" text-anchor="middle" font-weight="700">Quality Score</text>
+
+<rect x="1266" y="770" width="84" height="44" rx="6" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+<text x="1308" y="789" font-size="18" fill="#b91c1c" font-weight="900" text-anchor="middle">3</text>
+<text x="1308" y="805" font-size="9" fill="#7f1d1d" text-anchor="middle" font-weight="700">Review Loops</text>
+
+<!-- progress bars -->
+<text x="984" y="830" font-size="10" fill="#334155" font-weight="600">Haiku usage</text>
+<rect x="984" y="834" width="220" height="8" rx="4" fill="#e2e8f0"/>
+<rect x="984" y="834" width="132" height="8" rx="4" fill="#16a34a"/>
+<text x="1212" y="843" font-size="9.5" fill="#15803d" font-weight="700">60%</text>
+
+<text x="984" y="857" font-size="10" fill="#334155" font-weight="600">Sonnet usage</text>
+<rect x="984" y="861" width="220" height="8" rx="4" fill="#e2e8f0"/>
+<rect x="984" y="861" width="77" height="8" rx="4" fill="#1d4ed8"/>
+<text x="1212" y="870" font-size="9.5" fill="#1d4ed8" font-weight="700">35%</text>
+
+<text x="984" y="884" font-size="10" fill="#334155" font-weight="600">Opus usage</text>
+<rect x="984" y="888" width="220" height="8" rx="4" fill="#e2e8f0"/>
+<rect x="984" y="888" width="11" height="8" rx="4" fill="#7c3aed"/>
+<text x="1212" y="897" font-size="9.5" fill="#7c3aed" font-weight="700">5%</text>
+
+<!-- ══════════════════════════════════
+     ARROWS
+══════════════════════════════════ -->
+<!-- VCOS → Terminal arrow -->
+<path d="M 446 572 L 456 572 L 456 562 L 470 580 L 456 598 L 456 588 L 446 588 Z"
+      fill="#1d4ed8" opacity="0.95"/>
+<text x="448" y="609" font-size="10" fill="#1d4ed8" text-anchor="middle" font-weight="700">명령어</text>
+<text x="448" y="622" font-size="10" fill="#1d4ed8" text-anchor="middle" font-weight="700">전달</text>
+
+<!-- Terminal → CCO arrow -->
+<path d="M 936 572 L 946 572 L 946 562 L 960 580 L 946 598 L 946 588 L 936 588 Z"
+      fill="#15803d" opacity="0.95"/>
+<text x="928" y="609" font-size="10" fill="#15803d" text-anchor="middle" font-weight="700">실시간</text>
+<text x="928" y="622" font-size="10" fill="#15803d" text-anchor="middle" font-weight="700">데이터</text>
+
+<!-- Section connector dots VCOS -->
+<circle cx="232" cy="286" r="3.5" fill="#93c5fd"/>
+<circle cx="232" cy="340" r="3.5" fill="#93c5fd"/>
+<circle cx="232" cy="394" r="3.5" fill="#86efac"/>
+<circle cx="232" cy="448" r="3.5" fill="#c4b5fd"/>
+<circle cx="232" cy="502" r="3.5" fill="#fdba74"/>
+<circle cx="232" cy="556" r="3.5" fill="#93c5fd"/>
+<!-- Section connector dots CCO -->
+<circle cx="1168" cy="286" r="3.5" fill="#86efac"/>
+<circle cx="1168" cy="340" r="3.5" fill="#93c5fd"/>
+<circle cx="1168" cy="394" r="3.5" fill="#fcd34d"/>
+<circle cx="1168" cy="448" r="3.5" fill="#fca5a5"/>
+<circle cx="1168" cy="502" r="3.5" fill="#c4b5fd"/>
+<circle cx="1168" cy="556" r="3.5" fill="#86efac"/>
+
+<!-- ══ BOTTOM TAGLINE ══ -->
+<rect x="18" y="900" width="1364" height="34" rx="10" fill="#fff" stroke="#c7d2fe" stroke-width="1.5" filter="url(#cs)"/>
+<text x="700" y="922" font-size="12.5" fill="#1e293b" text-anchor="middle" font-weight="600">
+  🎯 <tspan fill="#1d4ed8" font-weight="800">VCOS 전략 수립</tspan>  →  📋 명령어 생성  →  ⌨️ <tspan fill="#7c3aed" font-weight="800">claude</tspan> 실행  →  🤖 AI 분대 개발  →  ⭐ 고도화 루프  →  📊 <tspan fill="#15803d" font-weight="800">CCO 관제</tspan>  →  🚀 배포
+</text>
+
+</svg>

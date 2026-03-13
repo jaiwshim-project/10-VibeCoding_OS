@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VCOS — 05 토큰 최적화 전략</title>
+<link rel="stylesheet" href="../vcos.css">
+<style>
+/* 05 토큰 최적화 */
+.model-card {
+  border-radius:var(--r-lg);padding:20px;border:2px solid;margin-bottom:12px;
+  background:var(--bg);box-shadow:var(--shadow-sm);
+  transition:transform var(--med),box-shadow var(--med);position:relative;overflow:hidden;
+}
+.model-card::after {
+  content:'';position:absolute;top:0;right:0;width:80px;height:80px;
+  background:currentColor;opacity:.04;border-radius:50%;transform:translate(20px,-20px);
+}
+.model-card:hover { transform:translateY(-2px);box-shadow:var(--shadow-md) }
+.model-header     { display:flex;align-items:center;gap:12px;margin-bottom:12px }
+.model-icon       { font-size:30px }
+.model-name-big   { font-size:16px;font-weight:900;line-height:1 }
+.model-id         { font-size:9.5px;color:var(--text3);font-family:monospace;margin-top:3px;letter-spacing:.3px }
+.use-row          { display:flex;align-items:flex-start;gap:7px;margin-bottom:5px }
+.use-dot          { width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:6px }
+.use-text         { font-size:11.5px;color:var(--text2);line-height:1.5 }
+
+.mercenary-card {
+  background:var(--bg);border:1.5px solid var(--border);
+  border-radius:var(--r-md);padding:16px;margin-bottom:9px;
+  box-shadow:var(--shadow-xs);
+  transition:all var(--fast);
+}
+.mercenary-card:hover { border-color:var(--accent);box-shadow:var(--shadow-sm) }
+.mercenary-header { display:flex;align-items:center;gap:9px;margin-bottom:9px }
+.merc-icon        { font-size:22px }
+.merc-name        { font-size:14px;font-weight:800;color:var(--text) }
+.merc-specialty   { font-size:10px;color:var(--text3);margin-top:2px;font-weight:500 }
+.merc-cmd {
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:9px 12px;
+  font-family:monospace;font-size:11px;color:var(--text2);margin-top:8px;
+}
+.cost-highlight { font-size:32px;font-weight:900;line-height:1 }
+.cost-label     { font-size:9.5px;color:var(--text3);margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:.5px }
+</style>
+</head>
+<body>
+<div class="vcos-header"><div id="navArea"></div></div>
+<div class="container"><div class="page-body">
+
+<div class="progress-steps" id="progressBar"></div>
+
+<div class="page-title">
+  <div class="page-num" style="background:linear-gradient(135deg,#a78bfa,#7c3aed);box-shadow:0 3px 12px rgba(124,58,237,.4)">5</div>
+  <div><div class="page-name">토큰 최적화 전략</div><div class="page-eng">AI Routing Engine — 3계층 모델 정책 + 용병 AI 배치</div></div>
+  <div class="page-badge">AUTO GENERATED</div>
+</div>
+
+<div id="content"></div>
+
+<div class="page-nav">
+  <a href="04-skills.html" class="btn btn-secondary">← 이전: 스킬 전략</a>
+  <div class="page-nav-center">Section 5 / 6</div>
+  <a href="06-command.html" class="btn btn-primary">다음: 명령어 생성 →</a>
+</div>
+
+</div></div>
+<div id="footerArea"></div>
+<script src="../vcos.js"></script>
+<script>
+document.getElementById('navArea').innerHTML = buildNav('5', false);
+document.getElementById('progressBar').innerHTML = buildProgress('5');
+document.getElementById('footerArea').innerHTML = buildFooter(false);
+
+const p = requireProject('../pages/01-intent.html');
+if (!p) throw new Error('no project');
+
+const c = calcComplexity(p);
+const tk = calcTokenEstimate(c);
+const type = getProjectType(c.total);
+
+function fmtK(n) { return n >= 1000000 ? (n/1000000).toFixed(1)+'M' : n >= 1000 ? Math.round(n/1000)+'K' : n; }
+
+const mercenaries = [
+  {
+    icon:'💎', name:'Gemini', specialty:'대용량 컨텍스트 처리',
+    color:'#4285f4', colorBg:'rgba(66,133,244,.08)', colorBorder:'rgba(66,133,244,.3)',
+    desc:'1M+ 토큰 컨텍스트. 대규모 코드베이스 전체 분석, 레거시 마이그레이션, 파일 수백 개 동시 처리.',
+    when:'코드베이스 전체 리뷰, 대규모 리팩토링, 데이터 분석',
+    cmd:`gemini -p "전체 코드베이스를 분석하고 구조 개선사항을 제안해줘"`,
+    trigger: c.total >= 14
+  },
+  {
+    icon:'🔭', name:'Perplexity', specialty:'실시간 웹 리서치',
+    color:'#20b2aa', colorBg:'rgba(32,178,170,.08)', colorBorder:'rgba(32,178,170,.3)',
+    desc:'실시간 인터넷 검색 기반 최신 정보. 최신 라이브러리, 보안 취약점, 기술 트렌드 리서치.',
+    when:'최신 기술 동향 조사, 라이브러리 비교, 보안 이슈 확인',
+    cmd:`perplexity_ask "${(p.techStack||'Next.js').split('+')[0].trim()} 2025 최신 배포 베스트프랙티스"`,
+    trigger: true
+  },
+  {
+    icon:'⚡', name:'Grok', specialty:'빠른 프로토타입 생성',
+    color:'#e65c00', colorBg:'rgba(230,92,0,.08)', colorBorder:'rgba(230,92,0,.3)',
+    desc:'X(Twitter) 데이터 + 빠른 창의적 생성. UI 아이디어, 빠른 프로토타입, 브레인스토밍에 최적.',
+    when:'UI 초안, 아이디어 발산, 빠른 목업 생성',
+    cmd:`grok -p "${p.name || '프로젝트'} UI 컴포넌트 초안 5가지 아이디어 생성"`,
+    trigger: true
+  },
+  {
+    icon:'🤖', name:'ChatGPT', specialty:'코드 보일러플레이트',
+    color:'#10a37f', colorBg:'rgba(16,163,127,.08)', colorBorder:'rgba(16,163,127,.3)',
+    desc:'CRUD 패턴, 표준 코드 생성에 특화. 반복적인 보일러플레이트 코드를 빠르게 생성.',
+    when:'CRUD 코드 생성, 표준 패턴 구현, 반복 작업 자동화',
+    cmd:`openai "${(p.techStack||'FastAPI').split('+')[1]?.trim()||'FastAPI'} CRUD 보일러플레이트 생성"`,
+    trigger: true
+  }
+];
+
+const haikuPct = Math.round(tk.haiku / (tk.haiku+tk.sonnet+tk.opus) * 100);
+const sonnetPct = Math.round(tk.sonnet / (tk.haiku+tk.sonnet+tk.opus) * 100);
+const opusPct = 100 - haikuPct - sonnetPct;
+
+document.getElementById('content').innerHTML = `
+<div class="stat-row">
+  <div class="stat-box"><div class="cost-highlight" style="color:var(--accent)">$${tk.total}</div><div class="cost-label">예상 총 비용</div></div>
+  <div class="stat-box"><div class="cost-highlight" style="color:var(--green)">$${tk.haikuCost}</div><div class="cost-label">Haiku 비용</div></div>
+  <div class="stat-box"><div class="cost-highlight" style="color:var(--accent)">${fmtK(tk.haiku)}</div><div class="cost-label">Haiku 토큰</div></div>
+  <div class="stat-box"><div class="cost-highlight" style="color:var(--accent)">${fmtK(tk.sonnet)}</div><div class="cost-label">Sonnet 토큰</div></div>
+  <div class="stat-box"><div class="cost-highlight" style="color:var(--purple)">${fmtK(tk.opus)}</div><div class="cost-label">Opus 토큰</div></div>
+</div>
+
+<div class="grid-2">
+  <div>
+    <div class="divider-label" style="margin-top:0"><span>3계층 모델 정책</span></div>
+
+    <div class="model-card" style="background:rgba(63,185,80,.06);border-color:rgba(63,185,80,.4)">
+      <div class="model-header">
+        <div class="model-icon">🟢</div>
+        <div style="flex:1">
+          <div class="model-name-big" style="color:var(--green)">Haiku — 기본 모델 (60%)</div>
+          <div class="model-id">claude-haiku-4-5-20251001 | $0.25/1M tokens</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:18px;font-weight:700;color:var(--green)">$${tk.haikuCost}</div>
+          <div style="font-size:10px;color:var(--text3)">${fmtK(tk.haiku)} 토큰</div>
+        </div>
+      </div>
+      <div class="use-row"><div class="use-dot" style="background:var(--green)"></div><div class="use-text">단순 코드 생성 및 보일러플레이트 작성</div></div>
+      <div class="use-row"><div class="use-dot" style="background:var(--green)"></div><div class="use-text">반복 작업 자동화 (CRUD, 테스트 케이스)</div></div>
+      <div class="use-row"><div class="use-dot" style="background:var(--green)"></div><div class="use-text">문서 작성 및 README 생성</div></div>
+      <div class="use-row"><div class="use-dot" style="background:var(--green)"></div><div class="use-text">코드 포맷팅 및 간단한 버그 수정</div></div>
+      <div class="use-row"><div class="use-dot" style="background:var(--green)"></div><div class="use-text">E2E 테스트 코드, API 테스트 자동화</div></div>
+    </div>
+
+    <div class="model-card" style="background:rgba(88,166,255,.06);border-color:rgba(88,166,255,.4)">
+      <div class="model-header">
+        <div class="model-icon">🔵</div>
+        <div style="flex:1">
+          <div class="model-name-big" style="color:var(--accent)">Sonnet — 복잡 작업 (35%)</div>
+          <div class="model-id">claude-sonnet-4-6 | $3/1M tokens</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:18px;font-weight:700;color:var(--accent)">$${tk.sonnetCost}</div>
+          <div style="font-size:10px;color:var(--text3)">${fmtK(tk.sonnet)} 토큰</div>
+        </div>
+      </div>
+      <div class="use-row"><div class="use-dot" style="background:var(--accent)"></div><div class="use-text">API 아키텍처 설계 및 복잡한 로직 구현</div></div>
+      <div class="use-row"><div class="use-dot" style="background:var(--accent)"></div><div class="use-text">DB 스키마 설계 및 최적화</div></div>
+      <div class="use-row"><div class="use-dot" style="background:var(--accent)"></div><div class="use-text">AI 통합 로직 (RAG, 추천 시스템)</div></div>
+      <div class="use-row"><div class="use-dot" style="background:var(--accent)"></div><div class="use-text">보안 취약점 분석 및 수정</div></div>
+      <div class="use-row"><div class="use-dot" style="background:var(--accent)"></div><div class="use-text">성능 최적화 및 코드 리뷰</div></div>
+    </div>
+
+    <div class="model-card" style="background:rgba(188,140,255,.06);border-color:rgba(188,140,255,.4)">
+      <div class="model-header">
+        <div class="model-icon">🟣</div>
+        <div style="flex:1">
+          <div class="model-name-big" style="color:var(--purple)">Opus — 오케스트레이터 전용 (5%)</div>
+          <div class="model-id">claude-opus-4-6 | $15/1M tokens</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:18px;font-weight:700;color:var(--purple)">$${tk.opusCost}</div>
+          <div style="font-size:10px;color:var(--text3)">${fmtK(tk.opus)} 토큰</div>
+        </div>
+      </div>
+      <div class="use-row"><div class="use-dot" style="background:var(--purple)"></div><div class="use-text">소대장(HQ) 역할만 — 직접 코딩 절대 금지</div></div>
+      <div class="use-row"><div class="use-dot" style="background:var(--purple)"></div><div class="use-text">전체 전략 수립 및 분대 지시 전달</div></div>
+      <div class="use-row"><div class="use-dot" style="background:var(--purple)"></div><div class="use-text">최종 아키텍처 결정 및 품질 판단</div></div>
+      <div class="notice notice-warn" style="margin-top:8px;padding:7px 10px">
+        <span class="notice-icon" style="font-size:12px">⚠️</span>
+        <span style="font-size:10px">Opus는 반드시 오케스트레이션만 담당. 직접 코딩 시 비용 10배 낭비 발생!</span>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title">토큰 배분 시각화</div>
+      <div style="margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <div style="width:50px;font-size:10px;color:var(--green)">Haiku</div>
+          <div style="flex:1;height:20px;background:var(--bg);border-radius:4px;overflow:hidden">
+            <div style="height:100%;width:${haikuPct}%;background:var(--green);border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px">
+              <span style="font-size:9px;color:#000;font-weight:700">${haikuPct}%</span>
+            </div>
+          </div>
+          <span style="font-size:10px;color:var(--text2);width:50px;text-align:right">${fmtK(tk.haiku)}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <div style="width:50px;font-size:10px;color:var(--accent)">Sonnet</div>
+          <div style="flex:1;height:20px;background:var(--bg);border-radius:4px;overflow:hidden">
+            <div style="height:100%;width:${sonnetPct}%;background:var(--accent2);border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px">
+              <span style="font-size:9px;color:#fff;font-weight:700">${sonnetPct}%</span>
+            </div>
+          </div>
+          <span style="font-size:10px;color:var(--text2);width:50px;text-align:right">${fmtK(tk.sonnet)}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:50px;font-size:10px;color:var(--purple)">Opus</div>
+          <div style="flex:1;height:20px;background:var(--bg);border-radius:4px;overflow:hidden">
+            <div style="height:100%;width:${opusPct}%;background:var(--purple);border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px">
+              <span style="font-size:9px;color:#fff;font-weight:700">${opusPct}%</span>
+            </div>
+          </div>
+          <span style="font-size:10px;color:var(--text2);width:50px;text-align:right">${fmtK(tk.opus)}</span>
+        </div>
+      </div>
+      <div style="padding-top:10px;border-top:1px solid var(--border2)">
+        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px">
+          <span style="color:var(--text2)">예상 총 비용</span>
+          <span style="font-weight:700;color:var(--accent)">$${tk.total}</span>
+        </div>
+        <div style="font-size:10px;color:var(--text3)">* 복잡도 점수(${c.total}점) 기반 추정치. 실제 비용은 다를 수 있습니다.</div>
+      </div>
+    </div>
+
+    <div class="divider-label"><span>🪖 용병 AI — 외부 전문 AI 배치</span></div>
+
+    ${mercenaries.filter(m => m.trigger).map(m => `
+      <div class="mercenary-card">
+        <div class="mercenary-header">
+          <div class="merc-icon">${m.icon}</div>
+          <div>
+            <div class="merc-name" style="color:${m.color}">${m.name}</div>
+            <div class="merc-specialty">${m.specialty}</div>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:6px;line-height:1.5">${m.desc}</div>
+        <div style="font-size:10px;color:var(--accent);margin-bottom:4px">📌 ${m.when}</div>
+        <div class="merc-cmd">${m.cmd}</div>
+      </div>
+    `).join('')}
+
+    <div class="notice notice-warn" style="margin-top:12px">
+      <span class="notice-icon">💡</span>
+      <span style="font-size:11px">용병 AI는 Claude Code와 <strong>병렬로</strong> 운영합니다. 각 AI의 전문 영역에만 투입하여 전체 개발 속도를 3~5배 높일 수 있습니다.</span>
+    </div>
+  </div>
+</div>
+`;
+</script>
+</body>
+</html>

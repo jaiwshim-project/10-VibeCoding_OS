@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VCOS — 시스템 구조도</title>
+<link rel="stylesheet" href="../vcos.css">
+<style>
+/* 구조도 페이지 전용 */
+.sitemap-header {
+  display:flex;align-items:center;gap:14px;
+  margin-bottom:20px;padding-bottom:18px;border-bottom:2px solid var(--border);
+}
+.sitemap-title  { font-size:21px;font-weight:800;color:var(--text);letter-spacing:-.3px }
+.sitemap-sub    { font-size:11.5px;color:var(--text3);margin-top:4px;font-weight:500 }
+
+.svg-container {
+  background:var(--bg);border:1.5px solid var(--border);
+  border-radius:var(--r-lg);overflow:auto;
+  box-shadow:var(--shadow-md);position:relative;
+}
+.svg-toolbar {
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;background:var(--bg2);
+  border-bottom:1.5px solid var(--border);border-radius:var(--r-lg) var(--r-lg) 0 0;
+  flex-wrap:wrap;gap:8px;
+}
+.svg-title-bar  { font-size:12px;font-weight:700;color:var(--text2) }
+.svg-actions    { display:flex;gap:6px }
+.svg-zoom-bar   { display:flex;align-items:center;gap:6px }
+.svg-zoom-label { font-size:11px;color:var(--text3);font-weight:600;min-width:36px;text-align:center }
+.svg-wrap       { padding:16px;overflow:auto }
+.svg-wrap svg   { display:block;max-width:100%;height:auto;transition:transform .2s }
+
+.info-grid {
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:12px;margin-top:18px;
+}
+.info-card {
+  background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r-md);
+  padding:14px 16px;box-shadow:var(--shadow-xs);
+  border-left:4px solid var(--accent);
+}
+.info-card-icon  { font-size:22px;margin-bottom:6px }
+.info-card-title { font-size:12.5px;font-weight:700;color:var(--text) }
+.info-card-desc  { font-size:11px;color:var(--text3);margin-top:4px;line-height:1.55 }
+</style>
+</head>
+<body>
+<div class="vcos-header"><div id="navArea"></div></div>
+<div class="container"><div class="page-body">
+
+<div class="sitemap-header">
+  <div class="page-num" style="background:linear-gradient(135deg,#0891b2,#0e7490);box-shadow:0 3px 12px rgba(8,145,178,.4)">🗺</div>
+  <div>
+    <div class="sitemap-title">VCOS 시스템 구조도</div>
+    <div class="sitemap-sub">모든 페이지 구성 · 데이터 흐름 · 공유 엔진 아키텍처 한눈에 보기</div>
+  </div>
+  <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn btn-secondary btn-sm" onclick="downloadSvg('sitemap')">⬇️ 구조도 SVG 다운로드</button>
+    <button class="btn btn-secondary btn-sm" onclick="downloadSvg('architecture')">⬇️ 아키텍처 SVG 다운로드</button>
+  </div>
+</div>
+
+<!-- TAB -->
+<div class="tab-bar" id="tabBar">
+  <button class="tab-btn active" data-tab="sitemap" onclick="switchTab('sitemap')">📐 페이지 구조도</button>
+  <button class="tab-btn" data-tab="architecture" onclick="switchTab('architecture')">🏗️ VCOS↔CCO 아키텍처</button>
+</div>
+
+<!-- 페이지 구조도 (인라인 HTML 다이어그램) -->
+<div id="tab-sitemap">
+<div class="svg-container">
+  <div class="svg-toolbar">
+    <div class="svg-title-bar">VCOS Platform · Phase 1 (Steps 1-6) + Phase 2 (고도화 독립) 구조</div>
+    <button class="btn btn-secondary btn-sm" onclick="downloadSvg('architecture')">⬇️ 아키텍처 SVG</button>
+  </div>
+  <div style="padding:24px 20px">
+
+    <!-- 허브 -->
+    <div style="text-align:center;margin-bottom:20px">
+      <a href="../index.html" style="display:inline-flex;flex-direction:column;align-items:center;gap:6px;padding:14px 28px;border-radius:var(--r-lg);background:linear-gradient(135deg,#1e3a8a,#2563eb);border:2px solid rgba(88,166,255,.4);text-decoration:none;transition:transform .2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+        <span style="font-size:22px">🏠</span>
+        <span style="font-size:12px;font-weight:800;color:#fff">index.html</span>
+        <span style="font-size:10px;color:rgba(255,255,255,.6)">VCOS 홈 허브</span>
+      </a>
+      <div style="text-align:center;margin-top:8px;font-size:18px;color:var(--text3)">↓</div>
+    </div>
+
+    <!-- Phase 1 -->
+    <div style="background:rgba(37,99,235,.05);border:1.5px solid rgba(37,99,235,.2);border-radius:var(--r-lg);padding:20px;margin-bottom:20px">
+      <div style="font-size:11px;font-weight:800;color:#3b82f6;letter-spacing:.8px;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:8px">
+        <span style="background:#2563eb;color:#fff;padding:2px 8px;border-radius:var(--r-full);font-size:9px">PHASE 1</span>
+        🚀 기획 &amp; 명령어 생성 — 결과물 만들기 전
+      </div>
+      <div style="display:flex;align-items:center;gap:0;flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px" id="p1flow"></div>
+      <div style="margin-top:14px;padding:10px 14px;background:rgba(3,105,161,.08);border:1px solid rgba(3,105,161,.25);border-radius:var(--r-md);font-size:11px;color:#38bdf8;font-weight:600">
+        ⚡ 06-command.html에서 명령어 복사 → Claude Code 터미널 붙여넣기 → 결과물 완성
+      </div>
+    </div>
+
+    <!-- 구분 화살표 -->
+    <div style="text-align:center;margin:0 0 20px">
+      <div style="display:inline-flex;flex-direction:column;align-items:center;gap:6px">
+        <div style="width:2px;height:20px;background:linear-gradient(to bottom,#2563eb,#ea580c)"></div>
+        <div style="font-size:10px;font-weight:700;color:var(--text3);background:var(--bg2);border:1px solid var(--border);padding:3px 12px;border-radius:var(--r-full)">결과물 완성 후 Phase 2 진행</div>
+        <div style="width:2px;height:20px;background:linear-gradient(to bottom,#ea580c,#c2410c)"></div>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div style="background:rgba(234,88,12,.05);border:1.5px solid rgba(234,88,12,.25);border-radius:var(--r-lg);padding:20px;margin-bottom:20px">
+      <div style="font-size:11px;font-weight:800;color:#ea580c;letter-spacing:.8px;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:8px">
+        <span style="background:#ea580c;color:#fff;padding:2px 8px;border-radius:var(--r-full);font-size:9px">PHASE 2</span>
+        🔥 독립 고도화 엔진 — 결과물 완성 후 별도 적용
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <a href="06-refinement.html" style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:14px 20px;border-radius:var(--r-lg);background:rgba(234,88,12,.1);border:2px dashed rgba(234,88,12,.4);text-decoration:none;transition:transform .2s;min-width:100px;text-align:center" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+          <span style="font-size:24px">📁</span>
+          <span style="font-size:11px;font-weight:800;color:#ea580c">폴더 지정</span>
+          <span style="font-size:9.5px;color:var(--text3)">06-refinement.html</span>
+        </a>
+        <span style="font-size:20px;color:#ea580c">→</span>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:14px 20px;border-radius:var(--r-lg);background:rgba(234,88,12,.1);border:2px dashed rgba(234,88,12,.4);min-width:100px;text-align:center">
+          <span style="font-size:24px">🔄</span>
+          <span style="font-size:11px;font-weight:800;color:#ea580c">/review-evaluate</span>
+          <span style="font-size:9.5px;color:var(--text3)">최소 3회 반복</span>
+        </div>
+        <span style="font-size:20px;color:#ea580c">→</span>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:14px 20px;border-radius:var(--r-lg);background:rgba(63,185,80,.08);border:2px solid rgba(63,185,80,.3);min-width:100px;text-align:center">
+          <span style="font-size:24px">✅</span>
+          <span style="font-size:11px;font-weight:800;color:#3fb950">97점 달성</span>
+          <span style="font-size:9.5px;color:var(--text3)">프로덕션 배포</span>
+        </div>
+        <div style="margin-left:8px;padding:10px 14px;background:rgba(234,88,12,.06);border-radius:var(--r-md);border:1px solid rgba(234,88,12,.2)">
+          <div style="font-size:10px;font-weight:700;color:#ea580c;margin-bottom:4px">V1→V4 점수 향상</div>
+          <div style="font-size:10px;color:var(--text2)">V1: 70점 → V2: 80점</div>
+          <div style="font-size:10px;color:var(--text2)">V3: 90점 → V4: 97점</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 유틸리티 -->
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px">
+      <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">🗂 유틸리티 페이지</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a href="sitemap.html" style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:var(--r-md);background:rgba(8,145,178,.08);border:1px solid rgba(8,145,178,.25);text-decoration:none;transition:all .2s" onmouseover="this.style.background='rgba(8,145,178,.15)'" onmouseout="this.style.background='rgba(8,145,178,.08)'">
+          <span style="font-size:16px">🗺</span><div><div style="font-size:11px;font-weight:700;color:#0891b2">sitemap.html</div><div style="font-size:9.5px;color:var(--text3)">시스템 구조도</div></div>
+        </a>
+        <a href="manual.html" style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:var(--r-md);background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.25);text-decoration:none;transition:all .2s" onmouseover="this.style.background='rgba(124,58,237,.15)'" onmouseout="this.style.background='rgba(124,58,237,.08)'">
+          <span style="font-size:16px">📖</span><div><div style="font-size:11px;font-weight:700;color:#7c3aed">manual.html</div><div style="font-size:9.5px;color:var(--text3)">사용 매뉴얼</div></div>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- 아키텍처 SVG 뷰어 -->
+<div id="tab-architecture" style="display:none">
+<div class="svg-container">
+  <div class="svg-toolbar">
+    <div class="svg-title-bar">VCOS → Claude Code Terminal → CCO 전체 아키텍처 파이프라인</div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <div class="svg-zoom-bar">
+        <button class="btn btn-secondary btn-sm" onclick="zoom(-0.1)">−</button>
+        <span class="svg-zoom-label" id="zoomLabel">100%</span>
+        <button class="btn btn-secondary btn-sm" onclick="zoom(+0.1)">+</button>
+        <button class="btn btn-ghost btn-sm" onclick="resetZoom()">초기화</button>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="downloadSvg('architecture')">⬇️ 다운로드</button>
+    </div>
+  </div>
+  <div class="svg-wrap">
+    <img id="svgImg" src="../vcos-cco-architecture.svg" alt="VCOS 아키텍처" style="width:100%;border-radius:var(--r-sm)">
+  </div>
+</div>
+</div>
+
+<!-- 정보 카드 그리드 -->
+<div class="divider-label" style="margin-top:28px"><span>페이지 구성 요약</span></div>
+
+<div class="info-grid" id="infoGrid">
+
+  <div class="info-card" style="border-left-color:#2563eb">
+    <div class="info-card-icon">🏠</div>
+    <div class="info-card-title">index.html — VCOS 허브</div>
+    <div class="info-card-desc">Phase 1/2 섹션 분리 허브. 프로젝트 바, 사용 방법 가이드, 바이브 코딩 워크플로우 안내</div>
+  </div>
+
+  <div class="divider-label" style="grid-column:1/-1;margin:4px 0"><span>🚀 Phase 1 — 기획 &amp; 명령어 생성</span></div>
+
+  <div class="info-card" style="border-left-color:#1f6feb">
+    <div class="info-card-icon">1️⃣</div>
+    <div class="info-card-title">01-intent.html — 프로젝트 인텐트</div>
+    <div class="info-card-desc">기본 포함 기능 5개 + 추가 기능 16개 선택. 프로젝트명·목적·사용자·기술스택 입력. localStorage 저장</div>
+  </div>
+  <div class="info-card" style="border-left-color:#d97706">
+    <div class="info-card-icon">2️⃣</div>
+    <div class="info-card-title">02-complexity.html — 복잡도 분석</div>
+    <div class="info-card-desc">6축(UI·Backend·AI·통합·데이터·보안) 자동 계산. Small/Medium/Large/Enterprise 분류</div>
+  </div>
+  <div class="info-card" style="border-left-color:#dc2626">
+    <div class="info-card-icon">3️⃣</div>
+    <div class="info-card-title">03-squad.html — 분대 편성</div>
+    <div class="info-card-desc">복잡도 기반 HQ·Alpha·Bravo·Charlie·Delta·Echo 6개 분대 자동 편성</div>
+  </div>
+  <div class="info-card" style="border-left-color:#16a34a">
+    <div class="info-card-icon">4️⃣</div>
+    <div class="info-card-title">04-skills.html — 스킬 전략</div>
+    <div class="info-card-desc">19개 스킬 중 프로젝트 최적 스킬 자동 선택. Phase 1/2 분류, 비활성 포함 전체 보기 토글</div>
+  </div>
+  <div class="info-card" style="border-left-color:#7c3aed">
+    <div class="info-card-icon">5️⃣</div>
+    <div class="info-card-title">05-token.html — 토큰 최적화</div>
+    <div class="info-card-desc">Haiku(60%)→Sonnet(35%)→Opus(5%) 3계층 모델 정책. 예상 비용 자동 계산</div>
+  </div>
+  <div class="info-card" style="border-left-color:#0369a1">
+    <div class="info-card-icon">6️⃣</div>
+    <div class="info-card-title">06-command.html — 명령어 생성</div>
+    <div class="info-card-desc">Phase 1 Step 6. 1~5단계 데이터 통합 → Claude Code 바이브 코딩 완성 명령어 생성. 복사/다운로드</div>
+  </div>
+
+  <div class="divider-label" style="grid-column:1/-1;margin:4px 0"><span>🔥 Phase 2 — 독립 고도화 엔진</span></div>
+
+  <div class="info-card" style="border-left-color:#ea580c">
+    <div class="info-card-icon">🔥</div>
+    <div class="info-card-title">06-refinement.html — 고도화 엔진 <span style="font-size:10px;background:rgba(234,88,12,.15);border:1px solid rgba(234,88,12,.4);color:#ea580c;padding:1px 6px;border-radius:10px;font-weight:700;margin-left:4px">P2</span></div>
+    <div class="info-card-desc">Phase 2 독립 고도화 엔진 (폴더 입력 방식). V1(70점)→V4(97점+) 자동 품질 루프. /review-evaluate 최소 3회 실행</div>
+  </div>
+  <div class="info-card" style="border-left-color:#6b7280">
+    <div class="info-card-icon">↩️</div>
+    <div class="info-card-title">07-command.html — 리다이렉트</div>
+    <div class="info-card-desc">→ 06-command.html 리다이렉트. 구 URL 호환성 유지</div>
+  </div>
+
+  <div class="divider-label" style="grid-column:1/-1;margin:4px 0"><span>🗂 유틸리티</span></div>
+
+  <div class="info-card" style="border-left-color:#0891b2">
+    <div class="info-card-icon">🗺️</div>
+    <div class="info-card-title">sitemap.html — 시스템 구조도</div>
+    <div class="info-card-desc">전체 페이지 구성·데이터 흐름 시각화. VCOS↔CCO 아키텍처 다이어그램</div>
+  </div>
+  <div class="info-card" style="border-left-color:#7c3aed">
+    <div class="info-card-icon">📖</div>
+    <div class="info-card-title">manual.html — VCOS 사용 매뉴얼</div>
+    <div class="info-card-desc">VCOS 사용 매뉴얼 — 단계별 상세 가이드, 워크플로우 시각화, FAQ</div>
+  </div>
+
+</div>
+
+<!-- 데이터 흐름 -->
+<div class="divider-label" style="margin-top:24px"><span>데이터 흐름</span></div>
+<div class="card">
+  <div class="card-title">localStorage 데이터 흐름</div>
+  <div id="dataFlow" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"></div>
+  <div style="margin-top:12px;padding:12px 14px;background:var(--bg2);border-radius:var(--r-md);border:1px solid var(--border)">
+    <div style="font-size:11.5px;color:var(--text2);line-height:1.8">
+      <strong>공유 키:</strong> <code style="background:var(--bg3);padding:2px 6px;border-radius:4px;font-size:10.5px">localStorage["vcosProject"]</code>
+      &nbsp;&mdash;&nbsp; 01에서 저장한 JSON을 02~07이 읽어 자동 생성합니다.
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-top:6px">
+      저장 데이터: name · purpose · users · features[] · aiLevel · scale · techStack · savedAt
+    </div>
+  </div>
+</div>
+
+<div class="page-nav">
+  <a href="../index.html" class="btn btn-secondary">🏠 VCOS 허브</a>
+  <div class="page-nav-center">🗺 시스템 구조도</div>
+  <a href="01-intent.html" class="btn btn-primary">🚀 프로젝트 시작 →</a>
+</div>
+
+</div></div>
+<div id="footerArea"></div>
+<script src="../vcos.js"></script>
+<script>
+document.getElementById('navArea').innerHTML = buildNav('map', false);
+document.getElementById('footerArea').innerHTML = buildFooter(false);
+
+// 데이터 흐름 렌더링
+(function() {
+  const flowItems = [
+    { label: '01 입력',   color: '#2563eb' },
+    { label: '→',         color: null },
+    { label: '02 분석',   color: '#d97706' },
+    { label: '→',         color: null },
+    { label: '03 편성',   color: '#dc2626' },
+    { label: '→',         color: null },
+    { label: '04 스킬',   color: '#16a34a' },
+    { label: '→',         color: null },
+    { label: '05 토큰',   color: '#7c3aed' },
+    { label: '→',         color: null },
+    { label: '06 명령어', color: '#0369a1' },
+    { label: '⎮',         color: null },
+    { label: '[Phase 2]', color: null, p2label: true },
+    { label: '→',         color: null },
+    { label: '고도화',    color: '#ea580c', p2: true }
+  ];
+  const html = flowItems.map(function(item) {
+    if (item.p2label) {
+      return '<span style="font-size:10px;font-weight:800;color:#ea580c;background:rgba(234,88,12,.08);border:1px solid rgba(234,88,12,.3);padding:3px 8px;border-radius:6px;margin:0 2px">[Phase 2]</span>';
+    }
+    if (item.color === null) {
+      return '<span style="font-size:18px;color:var(--text3);font-weight:700">' + item.label + '</span>';
+    }
+    return '<span style="background:' + item.color + '15;border:1.5px solid ' + item.color + '40;color:' + item.color + ';padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700">' + item.label + '</span>';
+  }).join('');
+  document.getElementById('dataFlow').innerHTML = html;
+})();
+
+// Phase 1 6단계 박스 렌더링
+(function() {
+  const steps = [
+    { num:'1', icon:'✏️', label:'01-intent',    desc:'인텐트',    color:'#2563eb', href:'01-intent.html' },
+    { num:'2', icon:'📊', label:'02-complexity', desc:'복잡도',    color:'#d97706', href:'02-complexity.html' },
+    { num:'3', icon:'⚔️', label:'03-squad',      desc:'분대 편성', color:'#dc2626', href:'03-squad.html' },
+    { num:'4', icon:'🛠', label:'04-skills',     desc:'스킬 전략', color:'#16a34a', href:'04-skills.html' },
+    { num:'5', icon:'💎', label:'05-token',      desc:'토큰 최적화',color:'#7c3aed', href:'05-token.html' },
+    { num:'6', icon:'⚡', label:'06-command',    desc:'명령어 생성',color:'#0369a1', href:'06-command.html' }
+  ];
+  const html = steps.map(function(s, i) {
+    return (i > 0 ? '<span style="font-size:18px;color:var(--text3);flex-shrink:0">→</span>' : '') +
+      '<a href="' + s.href + '" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 14px;border-radius:var(--r-lg);background:' + s.color + '18;border:2px solid ' + s.color + '40;text-decoration:none;transition:transform .2s;min-width:80px;text-align:center;flex-shrink:0" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'\'">' +
+        '<span style="font-size:18px">' + s.icon + '</span>' +
+        '<span style="font-size:10px;font-weight:800;color:' + s.color + '">' + s.num + '단계</span>' +
+        '<span style="font-size:9px;color:var(--text3)">' + s.desc + '</span>' +
+      '</a>';
+  }).join('');
+  document.getElementById('p1flow').innerHTML = html;
+})();
+
+let zoomLevel = 1;
+
+const SVG_FILES = {
+  architecture: { src:'../vcos-cco-architecture.svg', filename:'vcos-cco-architecture.svg' }
+};
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.toggle('active', b.dataset.tab === tab); });
+  document.getElementById('tab-sitemap').style.display     = (tab === 'sitemap')      ? '' : 'none';
+  document.getElementById('tab-architecture').style.display = (tab === 'architecture') ? '' : 'none';
+  if (tab === 'architecture') { zoomLevel = 1; applyZoom(); }
+}
+
+function zoom(delta) {
+  zoomLevel = Math.min(3, Math.max(0.4, zoomLevel + delta));
+  applyZoom();
+}
+function resetZoom() { zoomLevel = 1; applyZoom(); }
+function applyZoom() {
+  var img = document.getElementById('svgImg');
+  if (!img) return;
+  img.style.transform = 'scale(' + zoomLevel + ')';
+  img.style.transformOrigin = 'top left';
+  document.getElementById('zoomLabel').textContent = Math.round(zoomLevel * 100) + '%';
+}
+
+function downloadSvg(tab) {
+  var info = SVG_FILES[tab] || SVG_FILES['architecture'];
+  var a = document.createElement('a');
+  a.href = info.src;
+  a.download = info.filename;
+  a.click();
+}
+</script>
+</body>
+</html>

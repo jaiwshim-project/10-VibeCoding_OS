@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VCOS — 사용 매뉴얼</title>
+<link rel="stylesheet" href="../vcos.css">
+<style>
+/* ── 매뉴얼 페이지 ── */
+
+/* 히어로 */
+.manual-hero {
+  background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 40%,#1e3a5f 100%);
+  border-radius:var(--r-lg);padding:40px 36px;margin-bottom:28px;
+  position:relative;overflow:hidden;
+}
+.manual-hero::before {
+  content:'';position:absolute;top:-60px;right:-60px;
+  width:280px;height:280px;border-radius:50%;
+  background:radial-gradient(circle,rgba(88,166,255,.15) 0%,transparent 70%);
+  pointer-events:none;
+}
+.manual-hero::after {
+  content:'';position:absolute;bottom:-40px;left:20%;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(124,58,237,.12) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hero-badge {
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(88,166,255,.15);border:1px solid rgba(88,166,255,.3);
+  color:#93c5fd;padding:4px 12px;border-radius:var(--r-full);
+  font-size:13px;font-weight:700;margin-bottom:16px;
+}
+.hero-title {
+  font-size:32px;font-weight:900;color:#fff;letter-spacing:-.5px;
+  line-height:1.15;margin-bottom:10px;
+}
+.hero-title span { color:#60a5fa }
+.hero-desc {
+  font-size:15px;color:rgba(255,255,255,.6);line-height:1.7;
+  max-width:560px;margin-bottom:24px;
+}
+.hero-stats {
+  display:flex;gap:24px;flex-wrap:wrap;
+}
+.hero-stat {
+  text-align:center;
+}
+.hero-stat-val { font-size:24px;font-weight:900;color:#60a5fa;line-height:1 }
+.hero-stat-lbl { font-size:12px;color:rgba(255,255,255,.5);margin-top:3px;font-weight:600 }
+
+/* 워크플로우 시각화 */
+.workflow-visual {
+  background:var(--bg);border:1.5px solid var(--border);
+  border-radius:var(--r-lg);padding:28px 24px;margin-bottom:28px;
+  box-shadow:var(--shadow-sm);
+}
+.wf-phase-label {
+  font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+  margin-bottom:12px;display:flex;align-items:center;gap:6px;
+}
+.wf-steps {
+  display:flex;align-items:stretch;gap:0;flex-wrap:nowrap;overflow-x:auto;
+  padding-bottom:4px;
+}
+.wf-step {
+  display:flex;flex-direction:column;align-items:center;position:relative;
+  min-width:90px;
+}
+.wf-step-box {
+  width:72px;height:72px;border-radius:14px;border:2px solid;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;transition:transform .2s;cursor:pointer;text-decoration:none;
+}
+.wf-step-box:hover { transform:translateY(-3px) }
+.wf-step-num { font-size:11px;font-weight:800;opacity:.8 }
+.wf-step-icon { font-size:22px }
+.wf-step-name { font-size:10.5px;font-weight:700;text-align:center;margin-top:6px;color:var(--text2) }
+.wf-arrow {
+  display:flex;align-items:center;padding:0 2px;margin-top:-10px;
+  font-size:20px;color:var(--text3);flex-shrink:0;align-self:center;
+  padding-bottom:18px;
+}
+.wf-divider {
+  display:flex;flex-direction:column;align-items:center;margin:0 8px;
+  align-self:stretch;justify-content:center;
+}
+.wf-divider-line {
+  width:2px;height:60px;background:linear-gradient(to bottom,rgba(234,88,12,.4),rgba(234,88,12,.1));
+}
+.wf-p2-box {
+  background:linear-gradient(135deg,rgba(234,88,12,.1),rgba(251,146,60,.08));
+  border:2px dashed rgba(234,88,12,.4);border-radius:14px;
+  padding:12px 16px;display:flex;flex-direction:column;align-items:center;
+  min-width:90px;cursor:pointer;text-decoration:none;
+  transition:transform .2s;
+}
+.wf-p2-box:hover { transform:translateY(-3px) }
+
+/* 섹션 제목 */
+.manual-section-title {
+  display:flex;align-items:center;gap:12px;margin:32px 0 18px;
+  padding-bottom:12px;border-bottom:2px solid var(--border);
+}
+.manual-section-num {
+  width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:900;color:#fff;flex-shrink:0;
+}
+.manual-section-name { font-size:20px;font-weight:800;color:var(--text) }
+.manual-section-sub  { font-size:13px;color:var(--text3);margin-top:2px }
+
+/* 단계 카드 */
+.step-card {
+  border-radius:var(--r-lg);margin-bottom:16px;overflow:hidden;
+  border:1.5px solid var(--border);box-shadow:var(--shadow-sm);
+}
+.step-card-header {
+  padding:14px 20px;display:flex;align-items:center;gap:14px;
+}
+.step-card-num {
+  width:40px;height:40px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;font-weight:900;color:#fff;flex-shrink:0;
+}
+.step-card-title { font-size:17px;font-weight:800;color:#fff }
+.step-card-desc  { font-size:13px;color:rgba(255,255,255,.65);margin-top:2px }
+.step-card-body  { padding:18px 20px;background:var(--bg) }
+
+/* 입출력 박스 */
+.io-row { display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px }
+.io-box {
+  flex:1;min-width:200px;padding:12px 14px;
+  border-radius:var(--r-md);border:1px solid var(--border);background:var(--bg2);
+}
+.io-box-label {
+  font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
+  margin-bottom:8px;opacity:.7;
+}
+.io-item {
+  display:flex;align-items:flex-start;gap:6px;margin-bottom:5px;font-size:13px;color:var(--text2);
+}
+.io-dot { width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:5px }
+
+/* 팁 박스 */
+.tip-box {
+  background:linear-gradient(135deg,rgba(37,99,235,.06),rgba(124,58,237,.04));
+  border:1px solid rgba(37,99,235,.2);border-left:4px solid #2563eb;
+  border-radius:var(--r-md);padding:12px 14px;margin-top:10px;
+  display:flex;gap:10px;align-items:flex-start;
+}
+.tip-icon { font-size:20px;flex-shrink:0;margin-top:1px }
+.tip-text { font-size:13px;color:var(--text2);line-height:1.7 }
+
+/* V1→V4 시각화 */
+.score-track {
+  display:flex;align-items:center;gap:0;margin:16px 0;
+  background:var(--bg2);border-radius:var(--r-lg);overflow:hidden;
+  border:1px solid var(--border);
+}
+.score-step {
+  flex:1;padding:14px 10px;text-align:center;border-right:1px solid var(--border);position:relative;
+}
+.score-step:last-child { border-right:none }
+.score-step-tag { font-size:12px;font-weight:800;letter-spacing:.3px }
+.score-step-val { font-size:28px;font-weight:900;line-height:1;margin:4px 0 }
+.score-step-bar {
+  height:4px;border-radius:2px;margin:6px auto 0;
+  transition:width .3s;
+}
+.score-step-lbl { font-size:11px;color:var(--text3);margin-top:4px;font-weight:600 }
+
+/* FAQ */
+.faq-item {
+  border:1.5px solid var(--border);border-radius:var(--r-md);
+  margin-bottom:10px;overflow:hidden;
+}
+.faq-q {
+  padding:14px 16px;display:flex;align-items:center;gap:10px;
+  background:var(--bg2);cursor:pointer;user-select:none;
+  font-size:14.5px;font-weight:700;color:var(--text);
+}
+.faq-q:hover { background:var(--accent-light) }
+.faq-toggle { margin-left:auto;font-size:16px;transition:transform .2s;color:var(--accent) }
+.faq-a {
+  padding:14px 16px;font-size:13.5px;color:var(--text2);
+  line-height:1.75;border-top:1px solid var(--border);background:var(--bg);
+  display:none;
+}
+.faq-item.open .faq-toggle { transform:rotate(180deg) }
+.faq-item.open .faq-a { display:block }
+
+/* 기능 그리드 */
+.feature-grid {
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;
+  margin-bottom:16px;
+}
+.feature-chip {
+  display:flex;align-items:center;gap:8px;
+  padding:10px 12px;border-radius:var(--r-md);
+  border:1.5px solid var(--border);background:var(--bg2);
+  font-size:13px;font-weight:600;color:var(--text2);
+  transition:all var(--fast);
+}
+.feature-chip:hover { border-color:var(--accent);color:var(--accent);background:var(--accent-light) }
+.feature-chip-icon { font-size:18px }
+</style>
+</head>
+<body>
+<div class="vcos-header"><div id="navArea"></div></div>
+<div class="container"><div class="page-body">
+
+<!-- ① 히어로 -->
+<div class="manual-hero">
+  <div class="hero-badge">📖 VCOS 공식 매뉴얼</div>
+  <div class="hero-title">아이디어를 <span>완성 코드</span>로<br>자동 변환하는 방법</div>
+  <div class="hero-desc">
+    VCOS(Vibe Coding Operating System)는 프로젝트 아이디어를 입력하면<br>
+    AI 분대 편성 → 스킬 전략 → Claude Code 명령어까지 자동 생성합니다.<br>
+    Phase 1으로 명령어를 만들고, Phase 2로 완성된 결과물을 97점으로 고도화하세요.
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="hero-stat-val">6</div><div class="hero-stat-lbl">Phase 1 단계</div></div>
+    <div class="hero-stat"><div class="hero-stat-val">19</div><div class="hero-stat-lbl">내장 스킬</div></div>
+    <div class="hero-stat"><div class="hero-stat-val">66</div><div class="hero-stat-lbl">AI 에이전트</div></div>
+    <div class="hero-stat"><div class="hero-stat-val">97+</div><div class="hero-stat-lbl">목표 품질 점수</div></div>
+  </div>
+</div>
+
+<!-- ② 전체 워크플로우 -->
+<div class="manual-section-title">
+  <div class="manual-section-num" style="background:linear-gradient(135deg,#1e40af,#2563eb)">🗺</div>
+  <div><div class="manual-section-name">전체 워크플로우</div><div class="manual-section-sub">VCOS 사용 순서 한눈에 보기</div></div>
+</div>
+
+<div class="workflow-visual">
+  <div class="wf-phase-label" style="color:#3b82f6">🚀 Phase 1 — 기획 &amp; 명령어 생성 (결과물 만들기 전)</div>
+  <div class="wf-steps" id="wfSteps1"></div>
+
+  <div style="margin:20px 0 16px;display:flex;align-items:center;gap:10px">
+    <div style="flex:1;height:2px;background:linear-gradient(to right,rgba(234,88,12,.3),rgba(234,88,12,.05))"></div>
+    <div style="font-size:13px;font-weight:700;color:#ea580c;background:rgba(234,88,12,.1);padding:4px 12px;border-radius:var(--r-full);border:1px solid rgba(234,88,12,.3)">
+      ⬇️ 명령어 복사 → Claude Code 터미널 실행 → 결과물 완성
+    </div>
+    <div style="flex:1;height:2px;background:linear-gradient(to left,rgba(234,88,12,.3),rgba(234,88,12,.05))"></div>
+  </div>
+
+  <div class="wf-phase-label" style="color:#ea580c">🔥 Phase 2 — 고도화 엔진 (결과물 완성 후 별도 사용)</div>
+  <div class="wf-steps" id="wfSteps2"></div>
+</div>
+
+<!-- ③ Phase 1 단계별 가이드 -->
+<div class="manual-section-title">
+  <div class="manual-section-num" style="background:linear-gradient(135deg,#1d4ed8,#2563eb)">1</div>
+  <div><div class="manual-section-name">Phase 1 — 6단계 상세 가이드</div><div class="manual-section-sub">각 단계에서 무엇을 입력하고 어떤 결과가 나오는지 확인하세요</div></div>
+</div>
+
+<div id="phase1Steps"></div>
+
+<!-- ④ Phase 2 고도화 -->
+<div class="manual-section-title" style="margin-top:36px">
+  <div class="manual-section-num" style="background:linear-gradient(135deg,#c2410c,#ea580c)">🔥</div>
+  <div><div class="manual-section-name">Phase 2 — 고도화 엔진</div><div class="manual-section-sub">완성된 결과물을 97점 프로덕션 수준으로 끌어올리기</div></div>
+</div>
+
+<div class="grid-2">
+  <div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title">고도화가 필요한 이유</div>
+      <div style="font-size:13.5px;color:var(--text2);line-height:1.8;margin-bottom:14px">
+        Claude Code가 처음 만든 결과물(V1)은 기능은 동작하지만<br>
+        코드 품질, 보안, 성능 등이 미흡한 <strong>70점 수준</strong>입니다.<br>
+        <code style="background:var(--bg2);padding:1px 5px;border-radius:3px;font-size:12.5px">/review-evaluate</code>를
+        반복 실행하면 AI가 자동으로 개선합니다.
+      </div>
+      <div class="score-track">
+        <div class="score-step">
+          <div class="score-step-tag" style="color:#f85149">V1</div>
+          <div class="score-step-val" style="color:#f85149">70</div>
+          <div class="score-step-bar" style="width:70%;background:#f85149"></div>
+          <div class="score-step-lbl">초기 개발</div>
+        </div>
+        <div class="score-step">
+          <div class="score-step-tag" style="color:#e3b341">V2</div>
+          <div class="score-step-val" style="color:#e3b341">80</div>
+          <div class="score-step-bar" style="width:80%;background:#e3b341"></div>
+          <div class="score-step-lbl">1차 고도화</div>
+        </div>
+        <div class="score-step">
+          <div class="score-step-tag" style="color:#3fb950">V3</div>
+          <div class="score-step-val" style="color:#3fb950">90</div>
+          <div class="score-step-bar" style="width:90%;background:#3fb950"></div>
+          <div class="score-step-lbl">2차 고도화</div>
+        </div>
+        <div class="score-step">
+          <div class="score-step-tag" style="color:#58a6ff">V4</div>
+          <div class="score-step-val" style="color:#58a6ff">97</div>
+          <div class="score-step-bar" style="width:97%;background:#58a6ff"></div>
+          <div class="score-step-lbl">목표 달성 🎉</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Phase 2 실행 순서</div>
+      <div id="p2Steps"></div>
+    </div>
+  </div>
+
+  <div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title">5가지 평가 기준 (각 20점)</div>
+      <div id="evalCriteria"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">실행 명령어</div>
+      <div style="background:#0d1b2e;border-radius:var(--r-md);padding:16px 18px;font-family:monospace;font-size:14px;color:#e2e8f0;line-height:2">
+        <span style="color:#7ee787"># 1. 결과물 폴더로 이동</span><br>
+        <span style="color:#58a6ff">cd</span> "C:\내프로젝트폴더"<br><br>
+        <span style="color:#7ee787"># 2. 고도화 루프 실행 (최소 3회)</span><br>
+        <span style="color:#ff7b72">/review-evaluate</span>
+      </div>
+      <div class="tip-box" style="margin-top:12px">
+        <div class="tip-icon">💡</div>
+        <div class="tip-text">Phase 2는 Phase 1 데이터와 <strong>완전히 독립</strong>입니다. 고도화 엔진 페이지에서 폴더 경로만 입력하면 바로 시작할 수 있습니다.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑤ 핵심 기능 가이드 -->
+<div class="manual-section-title" style="margin-top:36px">
+  <div class="manual-section-num" style="background:linear-gradient(135deg,#166534,#16a34a)">⚡</div>
+  <div><div class="manual-section-name">핵심 기능 가이드</div><div class="manual-section-sub">VCOS의 주요 구성 요소 이해하기</div></div>
+</div>
+
+<div class="grid-2" style="margin-bottom:20px">
+  <div class="card">
+    <div class="card-title">🎖️ AI 분대 편성 시스템</div>
+    <div style="font-size:13.5px;color:var(--text2);line-height:1.8;margin-bottom:12px">
+      복잡도에 따라 최대 6개 분대(66명)가 자동 편성됩니다.<br>
+      각 분대는 Opus/Sonnet/Haiku 모델을 역할에 맞게 배분합니다.
+    </div>
+    <div id="squadGrid"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🤖 3계층 모델 정책</div>
+    <div style="font-size:13.5px;color:var(--text2);line-height:1.8;margin-bottom:14px">
+      토큰 비용을 최적화하면서 품질을 유지하는 자동 라우팅 정책입니다.
+    </div>
+    <div id="modelTiers"></div>
+    <div class="tip-box" style="margin-top:12px">
+      <div class="tip-icon">💰</div>
+      <div class="tip-text">Haiku 60% 활용으로 <strong>비용 약 70% 절감</strong>하면서 Opus의 전략적 판단력을 유지합니다.</div>
+    </div>
+  </div>
+</div>
+
+<div class="card" style="margin-bottom:20px">
+  <div class="card-title">🛠️ 19가지 내장 스킬 목록</div>
+  <div style="font-size:13px;color:var(--text3);margin-bottom:12px">Phase 1(빌드)과 Phase 2(고도화) 스킬이 자동 분류되어 적용됩니다.</div>
+  <div class="feature-grid" id="skillGrid"></div>
+</div>
+
+<!-- ⑥ FAQ -->
+<div class="manual-section-title" style="margin-top:36px">
+  <div class="manual-section-num" style="background:linear-gradient(135deg,#5b21b6,#7c3aed)">❓</div>
+  <div><div class="manual-section-name">자주 묻는 질문</div><div class="manual-section-sub">FAQ — 헷갈리는 부분을 빠르게 해결하세요</div></div>
+</div>
+
+<div id="faqList"></div>
+
+<div class="page-nav" style="margin-top:32px">
+  <a href="../index.html" class="btn btn-secondary">🏠 홈으로</a>
+  <div class="page-nav-center">📖 VCOS 사용 매뉴얼</div>
+  <a href="01-intent.html" class="btn btn-primary">🚀 바로 시작 →</a>
+</div>
+
+</div></div>
+<div id="footerArea"></div>
+<script src="../vcos.js"></script>
+<script>
+document.getElementById('navArea').innerHTML = buildNav('manual', false);
+document.getElementById('footerArea').innerHTML = buildFooter(false);
+
+/* ── 워크플로우 시각화 ── */
+const P1_STEPS = [
+  { num:'1', icon:'✍️', name:'인텐트 입력', color:'#2563eb', file:'01-intent.html' },
+  { num:'2', icon:'📊', name:'복잡도 분석', color:'#d97706', file:'02-complexity.html' },
+  { num:'3', icon:'🎖️', name:'분대 편성',   color:'#dc2626', file:'03-squad.html' },
+  { num:'4', icon:'🛠️', name:'스킬 전략',   color:'#16a34a', file:'04-skills.html' },
+  { num:'5', icon:'🤖', name:'토큰 최적화', color:'#7c3aed', file:'05-token.html' },
+  { num:'6', icon:'⚡', name:'명령어 생성', color:'#0369a1', file:'06-command.html' },
+];
+
+document.getElementById('wfSteps1').innerHTML = P1_STEPS.map((s, i) => `
+  ${i > 0 ? '<div class="wf-arrow">›</div>' : ''}
+  <div class="wf-step">
+    <a href="${s.file}" class="wf-step-box" style="border-color:${s.color}50;background:${s.color}0d;color:${s.color}">
+      <div class="wf-step-num">${s.num}</div>
+      <div class="wf-step-icon">${s.icon}</div>
+    </a>
+    <div class="wf-step-name">${s.name}</div>
+  </div>
+`).join('');
+
+document.getElementById('wfSteps2').innerHTML = `
+  <div class="wf-step">
+    <a href="06-refinement.html" class="wf-p2-box">
+      <div style="font-size:11px;font-weight:800;color:#ea580c;margin-bottom:4px">P2</div>
+      <div style="font-size:24px">📁</div>
+      <div style="font-size:10.5px;color:#ea580c;font-weight:700;margin-top:4px">폴더 지정</div>
+    </a>
+  </div>
+  <div class="wf-arrow" style="color:#ea580c">›</div>
+  <div class="wf-step">
+    <div class="wf-p2-box" style="cursor:default">
+      <div style="font-size:24px">🔄</div>
+      <div style="font-size:10.5px;color:#ea580c;font-weight:700;margin-top:4px">/review-evaluate</div>
+    </div>
+  </div>
+  <div class="wf-arrow" style="color:#ea580c">›</div>
+  <div class="wf-step">
+    <div class="wf-p2-box" style="cursor:default">
+      <div style="font-size:24px">✅</div>
+      <div style="font-size:10.5px;color:#ea580c;font-weight:700;margin-top:4px">97점 달성</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;margin-left:8px;padding-bottom:18px">
+    <div style="font-size:12px;color:var(--text3);max-width:140px;line-height:1.6">
+      3회 이상 반복<br>자동 품질 개선
+    </div>
+  </div>
+`;
+
+/* ── Phase 1 단계 카드 ── */
+const steps = [
+  {
+    num:'1', color:'#2563eb', bgColor:'rgba(37,99,235,.9)', icon:'✍️',
+    title:'프로젝트 인텐트 입력', subtitle:'01-intent.html',
+    desc:'프로젝트의 핵심 정보를 입력하면 이후 모든 단계가 자동으로 생성됩니다.',
+    inputs:['프로젝트 이름 (필수)','플랫폼 목적 / 목표','타겟 사용자 태그','기술 스택 선택','AI 기능 수준'],
+    outputs:['localStorage에 JSON 자동 저장','2~6단계 자동 분석 기반 데이터'],
+    features:['🔒 기본 포함 기능 5개 (항상 구현)', '➕ 추가 기능 16개 (선택)','📂 참고 폴더 경로 지정 가능'],
+    tip:'기본 포함 기능(프로젝트 구조·라우팅·반응형·에러처리·환경설정)은 항상 구현됩니다. 필요 없으면 체크 해제하세요.'
+  },
+  {
+    num:'2', color:'#d97706', bgColor:'rgba(215,119,6,.9)', icon:'📊',
+    title:'복잡도 분석', subtitle:'02-complexity.html',
+    desc:'6개 축(UI·Backend·AI·통합·데이터·보안)을 기반으로 프로젝트 복잡도를 자동 계산합니다.',
+    inputs:['인텐트 데이터 자동 읽기 (별도 입력 없음)'],
+    outputs:['총 복잡도 점수 (0~30)','Small / Medium / Large / Enterprise 분류','분대 규모 결정 기준'],
+    features:['6축 레이더 차트 시각화','복잡도별 위험도 분석','예상 개발 기간 자동 산출'],
+    tip:'복잡도가 높을수록 더 많은 분대(Alpha~Echo)가 편성됩니다. 복잡도 10 이상이면 Delta/Echo 분대가 추가됩니다.'
+  },
+  {
+    num:'3', color:'#dc2626', bgColor:'rgba(220,38,38,.9)', icon:'🎖️',
+    title:'분대 편성', subtitle:'03-squad.html',
+    desc:'복잡도에 따라 HQ 본부 + 최대 5개 분대, 총 66명의 AI 에이전트가 자동 배치됩니다.',
+    inputs:['복잡도 데이터 자동 읽기'],
+    outputs:['HQ 본부 (소대장+연락병+용병4)','Alpha 분대 (복잡도 8+)','Bravo / Charlie 분대 (항상)','Delta / Echo 분대 (복잡도 16+)'],
+    features:['분대별 역할·인원·모델 시각화','Opus/Sonnet/Haiku 비율 분석','Claude Code 실행 명령어 자동 생성'],
+    tip:'용병 AI(Gemini, Perplexity, Grok, ChatGPT)는 HQ 본부에 편제되어 Claude 부족한 부분을 보완합니다.'
+  },
+  {
+    num:'4', color:'#16a34a', bgColor:'rgba(22,163,74,.9)', icon:'🛠️',
+    title:'스킬 전략', subtitle:'04-skills.html',
+    desc:'19개 내장 스킬 중 프로젝트 특성에 맞는 스킬이 자동 선택되어 Phase 1/2로 분류됩니다.',
+    inputs:['프로젝트 피처 목록','복잡도 수준'],
+    outputs:['Phase 1 활성 스킬 목록 (빌드 단계)','Phase 2 활성 스킬 목록 (고도화 단계)','비활성 스킬 (해당 없음)'],
+    features:['스킬별 활성화 조건 표시','비활성 포함 전체 보기 토글','명령어에 자동 반영'],
+    tip:'선택한 기능(결제, AI, RAG 등)이 있으면 해당 스킬이 자동 활성화됩니다. 직접 토글로 조정도 가능합니다.'
+  },
+  {
+    num:'5', color:'#7c3aed', bgColor:'rgba(124,58,237,.9)', icon:'🤖',
+    title:'토큰 최적화', subtitle:'05-token.html',
+    desc:'3계층 AI 모델 정책으로 비용을 최소화하면서 최적의 품질을 유지합니다.',
+    inputs:['복잡도 및 분대 데이터 자동 읽기'],
+    outputs:['Haiku 60% / Sonnet 35% / Opus 5% 배분','예상 토큰/비용 자동 계산','용병 AI 활용 전략'],
+    features:['모델별 사용처 구체적 명시','월간 예상 비용 시뮬레이션','Gemini·Perplexity 무료 활용법'],
+    tip:'Opus는 아키텍처 설계와 최종 검토에만 사용합니다. 반복 작업은 모두 Haiku로 처리해 비용을 절감하세요.'
+  },
+  {
+    num:'6', color:'#0369a1', bgColor:'rgba(3,105,161,.9)', icon:'⚡',
+    title:'명령어 생성', subtitle:'06-command.html',
+    desc:'1~5단계 모든 데이터를 통합하여 Claude Code에 바로 붙여넣을 수 있는 완성 명령어를 생성합니다.',
+    inputs:['전체 단계 데이터 자동 통합'],
+    outputs:['Claude Code 바이브 코딩 명령어','분대 실행 명령어 세트','스킬 실행 순서 포함'],
+    features:['원클릭 복사 기능','텍스트 파일 다운로드','실행 전 체크리스트'],
+    tip:'명령어를 복사하여 Claude Code 터미널에 붙여넣으면 AI가 자동으로 개발을 시작합니다. 결과물이 완성되면 Phase 2를 사용하세요.'
+  }
+];
+
+document.getElementById('phase1Steps').innerHTML = steps.map(s => `
+<div class="step-card">
+  <div class="step-card-header" style="background:${s.bgColor}">
+    <div class="step-card-num" style="background:rgba(0,0,0,.25)">${s.icon}</div>
+    <div>
+      <div class="step-card-title">Step ${s.num}. ${s.title}</div>
+      <div class="step-card-desc">${s.subtitle} — ${s.desc}</div>
+    </div>
+    <a href="${s.subtitle}" class="btn btn-secondary btn-sm" style="margin-left:auto;background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);color:#fff;flex-shrink:0">바로가기 →</a>
+  </div>
+  <div class="step-card-body">
+    <div class="io-row">
+      <div class="io-box">
+        <div class="io-box-label" style="color:${s.color}">📥 입력</div>
+        ${s.inputs.map(i => `<div class="io-item"><div class="io-dot" style="background:${s.color}60"></div>${i}</div>`).join('')}
+      </div>
+      <div class="io-box">
+        <div class="io-box-label" style="color:${s.color}">📤 출력</div>
+        ${s.outputs.map(o => `<div class="io-item"><div class="io-dot" style="background:${s.color}60"></div>${o}</div>`).join('')}
+      </div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
+      ${s.features.map(f => `<span style="font-size:12.5px;padding:3px 9px;border-radius:var(--r-full);background:${s.color}12;border:1px solid ${s.color}30;color:${s.color};font-weight:600">${f}</span>`).join('')}
+    </div>
+    <div class="tip-box" style="border-left-color:${s.color}">
+      <div class="tip-icon">💡</div>
+      <div class="tip-text">${s.tip}</div>
+    </div>
+  </div>
+</div>
+`).join('');
+
+/* ── Phase 2 실행 순서 ── */
+document.getElementById('p2Steps').innerHTML = [
+  { n:1, title:'결과물 폴더 지정', desc:'고도화 엔진 페이지에서 개발 완료된 폴더 경로를 입력합니다.' },
+  { n:2, title:'Claude Code 터미널 실행', desc:'해당 폴더에서 Claude Code를 시작합니다.' },
+  { n:3, title:'/review-evaluate 실행', desc:'AI가 5개 기준(아키텍처·코드·보안·성능·유지보수)으로 자동 평가합니다.' },
+  { n:4, title:'자동 개선 적용', desc:'평가 결과 기반으로 코드를 자동 수정합니다.' },
+  { n:5, title:'3회 이상 반복 → 97점 달성', desc:'목표 점수 도달 시 프로덕션 배포 가능 상태입니다.' }
+].map(s => `
+  <div style="display:flex;gap:10px;margin-bottom:10px;align-items:flex-start">
+    <div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#ea580c,#c2410c);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">${s.n}</div>
+    <div>
+      <div style="font-size:14px;font-weight:700;color:var(--text)">${s.title}</div>
+      <div style="font-size:12.5px;color:var(--text2);margin-top:2px">${s.desc}</div>
+    </div>
+  </div>
+`).join('');
+
+/* ── 평가 기준 ── */
+document.getElementById('evalCriteria').innerHTML = [
+  { icon:'🏗️', name:'아키텍처 품질', pts:20 },
+  { icon:'💻', name:'코드 품질', pts:20 },
+  { icon:'🛡️', name:'보안', pts:20 },
+  { icon:'⚡', name:'성능', pts:20 },
+  { icon:'🔧', name:'유지보수성', pts:20 }
+].map(c => `
+  <div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--bg2);border-radius:var(--r-md);margin-bottom:7px;border:1px solid var(--border)">
+    <span style="font-size:19px">${c.icon}</span>
+    <span style="font-size:13.5px;font-weight:700;color:var(--text);flex:1">${c.name}</span>
+    <span style="font-size:15px;font-weight:900;color:var(--accent)">${c.pts}점</span>
+  </div>
+`).join('');
+
+/* ── 분대 그리드 ── */
+document.getElementById('squadGrid').innerHTML = [
+  { emoji:'🎖️', name:'HQ 본부', role:'오케스트레이션·지휘', color:'#8b949e', always:true },
+  { emoji:'🔴', name:'Alpha', role:'아키텍처 설계', color:'#f85149', always:false },
+  { emoji:'🔵', name:'Bravo', role:'핵심 개발·API', color:'#58a6ff', always:true },
+  { emoji:'🟢', name:'Charlie', role:'QA·문서화', color:'#3fb950', always:true },
+  { emoji:'🟠', name:'Delta', role:'데이터·AI 연동', color:'#f0883e', always:false },
+  { emoji:'🟣', name:'Echo', role:'보안·CI/CD', color:'#bc8cff', always:false },
+].map(sq => `
+  <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r-md);background:${sq.color}0d;border:1px solid ${sq.color}30;margin-bottom:6px">
+    <span style="font-size:20px">${sq.emoji}</span>
+    <div style="flex:1">
+      <div style="font-size:13.5px;font-weight:700;color:${sq.color}">${sq.name}</div>
+      <div style="font-size:12px;color:var(--text3)">${sq.role}</div>
+    </div>
+    <span style="font-size:11px;padding:2px 7px;border-radius:var(--r-full);background:${sq.always?'rgba(63,185,80,.15)':'rgba(139,148,158,.1)'};color:${sq.always?'#3fb950':'#8b949e'};font-weight:700">${sq.always?'항상':'복잡도 8+'}</span>
+  </div>
+`).join('');
+
+/* ── 모델 계층 ── */
+document.getElementById('modelTiers').innerHTML = [
+  { model:'Haiku', pct:60, color:'#3fb950', uses:'반복 작업·요약·검색·연락병' },
+  { model:'Sonnet', pct:35, color:'#58a6ff', uses:'핵심 개발·API·코드 생성' },
+  { model:'Opus',  pct:5,  color:'#bc8cff', uses:'아키텍처 설계·최종 판단' },
+].map(m => `
+  <div style="margin-bottom:10px">
+    <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+      <span style="font-size:13.5px;font-weight:700;color:${m.color}">${m.model}</span>
+      <span style="font-size:12.5px;color:var(--text3)">${m.uses}</span>
+    </div>
+    <div style="height:8px;background:var(--bg2);border-radius:4px;overflow:hidden">
+      <div style="height:100%;width:${m.pct}%;background:${m.color};border-radius:4px"></div>
+    </div>
+    <div style="font-size:11.5px;color:var(--text3);margin-top:2px;text-align:right;font-weight:700">${m.pct}%</div>
+  </div>
+`).join('');
+
+/* ── 스킬 그리드 ── */
+const skills = [
+  { icon:'🔍', name:'review-evaluate', phase:'P2' },
+  { icon:'🏗️', name:'api-builder-core', phase:'P1' },
+  { icon:'🧪', name:'api-test-core', phase:'P2' },
+  { icon:'🚀', name:'cicd-setup-core', phase:'P2' },
+  { icon:'🖼️', name:'create-image-core', phase:'P1' },
+  { icon:'🗄️', name:'db-schema-core', phase:'P1' },
+  { icon:'📦', name:'deploy-skill-core', phase:'P1' },
+  { icon:'🤖', name:'deploy-subagent-core', phase:'P1' },
+  { icon:'📄', name:'doc-generator-core', phase:'P1' },
+  { icon:'🔬', name:'e2e-test-core', phase:'P2' },
+  { icon:'🔎', name:'find-skills-core', phase:'P1' },
+  { icon:'⚡', name:'performance-check-core', phase:'P2' },
+  { icon:'🎯', name:'platoon-formation-v2', phase:'P1' },
+  { icon:'🛡️', name:'security-audit-core', phase:'P2' },
+  { icon:'🔧', name:'troubleshoot-core', phase:'P2' },
+  { icon:'🎨', name:'ui-ux-builder-core', phase:'P1' },
+  { icon:'🔗', name:'cpc-engage', phase:'P1' },
+  { icon:'📊', name:'exploratory-data-analysis', phase:'P1' },
+  { icon:'🎬', name:'youtube-generate-core', phase:'P1' },
+];
+document.getElementById('skillGrid').innerHTML = skills.map(s => `
+  <div class="feature-chip" style="border-color:${s.phase==='P1'?'rgba(37,99,235,.2)':'rgba(234,88,12,.2)'}">
+    <span class="feature-chip-icon">${s.icon}</span>
+    <div>
+      <div style="font-size:12px;font-weight:700">${s.name}</div>
+      <div style="font-size:11px;margin-top:1px;color:${s.phase==='P1'?'#3b82f6':'#ea580c'};font-weight:700">${s.phase}</div>
+    </div>
+  </div>
+`).join('');
+
+/* ── FAQ ── */
+const faqs = [
+  { q:'Phase 1과 Phase 2의 차이가 무엇인가요?',
+    a:'Phase 1은 결과물을 만들기 전 단계입니다. 프로젝트 정보를 입력하면 AI 분대 편성, 스킬 전략, Claude Code 명령어가 자동 생성됩니다. Phase 2는 개발이 완료된 결과물 폴더에 적용하는 고도화 단계입니다. /review-evaluate를 3회 이상 실행하면 V1(70점)에서 V4(97점)까지 자동으로 코드 품질이 향상됩니다.' },
+  { q:'저장된 데이터는 어디에 보관되나요?',
+    a:'브라우저의 localStorage에 저장됩니다. 키 이름은 "vcosProject"이며 01-intent.html에서 저장한 JSON을 02~06 단계가 자동으로 읽어 분석합니다. 브라우저를 닫아도 데이터가 유지되며, "불러오기" 버튼으로 이전 프로젝트를 복원할 수 있습니다.' },
+  { q:'기본 포함 기능과 추가 기능 선택의 차이는 무엇인가요?',
+    a:'기본 포함 기능(프로젝트 구조 설정, 라우팅, 반응형 레이아웃, 에러 처리, 환경 설정)은 모든 프로젝트에 항상 자동으로 구현됩니다. 추가 기능(사용자 인증, AI 채팅, 결제 등 16가지)은 선택한 경우에만 개발 명령어에 포함됩니다. 기본 기능 중 원하지 않는 것이 있으면 체크를 해제하여 제외할 수 있습니다.' },
+  { q:'19개 스킬은 모두 사용되나요?',
+    a:'아니요. 프로젝트 피처와 복잡도에 따라 관련 스킬만 자동 활성화됩니다. 예를 들어 결제 기능이 없으면 결제 관련 스킬은 비활성화됩니다. 04-스킬 전략 페이지에서 "비활성 포함 전체 보기" 버튼으로 모든 스킬을 확인하고 수동으로 조정할 수 있습니다.' },
+  { q:'Phase 2 고도화를 사용하려면 Phase 1을 먼저 해야 하나요?',
+    a:'아니요. Phase 2는 Phase 1 데이터와 완전히 독립적으로 작동합니다. 고도화 엔진 페이지(06-refinement.html)에서 개발이 완료된 폴더 경로만 입력하면 바로 사용할 수 있습니다. Phase 1을 거치지 않고 다른 방법으로 개발한 프로젝트에도 Phase 2를 적용할 수 있습니다.' },
+  { q:'명령어를 복사한 후 어떻게 사용하나요?',
+    a:'1) Claude Code 터미널을 열고, 2) 생성된 명령어를 붙여넣기(Ctrl+V)한 후, 3) Enter를 누르면 AI가 자동으로 개발을 시작합니다. 개발이 완료되면 결과물 폴더를 Phase 2 고도화 엔진에 입력하여 코드 품질을 97점 수준으로 향상시키세요.' },
+];
+
+document.getElementById('faqList').innerHTML = faqs.map((f, i) => `
+  <div class="faq-item" id="faq${i}">
+    <div class="faq-q" onclick="toggleFaq(${i})">
+      <span style="width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0">${i+1}</span>
+      ${f.q}
+      <span class="faq-toggle">▼</span>
+    </div>
+    <div class="faq-a">${f.a}</div>
+  </div>
+`).join('');
+
+function toggleFaq(i) {
+  const el = document.getElementById('faq' + i);
+  el.classList.toggle('open');
+}
+</script>
+</body>
+</html>
