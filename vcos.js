@@ -5,6 +5,15 @@
 
 const STORAGE_KEY = 'vcos_project';
 
+/* ── Clipboard Helper ────────────────────────────────────── */
+function copyText(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✅ 복사됨!';
+    setTimeout(() => btn.textContent = orig, 1800);
+  });
+}
+
 /* ── Feature Labels ─────────────────────────────────────── */
 const FEATURE_LABELS = {
   user_auth:    '👤 사용자 인증/로그인',
