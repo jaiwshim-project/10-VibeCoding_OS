@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 대시보드 | RegenMed Consulting</title>
+    <link rel="stylesheet" href="../style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* ===== 프리미엄 관리자 대시보드 (라이트) ===== */
+        body { background: #F0F2F8; }
+        .admin-container { max-width: 1280px; margin: 0 auto; padding: 110px 28px 80px; }
+
+        /* 헤더 영역 */
+        .admin-header {
+            margin-bottom: 36px;
+            padding: 36px 40px;
+            background: linear-gradient(135deg, #1E3A5F 0%, #2B4C7E 50%, #1A3D6D 100%);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(30,58,95,0.25);
+        }
+        .admin-header::before {
+            content: '';
+            position: absolute;
+            top: -50%; right: -20%;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .admin-header h1 {
+            font-size: 26px; font-weight: 900; margin-bottom: 6px;
+            color: #fff;
+            position: relative;
+        }
+        .admin-header p { color: #B8D0EA; font-size: 14px; position: relative; }
+
+        /* 스탯 카드 */
+        .admin-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-bottom: 32px; }
+        .stat-card {
+            background: #fff;
+            border: 1px solid #E2E8F0;
+            border-radius: 20px;
+            padding: 26px 28px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+        }
+        .stat-card::after {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 4px;
+            border-radius: 20px 20px 0 0;
+        }
+        .stat-card:nth-child(1)::after { background: linear-gradient(90deg, #3B82F6, #60A5FA); }
+        .stat-card:nth-child(2)::after { background: linear-gradient(90deg, #10B981, #34D399); }
+        .stat-card:nth-child(3)::after { background: linear-gradient(90deg, #F59E0B, #FBBF24); }
+        .stat-card:nth-child(4)::after { background: linear-gradient(90deg, #EF4444, #F87171); }
+        .stat-card .stat-label { font-size: 12px; color: #6B7280; margin-bottom: 10px; font-weight: 600; letter-spacing: 0.5px; }
+        .stat-card .stat-value { font-size: 36px; font-weight: 900; }
+        .stat-card:nth-child(1) .stat-value { color: #2563EB; }
+        .stat-card:nth-child(2) .stat-value { color: #059669; }
+        .stat-card:nth-child(3) .stat-value { color: #D97706; }
+        .stat-card:nth-child(4) .stat-value { color: #DC2626; }
+        .stat-card .stat-sub { font-size: 11px; color: #9CA3AF; margin-top: 6px; }
+
+        /* 테이블 래퍼 */
+        .admin-table-wrap {
+            background: #fff;
+            border: 1px solid #E2E8F0;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+        }
+        .admin-table-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 22px 28px;
+            border-bottom: 1px solid #E5E7EB;
+            background: #FAFBFD;
+        }
+        .admin-table-header h2 { font-size: 17px; font-weight: 800; color: #1E293B; }
+        .btn-clear-data {
+            background: linear-gradient(135deg, #EF4444, #DC2626);
+            color: #fff; border: none; padding: 9px 20px; border-radius: 10px;
+            font-size: 12px; cursor: pointer; font-weight: 700;
+            box-shadow: 0 2px 8px rgba(239,68,68,0.25);
+            transition: all 0.2s;
+        }
+        .btn-clear-data:hover { box-shadow: 0 4px 14px rgba(239,68,68,0.35); transform: translateY(-1px); }
+
+        /* 테이블 */
+        .admin-table { width: 100%; border-collapse: collapse; }
+        .admin-table th {
+            background: #F8FAFC;
+            padding: 13px 18px; text-align: left;
+            font-size: 11px; font-weight: 700; color: #64748B;
+            text-transform: uppercase; letter-spacing: 0.8px;
+            border-bottom: 2px solid #E2E8F0;
+            white-space: nowrap;
+        }
+        .admin-table td {
+            padding: 15px 18px; font-size: 13px; color: #334155;
+            border-bottom: 1px solid #F1F5F9;
+        }
+        .admin-table tr:hover td { background: #F8FAFC; }
+        .admin-table td strong { color: #1E293B; }
+
+        /* 등급 태그 */
+        .grade-tag { display: inline-block; padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 800; letter-spacing: 0.3px; }
+        .grade-tag.grade-a { background: #ECFDF5; color: #059669; border: 1px solid #A7F3D0; }
+        .grade-tag.grade-b { background: #FFFBEB; color: #D97706; border: 1px solid #FDE68A; }
+        .grade-tag.grade-c { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; }
+
+        /* 세그먼트 바 */
+        .score-bar-mini { display: inline-flex; gap: 2px; width: 80px; height: 8px; vertical-align: middle; margin-right: 8px; }
+        .score-bar-mini .mini-seg { display: block; flex: 1; height: 8px; background: #E2E8F0; border-radius: 2px; overflow: hidden; }
+        .score-bar-mini .mini-seg .mini-seg-fill { display: block; height: 8px; border-radius: 2px; }
+
+        .no-data { padding: 60px 20px; text-align: center; color: #94A3B8; font-size: 15px; }
+        .detail-btn {
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+            color: #fff; border: none; padding: 7px 16px; border-radius: 8px;
+            font-size: 12px; font-weight: 700; cursor: pointer;
+            box-shadow: 0 2px 8px rgba(59,130,246,0.25);
+            transition: all 0.2s;
+        }
+        .detail-btn:hover { box-shadow: 0 4px 14px rgba(59,130,246,0.35); transform: translateY(-1px); }
+
+        /* 모달 */
+        .admin-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.5); backdrop-filter: blur(6px); z-index: 9999; justify-content: center; align-items: center; }
+        .admin-modal-overlay.active { display: flex; }
+        .admin-modal {
+            background: #fff;
+            border: 1px solid #E2E8F0;
+            border-radius: 24px; max-width: 620px; width: 92%; max-height: 80vh;
+            overflow-y: auto; padding: 36px;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.15);
+        }
+        .admin-modal h3 { font-size: 19px; font-weight: 800; margin-bottom: 22px; color: #1E293B; }
+        .modal-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+        .modal-info-item {
+            padding: 14px 16px;
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 12px;
+        }
+        .modal-info-item .label { font-size: 11px; color: #64748B; margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .modal-info-item .value { font-size: 14px; font-weight: 700; color: #1E293B; }
+        .modal-score-section { margin-bottom: 20px; }
+        .modal-score-section h4 { font-size: 15px; font-weight: 700; margin-bottom: 14px; color: #334155; }
+        .modal-part-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+        .modal-part-label { width: 130px; font-size: 12px; color: #64748B; font-weight: 600; }
+        .modal-part-bar { flex: 1; height: 8px; background: #E2E8F0; border-radius: 4px; }
+        .modal-part-bar-fill { height: 100%; border-radius: 4px; }
+        .modal-part-score { font-size: 13px; font-weight: 800; width: 55px; text-align: right; color: #1E293B; }
+        .modal-close {
+            background: #F1F5F9; color: #475569; border: 1px solid #E2E8F0;
+            padding: 11px 28px; border-radius: 12px; font-size: 13px; cursor: pointer;
+            font-weight: 700; margin-top: 18px; transition: background 0.2s;
+        }
+        .modal-close:hover { background: #E2E8F0; }
+        .modal-note {
+            margin-top: 16px; padding: 14px 18px;
+            background: #FFFBEB;
+            border: 1px solid #FDE68A;
+            border-radius: 12px; font-size: 13px; color: #92400E;
+        }
+
+        /* 탭 */
+        .admin-tabs {
+            display: flex; gap: 4px; margin-bottom: 0;
+            background: #F1F5F9;
+            border-radius: 20px 20px 0 0;
+            padding: 6px 6px 0;
+        }
+        .admin-tab {
+            flex: 1; padding: 14px 20px; text-align: center;
+            font-size: 13px; font-weight: 700; color: #94A3B8;
+            background: transparent; border: none; cursor: pointer;
+            border-radius: 14px 14px 0 0; transition: all 0.25s;
+        }
+        .admin-tab.active {
+            background: #fff;
+            color: #2563EB;
+            box-shadow: 0 -2px 12px rgba(37,99,235,0.08);
+        }
+        .admin-tab:hover:not(.active) { color: #64748B; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .tab-panel { background: transparent; }
+
+        /* 일련번호 링크 */
+        .serial-link {
+            color: #2563EB; font-weight: 800; text-decoration: none; cursor: pointer;
+            font-family: 'Courier New', monospace; letter-spacing: 1px;
+        }
+        .serial-link:hover { text-decoration: underline; color: #1D4ED8; }
+
+        /* 문의 테이블 */
+        .inquiry-text { max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12px; color: #475569; }
+        .inquiry-full { white-space: normal; max-width: none; }
+
+        /* 로그인 화면 */
+        .admin-login-overlay {
+            position: fixed; inset: 0; z-index: 10000;
+            background: linear-gradient(135deg, #1E3A5F 0%, #2B4C7E 40%, #1A3D6D 100%);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .admin-login-card {
+            background: #fff;
+            border-radius: 28px; padding: 52px 44px; text-align: center;
+            max-width: 420px; width: 92%;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.2);
+        }
+        .admin-login-card .login-icon { font-size: 52px; margin-bottom: 18px; }
+        .admin-login-card h2 {
+            font-size: 22px; font-weight: 900; margin-bottom: 8px;
+            color: #1E293B;
+        }
+        .admin-login-card p { font-size: 13px; color: #64748B; margin-bottom: 30px; }
+        .admin-login-card input[type="password"] {
+            width: 100%; padding: 15px 18px;
+            background: #F8FAFC;
+            border: 2px solid #E2E8F0;
+            border-radius: 14px;
+            font-size: 18px; text-align: center; letter-spacing: 6px;
+            color: #1E293B; outline: none;
+            transition: border-color 0.3s;
+        }
+        .admin-login-card input[type="password"]::placeholder { color: #CBD5E1; }
+        .admin-login-card input[type="password"]:focus { border-color: #3B82F6; box-shadow: 0 0 0 4px rgba(59,130,246,0.1); }
+        .admin-login-card input[type="password"].error { border-color: #EF4444; animation: shake 0.4s; }
+        .admin-login-card .login-btn {
+            display: block; width: 100%; margin-top: 18px; padding: 15px;
+            background: linear-gradient(135deg, #2563EB, #3B82F6);
+            color: #fff; border: none; border-radius: 14px;
+            font-size: 15px; font-weight: 800; cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(37,99,235,0.3);
+        }
+        .admin-login-card .login-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(37,99,235,0.4); }
+        .admin-login-card .login-error { color: #EF4444; font-size: 13px; margin-top: 14px; display: none; font-weight: 600; }
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+
+        /* 검색 바 */
+        .search-bar {
+            display: flex; flex-wrap: wrap; gap: 10px;
+            padding: 16px 24px;
+            background: #F8FAFC;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        .search-bar input[type="text"],
+        .search-bar input[type="date"],
+        .search-bar select {
+            padding: 10px 14px;
+            background: #fff;
+            border: 1px solid #D1D5DB;
+            border-radius: 10px; font-size: 13px;
+            color: #334155; outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .search-bar input[type="text"] { flex: 1; min-width: 180px; }
+        .search-bar input::placeholder { color: #94A3B8; }
+        .search-bar input:focus, .search-bar select:focus {
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+        }
+        .search-bar select { min-width: 120px; }
+        .search-bar .date-range { display: flex; align-items: center; gap: 6px; }
+        .search-bar .date-range span { font-size: 12px; color: #94A3B8; }
+        .search-bar .btn-reset {
+            background: #E2E8F0; color: #475569;
+            border: 1px solid #CBD5E1;
+            padding: 10px 18px; border-radius: 10px;
+            font-size: 12px; cursor: pointer; font-weight: 700; white-space: nowrap;
+            transition: background 0.2s;
+        }
+        .search-bar .btn-reset:hover { background: #CBD5E1; }
+        .search-count {
+            padding: 8px 24px; font-size: 11px; font-weight: 600; color: #64748B;
+            background: #FAFBFD;
+            border-bottom: 1px solid #F1F5F9;
+            letter-spacing: 0.3px;
+        }
+
+        @media (max-width: 768px) {
+            .admin-table-wrap { overflow-x: auto; }
+            .modal-info-grid { grid-template-columns: 1fr; }
+            .search-bar { flex-direction: column; }
+            .search-bar input[type="text"] { min-width: auto; }
+            .admin-header { padding: 28px 24px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <header class="header" id="header">
+        <div class="header-container">
+            <a href="../index.html" class="logo">
+                <span class="logo-icon">🧬</span>
+                <span class="logo-text">RegenMed<span class="logo-highlight">Consulting</span></span>
+            </a>
+            <nav class="nav">
+                <a href="why-us.html" class="nav-link">왜 우리인가</a>
+                <div class="nav-dropdown">
+                    <a href="services.html" class="nav-link">서비스 <span class="nav-arrow">▾</span></a>
+                    <div class="nav-dropdown-menu">
+                        <a href="services.html" class="dropdown-link">서비스 소개</a>
+                        <a href="diagnosis.html" class="dropdown-link">비즈니스 진단</a>
+                        <a href="results.html" class="dropdown-link">진단 결과 보기</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <a href="nkcl.html" class="nav-link">파트너 <span class="nav-arrow">▾</span></a>
+                    <div class="nav-dropdown-menu">
+                        <a href="nkcl.html" class="dropdown-link">NKCL Bio Group</a>
+                        <a href="exvar.html" class="dropdown-link">ExVAR 셀테라피</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <a href="process.html" class="nav-link">프로세스 <span class="nav-arrow">▾</span></a>
+                    <div class="nav-dropdown-menu">
+                        <a href="process.html" class="dropdown-link">컨설팅 프로세스</a>
+                        <a href="sop-guide.html" class="dropdown-link">표준작업지침서</a>
+                    </div>
+                </div>
+                <a href="expertise.html" class="nav-link">전문분야</a>
+                <a href="requirements.html" class="nav-link">시설요건</a>
+            </nav>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="why-us.html" class="mobile-nav-link">왜 우리인가</a>
+        <a href="services.html" class="mobile-nav-link">서비스</a>
+        <a href="diagnosis.html" class="mobile-nav-link mobile-sub-link">↳ 비즈니스 진단</a>
+        <a href="results.html" class="mobile-nav-link mobile-sub-link">↳ 진단 결과 보기</a>
+        <a href="nkcl.html" class="mobile-nav-link">파트너</a>
+        <a href="nkcl.html" class="mobile-nav-link mobile-sub-link">↳ NKCL Bio Group</a>
+        <a href="exvar.html" class="mobile-nav-link mobile-sub-link">↳ ExVAR 셀테라피</a>
+        <div class="mobile-nav-accordion">
+            <button class="mobile-nav-accordion-btn">프로세스 <span class="mobile-acc-arrow">▾</span></button>
+            <div class="mobile-nav-accordion-content">
+                <a href="process.html" class="mobile-nav-sub-link">컨설팅 프로세스</a>
+                <a href="sop-guide.html" class="mobile-nav-sub-link">표준작업지침서</a>
+            </div>
+        </div>
+        <a href="expertise.html" class="mobile-nav-link">전문분야</a>
+        <a href="requirements.html" class="mobile-nav-link">시설요건</a>
+        <a href="results.html" class="mobile-nav-link nav-cta-mobile">진단 결과 보기</a>
+    </div>
+
+    <!-- 비밀번호 입력 -->
+    <div class="admin-login-overlay" id="loginOverlay">
+        <div class="admin-login-card">
+            <div class="login-icon">🔒</div>
+            <h2>관리자 인증</h2>
+            <p>대시보드에 접근하려면 비밀번호를 입력하세요</p>
+            <form id="loginForm">
+                <input type="password" id="adminPw" placeholder="비밀번호 입력" autocomplete="off" autofocus>
+                <button type="submit" class="login-btn">확인</button>
+                <p class="login-error" id="loginError">비밀번호가 올바르지 않습니다</p>
+            </form>
+        </div>
+    </div>
+
+    <div class="admin-container" id="adminContainer" style="display:none;">
+        <div class="admin-header">
+            <h1>관리자 대시보드</h1>
+            <p>진단 신청자 정보 및 결과를 확인합니다</p>
+        </div>
+
+        <div class="admin-stats" id="adminStats">
+            <div class="stat-card">
+                <div class="stat-label">총 진단 건수</div>
+                <div class="stat-value" id="statTotal">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">A등급 (80점 이상)</div>
+                <div class="stat-value" id="statA" style="color:#00B894">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">B등급 (60~79점)</div>
+                <div class="stat-value" id="statB" style="color:#FDCB6E">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">C등급 (60점 미만)</div>
+                <div class="stat-value" id="statC" style="color:#E17055">0</div>
+            </div>
+        </div>
+
+        <div class="admin-table-wrap">
+            <div class="admin-tabs">
+                <button class="admin-tab active" data-tab="tab1">AI 분석 리포트</button>
+                <button class="admin-tab" data-tab="tab2">문의사항</button>
+            </div>
+
+            <!-- 탭1: AI 분석 리포트 -->
+            <div class="tab-content tab-panel active" id="tab1">
+                <div class="admin-table-header">
+                    <h2>AI 분석 리포트 목록</h2>
+                    <button class="btn-clear-data" onclick="if(confirm('모든 진단 기록을 삭제하시겠습니까?')){localStorage.removeItem('diagnosisHistory');location.reload();}">전체 삭제</button>
+                </div>
+                <div class="search-bar" id="reportSearchBar">
+                    <input type="text" id="reportSearch" placeholder="일련번호, 이름, 병원/기관명 검색..." oninput="filterReportTable()">
+                    <select id="reportGrade" onchange="filterReportTable()">
+                        <option value="">전체 등급</option>
+                        <option value="A">A등급</option>
+                        <option value="B">B등급</option>
+                        <option value="C">C등급</option>
+                    </select>
+                    <div class="date-range">
+                        <input type="date" id="reportDateFrom" onchange="filterReportTable()">
+                        <span>~</span>
+                        <input type="date" id="reportDateTo" onchange="filterReportTable()">
+                    </div>
+                    <button class="btn-reset" onclick="resetReportFilter()">초기화</button>
+                </div>
+                <div class="search-count" id="reportCount"></div>
+                <div style="overflow-x:auto;">
+                    <table class="admin-table" id="reportTable" style="display:none;">
+                        <thead>
+                            <tr>
+                                <th>일련번호</th>
+                                <th>날짜</th>
+                                <th>성함</th>
+                                <th>병원/기관</th>
+                                <th>총점</th>
+                                <th>등급</th>
+                                <th>P1 입지</th>
+                                <th>P2 시설</th>
+                                <th>P3 운영</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportBody"></tbody>
+                    </table>
+                    <div class="no-data" id="noDataReport">진단 기록이 없습니다.</div>
+                </div>
+            </div>
+
+            <!-- 탭2: 문의사항 -->
+            <div class="tab-content tab-panel" id="tab2">
+                <div class="admin-table-header">
+                    <h2>문의사항 목록</h2>
+                </div>
+                <div class="search-bar" id="inquirySearchBar">
+                    <input type="text" id="inquirySearch" placeholder="이름, 연락처, 문의내용 검색..." oninput="filterInquiryTable()">
+                    <button class="btn-reset" onclick="resetInquiryFilter()">초기화</button>
+                </div>
+                <div class="search-count" id="inquiryCount"></div>
+                <div style="overflow-x:auto;">
+                    <table class="admin-table" id="inquiryTable" style="display:none;">
+                        <thead>
+                            <tr>
+                                <th>일련번호</th>
+                                <th>날짜</th>
+                                <th>성함</th>
+                                <th>연락처</th>
+                                <th>이메일</th>
+                                <th>문의내용</th>
+                                <th>상세</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inquiryBody"></tbody>
+                    </table>
+                    <div class="no-data" id="noDataInquiry">문의사항이 없습니다.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 상세 모달 -->
+    <div class="admin-modal-overlay" id="detailModal">
+        <div class="admin-modal">
+            <h3 id="modalTitle">진단 상세 정보</h3>
+            <div class="modal-info-grid" id="modalInfo"></div>
+            <div class="modal-score-section" id="modalScores"></div>
+            <div class="modal-note" id="modalNote" style="display:none;"></div>
+            <button class="modal-close" onclick="document.getElementById('detailModal').classList.remove('active')">닫기</button>
+        </div>
+    </div>
+
+    <script src="../js/supabase.js"></script>
+    <script src="../script.js"></script>
+    <script>
+    // 비밀번호 인증
+    (function() {
+        var overlay = document.getElementById('loginOverlay');
+        var container = document.getElementById('adminContainer');
+        var pwInput = document.getElementById('adminPw');
+        var errorMsg = document.getElementById('loginError');
+        var PASS = '963314';
+
+        // 이미 인증된 세션이면 바로 표시
+        if (sessionStorage.getItem('adminAuth') === 'true') {
+            overlay.style.display = 'none';
+            container.style.display = 'block';
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (pwInput.value === PASS) {
+                sessionStorage.setItem('adminAuth', 'true');
+                overlay.style.display = 'none';
+                container.style.display = 'block';
+            } else {
+                pwInput.classList.add('error');
+                errorMsg.style.display = 'block';
+                setTimeout(function() { pwInput.classList.remove('error'); }, 400);
+                pwInput.value = '';
+                pwInput.focus();
+            }
+        });
+    })();
+
+    (function() {
+        // 탭 전환
+        document.querySelectorAll('.admin-tab').forEach(function(tab) {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.admin-tab').forEach(function(t) { t.classList.remove('active'); });
+                document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+                tab.classList.add('active');
+                document.getElementById(tab.getAttribute('data-tab')).classList.add('active');
+            });
+        });
+
+        // 모달 배경 클릭 닫기
+        document.getElementById('detailModal').addEventListener('click', function(e) {
+            if (e.target === this) this.classList.remove('active');
+        });
+
+        function serialNo(id) {
+            return String(id).padStart(4, '0');
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            var d = new Date(dateStr);
+            return d.getFullYear() + '.' + String(d.getMonth()+1).padStart(2,'0') + '.' + String(d.getDate()).padStart(2,'0');
+        }
+
+        // === Supabase에서 진단 데이터 로드 (탭1) ===
+        supabaseFetchDiagnoses().then(function(diagnoses) {
+            document.getElementById('statTotal').textContent = diagnoses.length;
+            var a = 0, b = 0, c = 0;
+            diagnoses.forEach(function(r) {
+                if (r.pct >= 80) a++;
+                else if (r.pct >= 60) b++;
+                else c++;
+            });
+            document.getElementById('statA').textContent = a;
+            document.getElementById('statB').textContent = b;
+            document.getElementById('statC').textContent = c;
+
+            if (diagnoses.length === 0) return;
+
+            document.getElementById('reportTable').style.display = 'table';
+            document.getElementById('noDataReport').style.display = 'none';
+
+            var reportBody = document.getElementById('reportBody');
+            diagnoses.forEach(function(r) {
+                var tr = document.createElement('tr');
+                var pct = r.pct;
+                var gradeClass = pct >= 80 ? 'grade-a' : pct >= 60 ? 'grade-b' : 'grade-c';
+                var gradeName = pct >= 80 ? 'A' : pct >= 60 ? 'B' : 'C';
+                var barColor = pct >= 80 ? '#00B894' : pct >= 60 ? '#FDCB6E' : '#E17055';
+
+                var segCols = ['#E17055', '#FDCB6E', '#F6E05E', '#48BB78', '#004DA6'];
+                function miniBar(score) {
+                    var html = '<span class="score-bar-mini">';
+                    for (var s = 0; s < 5; s++) {
+                        var sMin = s * 10, sMax = (s+1) * 10;
+                        var fw = score >= sMax ? 100 : score > sMin ? ((score - sMin) / 10) * 100 : 0;
+                        html += '<span class="mini-seg"><span class="mini-seg-fill" style="width:' + fw + '%;background:' + segCols[s] + '"></span></span>';
+                    }
+                    html += '</span>' + score + '/50';
+                    return html;
+                }
+                function miniBarPct(pct) {
+                    var html = '<span class="score-bar-mini">';
+                    for (var s = 0; s < 5; s++) {
+                        var sMin = s * 20, sMax = (s+1) * 20;
+                        var fw = pct >= sMax ? 100 : pct > sMin ? ((pct - sMin) / 20) * 100 : 0;
+                        html += '<span class="mini-seg"><span class="mini-seg-fill" style="width:' + fw + '%;background:' + segCols[s] + '"></span></span>';
+                    }
+                    html += '</span>';
+                    return html;
+                }
+
+                tr.innerHTML =
+                    '<td><a class="serial-link" href="results.html?id=' + r.id + '">' + serialNo(r.id) + '</a></td>' +
+                    '<td>' + formatDate(r.created_at) + '</td>' +
+                    '<td><strong>' + (r.name || '-') + '</strong></td>' +
+                    '<td>' + (r.hospital || '-') + '</td>' +
+                    '<td>' + miniBarPct(pct) + pct + '점</td>' +
+                    '<td><span class="grade-tag ' + gradeClass + '">' + gradeName + '</span></td>' +
+                    '<td>' + miniBar(r.scores_p1) + '</td>' +
+                    '<td>' + miniBar(r.scores_p2) + '</td>' +
+                    '<td>' + miniBar(r.scores_p3) + '</td>';
+                reportBody.appendChild(tr);
+            });
+
+            // 진단 데이터 중 note가 있는 것은 문의 탭에도 표시
+            var hasInquiry = false;
+            var inquiryBody = document.getElementById('inquiryBody');
+            diagnoses.forEach(function(r) {
+                var note = r.note || '';
+                if (!note.trim()) return;
+                hasInquiry = true;
+                var tr = document.createElement('tr');
+                tr.innerHTML =
+                    '<td><a class="serial-link" href="results.html?id=' + r.id + '">' + serialNo(r.id) + '</a></td>' +
+                    '<td>' + formatDate(r.created_at) + '</td>' +
+                    '<td><strong>' + (r.name || '-') + '</strong></td>' +
+                    '<td>' + (r.phone || '-') + '</td>' +
+                    '<td>' + (r.email || '-') + '</td>' +
+                    '<td><div class="inquiry-text">' + note + '</div></td>' +
+                    '<td><button class="detail-btn" data-id="' + r.id + '">상세</button></td>';
+                inquiryBody.appendChild(tr);
+            });
+
+            // Supabase에서 문의사항(contact form) 데이터도 로드
+            supabaseFetchInquiries().then(function(inquiries) {
+                inquiries.forEach(function(q) {
+                    hasInquiry = true;
+                    var tr = document.createElement('tr');
+                    tr.innerHTML =
+                        '<td>C' + String(q.id).padStart(4, '0') + '</td>' +
+                        '<td>' + formatDate(q.created_at) + '</td>' +
+                        '<td><strong>' + (q.name || '-') + '</strong></td>' +
+                        '<td>' + (q.phone || '-') + '</td>' +
+                        '<td>' + (q.email || '-') + '</td>' +
+                        '<td><div class="inquiry-text">' + (q.message || '') + '</div></td>' +
+                        '<td><span style="color:#999;font-size:12px;">문의폼</span></td>';
+                    inquiryBody.appendChild(tr);
+                });
+                if (hasInquiry) {
+                    document.getElementById('inquiryTable').style.display = 'table';
+                    document.getElementById('noDataInquiry').style.display = 'none';
+                }
+            });
+
+            // 상세 모달
+            inquiryBody.addEventListener('click', function(e) {
+                if (!e.target.classList.contains('detail-btn')) return;
+                var rid = parseInt(e.target.getAttribute('data-id'));
+                var r = diagnoses.find(function(d) { return d.id === rid; });
+                if (!r) return;
+
+                document.getElementById('modalTitle').textContent = serialNo(r.id) + ' ' + (r.name || '미입력') + ' - 상세 정보';
+
+                var infoHtml =
+                    '<div class="modal-info-item"><div class="label">성함</div><div class="value">' + (r.name || '-') + '</div></div>' +
+                    '<div class="modal-info-item"><div class="label">직함</div><div class="value">' + (r.position || '-') + '</div></div>' +
+                    '<div class="modal-info-item"><div class="label">연락처</div><div class="value">' + (r.phone || '-') + '</div></div>' +
+                    '<div class="modal-info-item"><div class="label">이메일</div><div class="value">' + (r.email || '-') + '</div></div>' +
+                    '<div class="modal-info-item"><div class="label">병원/기관</div><div class="value">' + (r.hospital || '-') + '</div></div>' +
+                    '<div class="modal-info-item"><div class="label">소재지</div><div class="value">' + (r.location || '-') + '</div></div>';
+                document.getElementById('modalInfo').innerHTML = infoHtml;
+
+                function partBar(label, score) {
+                    var segs = '';
+                    for (var s = 0; s < 5; s++) {
+                        var sMin = s * 10, sMax = (s+1) * 10;
+                        var fw = score >= sMax ? 100 : score > sMin ? ((score - sMin) / 10) * 100 : 0;
+                        segs += '<span style="flex:1;background:#E5E7EB;border-radius:3px;overflow:hidden;"><span style="display:block;height:100%;width:' + fw + '%;background:' + segCols[s] + ';border-radius:3px;"></span></span>';
+                    }
+                    return '<div class="modal-part-row"><span class="modal-part-label">' + label + '</span><div class="modal-part-bar" style="display:flex;gap:2px;">' + segs + '</div><span class="modal-part-score">' + score + '/50</span></div>';
+                }
+                var scoresHtml = '<h4>총점: ' + r.pct + '점</h4>' +
+                    partBar('PART 1. 입지/수익성', r.scores_p1) +
+                    partBar('PART 2. 시설/엔지니어링', r.scores_p2) +
+                    partBar('PART 3. 운영/팀빌딩', r.scores_p3);
+                document.getElementById('modalScores').innerHTML = scoresHtml;
+
+                var noteEl = document.getElementById('modalNote');
+                if (r.note) {
+                    noteEl.style.display = 'block';
+                    noteEl.textContent = '문의내용: ' + r.note;
+                } else {
+                    noteEl.style.display = 'none';
+                }
+
+                document.getElementById('detailModal').classList.add('active');
+            });
+        });
+    })();
+
+    // === 검색/필터 기능 ===
+    function filterReportTable() {
+        var keyword = document.getElementById('reportSearch').value.toLowerCase();
+        var grade = document.getElementById('reportGrade').value;
+        var dateFrom = document.getElementById('reportDateFrom').value;
+        var dateTo = document.getElementById('reportDateTo').value;
+        var rows = document.querySelectorAll('#reportBody tr');
+        var shown = 0;
+        rows.forEach(function(tr) {
+            var cells = tr.querySelectorAll('td');
+            var serial = (cells[0] ? cells[0].textContent : '').toLowerCase();
+            var name = (cells[2] ? cells[2].textContent : '').toLowerCase();
+            var hospital = (cells[3] ? cells[3].textContent : '').toLowerCase();
+            var gradeText = (cells[5] ? cells[5].textContent : '');
+            var dateText = (cells[1] ? cells[1].textContent.replace(/\./g, '-') : '');
+            var matchKeyword = !keyword || serial.indexOf(keyword) >= 0 || name.indexOf(keyword) >= 0 || hospital.indexOf(keyword) >= 0;
+            var matchGrade = !grade || gradeText.indexOf(grade) >= 0;
+            var matchDateFrom = !dateFrom || dateText >= dateFrom;
+            var matchDateTo = !dateTo || dateText <= dateTo;
+            var show = matchKeyword && matchGrade && matchDateFrom && matchDateTo;
+            tr.style.display = show ? '' : 'none';
+            if (show) shown++;
+        });
+        document.getElementById('reportCount').textContent = '검색 결과: ' + shown + '건';
+    }
+
+    function resetReportFilter() {
+        document.getElementById('reportSearch').value = '';
+        document.getElementById('reportGrade').value = '';
+        document.getElementById('reportDateFrom').value = '';
+        document.getElementById('reportDateTo').value = '';
+        filterReportTable();
+    }
+
+    function filterInquiryTable() {
+        var keyword = document.getElementById('inquirySearch').value.toLowerCase();
+        var rows = document.querySelectorAll('#inquiryBody tr');
+        var shown = 0;
+        rows.forEach(function(tr) {
+            var text = tr.textContent.toLowerCase();
+            var show = !keyword || text.indexOf(keyword) >= 0;
+            tr.style.display = show ? '' : 'none';
+            if (show) shown++;
+        });
+        document.getElementById('inquiryCount').textContent = '검색 결과: ' + shown + '건';
+    }
+
+    function resetInquiryFilter() {
+        document.getElementById('inquirySearch').value = '';
+        filterInquiryTable();
+    }
+    </script>
+</body>
+</html>

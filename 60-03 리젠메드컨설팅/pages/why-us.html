@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>왜 우리인가 | 첨단재생의료 인허가 컨설팅</title>
+    <meta name="description" content="첨단재생의료 실시기관 인허가의 어려움을 해결해드립니다. 복잡한 법규, 시설 설계, 예산 문제를 전문가와 함께 해결하세요.">
+    <link rel="stylesheet" href="../style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* 비즈니스 진단 하이라이트 카드 */
+        .diagnosis-highlight-card {
+            margin-top: 48px;
+            position: relative;
+            background: linear-gradient(135deg, #0D1B3E 0%, #1A3360 40%, #0A2A4A 100%);
+            border-radius: 28px;
+            padding: 48px 52px;
+            overflow: hidden;
+            box-shadow: 0 12px 48px rgba(0,77,166,0.2), 0 0 0 1px rgba(59,130,246,0.15);
+        }
+        .dhc-glow {
+            position: absolute;
+            top: -80px; right: -80px;
+            width: 320px; height: 320px;
+            background: radial-gradient(circle, rgba(59,130,246,0.2) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .dhc-content { position: relative; z-index: 1; }
+        .dhc-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+            color: #fff;
+            font-size: 11px; font-weight: 800;
+            padding: 6px 16px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 14px rgba(37,99,235,0.3);
+        }
+        .dhc-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        .dhc-content h3 {
+            font-size: 26px;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 14px;
+        }
+        .dhc-content p {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #A8C4E0;
+            max-width: 600px;
+            margin-bottom: 24px;
+        }
+        .dhc-content p strong { color: #93C5FD; }
+        .dhc-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+        .dhc-features span {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #C8DEFA;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 8px 18px;
+            border-radius: 12px;
+        }
+        .dhc-buttons {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .dhc-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 32px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .dhc-btn-primary {
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+            color: #fff;
+            box-shadow: 0 6px 24px rgba(37,99,235,0.35);
+        }
+        .dhc-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 32px rgba(37,99,235,0.45);
+        }
+        .dhc-btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: #C8DEFA;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .dhc-btn-secondary:hover {
+            background: rgba(255,255,255,0.16);
+        }
+        @media (max-width: 768px) {
+            .diagnosis-highlight-card { padding: 32px 24px; }
+            .dhc-content h3 { font-size: 22px; }
+            .dhc-buttons { flex-direction: column; }
+            .dhc-btn { justify-content: center; }
+        }
+
+        /* PDF 뷰어 */
+        .pdf-viewer-section {
+            padding: 80px 0;
+            background: #F6F7FB;
+        }
+        .pdf-tab-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .pdf-tab-btn {
+            padding: 12px 28px;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            background: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            color: #4A5568;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: var(--font-primary);
+        }
+        .pdf-tab-btn:hover {
+            border-color: #0066CC;
+            color: #0066CC;
+        }
+        .pdf-tab-btn.active {
+            background: linear-gradient(135deg, #004DA6, #008F72);
+            color: #fff;
+            border-color: transparent;
+        }
+        .pdf-viewer-wrap {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 4px 32px rgba(0,0,0,0.08);
+            overflow: hidden;
+            border: 1px solid #E2E8F0;
+        }
+        .pdf-iframe {
+            width: 100%;
+            height: 800px;
+            border: none;
+            display: block;
+        }
+        @media (max-width: 768px) {
+            .pdf-iframe { height: 500px; }
+            .pdf-viewer-section { padding: 48px 0; }
+            .pdf-tab-btn { padding: 10px 18px; font-size: 13px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <header class="header" id="header">
+        <div class="header-container">
+            <div class="logo-group">
+                <a href="../index.html" class="logo">
+                    <span class="logo-icon">🧬</span>
+                    <span class="logo-text">RegenMed<span class="logo-highlight">Consulting</span></span>
+                </a>
+                <span class="logo-sub">첨단재생의료기관</span>
+            </div>
+                        <nav class="nav">
+                <a href="why-us.html" class="nav-link active">왜 우리인가</a>
+                <div class="nav-dropdown">
+                    <a href="philosophy.html" class="nav-link">통합 솔루션 <span class="nav-arrow">▾</span></a>
+                    <div class="nav-dropdown-menu">
+                        <a href="philosophy.html" class="dropdown-link">차별화 철학</a>
+                        <a href="package.html" class="dropdown-link">4단계 통합 패키지</a>
+                        <a href="prp-prf.html" class="dropdown-link">PRP + PRF 기술</a>
+                        <a href="svf-evar.html" class="dropdown-link">SVF + E-VAR 기술</a>
+                        <a href="sop.html" class="dropdown-link">SOP 패키지</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <a href="services.html" class="nav-link">서비스 <span class="nav-arrow">▾</span></a>
+                    <div class="nav-dropdown-menu">
+                        <a href="diagnosis.html" class="dropdown-link">비즈니스 진단</a>
+                        <a href="results.html" class="dropdown-link">진단 결과 보기</a>
+                                            <a href="https://jaiwshim-project.github.io/mediconsulting/pages/kimjaeryong.html" class="dropdown-link">김재룡성형외과</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <a href="nkcl.html" class="nav-link">파트너 <span class="nav-arrow">▾</span></a>
+                    <div class="nav-dropdown-menu">
+                        <a href="nkcl.html" class="dropdown-link nkcl-link">NKCL Bio Group</a>
+                        <a href="exvar.html" class="dropdown-link">ExVAR 셀테라피</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <a href="process.html" class="nav-link">프로세스 <span class="nav-arrow">▾</span></a>
+                    <div class="nav-dropdown-menu">
+                        <a href="process.html" class="dropdown-link">컨설팅 프로세스</a>
+                        <a href="sop-guide.html" class="dropdown-link">표준작업지침서</a>
+                    </div>
+                </div>
+                <a href="requirements.html" class="nav-link">시설요건</a>
+                <a href="news.html" class="nav-link">기사 보기</a>
+            </nav>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 모바일 오버레이 -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+
+    <!-- 모바일 메뉴 -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="why-us.html" class="mobile-nav-link">왜 우리인가</a>
+        <div class="mobile-nav-accordion">
+            <button class="mobile-nav-accordion-btn">통합 솔루션 <span class="mobile-acc-arrow">▾</span></button>
+            <div class="mobile-nav-accordion-content">
+                <a href="philosophy.html" class="mobile-nav-sub-link">차별화 철학</a>
+                <a href="package.html" class="mobile-nav-sub-link">4단계 통합 패키지</a>
+                <a href="prp-prf.html" class="mobile-nav-sub-link">PRP + PRF 기술</a>
+                <a href="svf-evar.html" class="mobile-nav-sub-link">SVF + E-VAR 기술</a>
+                <a href="sop.html" class="mobile-nav-sub-link">SOP 패키지</a>
+            </div>
+        </div>
+        <div class="mobile-nav-accordion">
+            <button class="mobile-nav-accordion-btn">서비스 <span class="mobile-acc-arrow">▾</span></button>
+            <div class="mobile-nav-accordion-content">
+                <a href="services.html" class="mobile-nav-sub-link">서비스 전체보기</a>
+                <a href="diagnosis.html" class="mobile-nav-sub-link">비즈니스 진단</a>
+                <a href="results.html" class="mobile-nav-sub-link">진단 결과 보기</a>
+                <a href="https://jaiwshim-project.github.io/mediconsulting/pages/kimjaeryong.html" class="mobile-nav-sub-link">김재룡성형외과</a>
+            </div>
+        </div>
+        <div class="mobile-nav-accordion">
+            <button class="mobile-nav-accordion-btn">파트너 <span class="mobile-acc-arrow">▾</span></button>
+            <div class="mobile-nav-accordion-content">
+                <a href="nkcl.html" class="mobile-nav-sub-link nkcl-link">NKCL Bio Group</a>
+                <a href="exvar.html" class="mobile-nav-sub-link">ExVAR 셀테라피</a>
+            </div>
+        </div>
+        <div class="mobile-nav-accordion">
+            <button class="mobile-nav-accordion-btn">프로세스 <span class="mobile-acc-arrow">▾</span></button>
+            <div class="mobile-nav-accordion-content">
+                <a href="process.html" class="mobile-nav-sub-link">컨설팅 프로세스</a>
+                <a href="sop-guide.html" class="mobile-nav-sub-link">표준작업지침서</a>
+            </div>
+        </div>
+        <a href="requirements.html" class="mobile-nav-link">시설요건</a>
+        <a href="news.html" class="mobile-nav-link">기사 보기</a>
+        <a href="results.html" class="mobile-nav-link nav-cta-mobile">진단 결과 보기</a>
+    </div>
+
+    <!-- 페이지 히어로 -->
+    <section class="page-hero why-us-hero">
+        <div class="hero-bg">
+            <div class="hero-gradient"></div>
+            <div class="hero-pattern"></div>
+        </div>
+        <div class="page-hero-content">
+            <span class="section-badge">01. Why Us</span>
+            <h1 class="page-hero-title">왜 우리인가</h1>
+            <p class="page-hero-desc">첨단재생의료 인허가의 어려움, 전문가와 함께 해결하세요</p>
+        </div>
+    </section>
+
+    <!-- 문제 제기 섹션 -->
+    <section class="problem-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">이런 고민이 있으신가요?</h2>
+                <p class="section-desc">많은 기관들이 겪는 인허가 과정의 어려움입니다</p>
+            </div>
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <div class="problem-icon">😰</div>
+                    <h3>복잡한 법규 요건</h3>
+                    <p>첨단재생의료법, 건축법, 소방법, 개인정보보호법 등 다양한 법규를 모두 충족해야 합니다</p>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">🏗️</div>
+                    <h3>시설 설계의 어려움</h3>
+                    <p>클린룸, 차압 관리, 공조 시스템 등 전문적인 시설 설계가 필요합니다</p>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">💰</div>
+                    <h3>예산과 시간의 낭비</h3>
+                    <p>잘못된 설계로 인한 재시공, 인허가 반려로 인한 시간과 비용 손실이 발생합니다</p>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">❓</div>
+                    <h3>정보 부족</h3>
+                    <p>실시기관 지정에 필요한 정확한 정보와 노하우를 찾기 어렵습니다</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 솔루션 섹션 -->
+    <section class="solution-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">우리가 제공하는 솔루션</h2>
+                <p class="section-desc">15년 이상의 경험으로 인허가 성공을 보장합니다</p>
+            </div>
+            <div class="solution-grid">
+                <div class="solution-card">
+                    <div class="solution-number">01</div>
+                    <h3>전문가 직접 컨설팅</h3>
+                    <p>첨단재생의료법 전문가가 직접 모든 과정을 함께합니다. 복잡한 법규 해석부터 실무 적용까지 원스톱으로 지원합니다.</p>
+                </div>
+                <div class="solution-card">
+                    <div class="solution-number">02</div>
+                    <h3>검증된 설계 노하우</h3>
+                    <p>100건 이상의 성공 사례에서 축적된 시설 설계 노하우를 바탕으로 최적의 설계안을 제시합니다.</p>
+                </div>
+                <div class="solution-card">
+                    <div class="solution-number">03</div>
+                    <h3>비용 최적화</h3>
+                    <p>불필요한 재시공 없이 한 번에 통과하는 설계로 시간과 비용을 절약합니다.</p>
+                </div>
+                <div class="solution-card">
+                    <div class="solution-number">04</div>
+                    <h3>인허가 성공 보장</h3>
+                    <p>98%의 인허가 성공률, 심사 대응부터 보완 처리까지 책임지고 진행합니다.</p>
+                </div>
+            </div>
+
+            <!-- 비즈니스 진단 하이라이트 카드 -->
+            <div class="diagnosis-highlight-card">
+                <div class="dhc-glow"></div>
+                <div class="dhc-content">
+                    <div class="dhc-badge">NEW — AI 기반 진단</div>
+                    <div class="dhc-icon">🔬</div>
+                    <h3>비즈니스 진단 서비스</h3>
+                    <p>30개 문항으로 <strong>입지 분석, 시설 인허가, 운영 전략</strong>을 AI가 정밀 분석합니다.<br>현재 준비 상태를 점수와 등급으로 확인하고, 전문가 맞춤 피드백을 받아보세요.</p>
+                    <div class="dhc-features">
+                        <span>📊 실시간 점수 분석</span>
+                        <span>📋 파트별 상세 리포트</span>
+                        <span>💡 전문가 맞춤 피드백</span>
+                    </div>
+                    <div class="dhc-buttons">
+                        <a href="diagnosis.html" class="dhc-btn dhc-btn-primary">
+                            <span>무료 진단 시작하기</span>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </a>
+                        <a href="results.html" class="dhc-btn dhc-btn-secondary">샘플 리포트 보기</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PDF 뷰어 섹션 -->
+    <section class="pdf-viewer-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">비즈니스 성공 블루프린트</h2>
+                <p class="section-desc">첨단재생의료 실시기관 인허가 성공을 위한 가이드를 확인하세요</p>
+            </div>
+            <div class="pdf-tab-nav">
+                <button class="pdf-tab-btn active" onclick="switchPdf(this, '../1 자료 모음/리젠메드컨설팅 사업제안서.pdf')">비즈니스 블루프린트</button>
+            </div>
+            <div class="pdf-viewer-wrap">
+                <iframe id="pdfFrame" src="../1 자료 모음/리젠메드컨설팅 사업제안서.pdf#toolbar=0&navpanes=0&scrollbar=1" class="pdf-iframe"></iframe>
+            </div>
+            <script>
+            function switchPdf(btn, src) {
+                document.querySelectorAll('.pdf-tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById('pdfFrame').src = src + '#toolbar=0&navpanes=0&scrollbar=1';
+            }
+            </script>
+        </div>
+    </section>
+
+    <!-- CTA 섹션 -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>지금 바로 무료 상담을 신청하세요</h2>
+                <p>첨단재생의료 실시기관 인허가, 전문가와 함께라면 어렵지 않습니다</p>
+                <a href="contact.html" class="btn btn-white">
+                    <span>무료 상담 신청</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 푸터 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="../index.html" class="logo">
+                        <span class="logo-icon">🧬</span>
+                        <span class="logo-text">RegenMed<span class="logo-highlight">Consulting</span></span>
+                    </a>
+                    <span class="logo-sub">첨단재생의료기관</span>
+                    <p class="footer-desc">첨단재생의료 실시기관 인허가 전문 컨설팅<br>복잡한 인허가 절차를 쉽고 빠르게</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <a href="services.html">서비스</a>
+                    <a href="process.html">컨설팅 프로세스</a>
+                    <a href="expertise.html">전문분야</a>
+                    <a href="contact.html">무료상담</a>
+                    <a href="nkcl-proposal.html" style="color:#FFD600;font-weight:700;">📋 NKCL 제안서</a>
+                </div>
+                <div class="footer-contact">
+                    <h4>Contact</h4>
+                    <p>📞 010-5592-5700 (이장춘 대표)</p>
+                    <p>📞 010-5012-2885 (이용식 회장)</p>
+                    <p>📧 jaiwshim@gmail.com</p>
+                    <p>📍 대전시</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 RegenMed Consulting. All rights reserved.</p>
+                <a href="admin.html" class="admin-footer-btn" title="관리자 대시보드">&#9881; 관리자</a>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- 맨 위로 버튼 -->
+    <button class="back-to-top" id="backToTop">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 15l-6-6-6 6"/>
+        </svg>
+    </button>
+
+    <script src="../script.js"></script>
+    <!-- 리젠메드AI상담톡 -->
+    <button class="ai-chat-btn" onclick="document.getElementById('aiChatPanel').classList.toggle('open')">리젠메드<span style="color:#FFD600">AI</span>상담톡</button>
+    <div class="ai-chat-panel" id="aiChatPanel">
+        <div class="ai-chat-header">
+            <span>리젠메드<span style="color:#FFD600">AI</span>상담톡</span>
+            <button class="ai-chat-close" onclick="document.getElementById('aiChatPanel').classList.remove('open')">&times;</button>
+        </div>
+        <iframe src="https://aitalker.co.kr/biz020" class="ai-chat-iframe"></iframe>
+    </div>
+    <style>
+        .ai-chat-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: linear-gradient(135deg, #0066CC, #00B894);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+            padding: 14px 28px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 6px 24px rgba(0,102,204,0.4);
+            z-index: 9999;
+            transition: all 0.3s;
+            font-family: var(--font-primary);
+        }
+        .ai-chat-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 32px rgba(0,102,204,0.5);
+        }
+        .ai-chat-panel {
+            position: fixed;
+            bottom: 80px;
+            right: 24px;
+            width: 400px;
+            height: 600px;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 12px 48px rgba(0,0,0,0.2);
+            z-index: 10000;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .ai-chat-panel.open { display: flex; }
+        .ai-chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #0066CC, #00B894);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+        }
+        .ai-chat-close {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .ai-chat-iframe {
+            flex: 1;
+            width: 100%;
+            border: none;
+        }
+        @media (max-width: 480px) {
+            .ai-chat-panel {
+                width: calc(100vw - 32px);
+                height: calc(100vh - 120px);
+                right: 16px;
+                bottom: 72px;
+            }
+        }
+    </style>
+    <!-- 사용자 매뉴얼 버튼 -->
+    <a href="manual.html" class="manual-float-btn" title="사용자 매뉴얼">
+        <span class="manual-btn-icon">📖</span>
+        <span class="manual-btn-text">사용자 매뉴얼</span>
+    </a>
+    <style>
+        .manual-float-btn {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            background: linear-gradient(135deg, #0D1B3E, #1A3360);
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 12px 20px;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.15);
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(13,27,62,0.4);
+            z-index: 9999;
+            transition: all 0.3s;
+            font-family: inherit;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .manual-float-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 28px rgba(13,27,62,0.5);
+            background: linear-gradient(135deg, #1A3360, #0066CC);
+        }
+        .manual-btn-icon { font-size: 16px; }
+    </style>
+</body>
+</html>
