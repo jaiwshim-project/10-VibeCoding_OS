@@ -1,0 +1,5 @@
+{"stage":0,"stage_gate_status":"Approved (Retroactive)","total_tasks":4
+5
+9,"completed_tasks":4
+5
+9,"verification_status":"Verified","ai_verification_note":"소급도입 — 모든 Task가 운영 중인 기능으로 PO 승인","po_approval_status":"Approved","po_approval_note":"소급 Stage: 간소화 Gate 적용 (PO 승인)","ai_verification_date":"2026-03-16","po_approval_date":"2026-03-16","checklist":{"all_tasks_completed":true,"all_verifications_passed":true,"no_blockers":true,"build_success":true,"test_success":true},"remarks":"소급도입 Stage"}

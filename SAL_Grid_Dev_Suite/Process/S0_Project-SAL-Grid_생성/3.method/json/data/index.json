@@ -1,9 +1,18 @@
 {
-  "project_id": "{PROJECT_ID}",
-  "project_name": "{PROJECT_NAME}",
-  "created_at": "{YYYY-MM-DD}",
-  "updated_at": "{YYYY-MM-DD}",
-  "total_tasks": 0,
-  "description": "{프로젝트 설명}",
-  "task_ids": []
+  "project_id": "VCOS-2026-001",
+  "project_name": "Vibe Coding OS",
+  "description": "AI 시대를 위한 소프트웨어 개발 운영체제 — 아이디어를 완성 코드로 자동 변환",
+  "method": "Vanilla",
+  "scenario": "retroactive",
+  "github_repo": "https://github.com/jaiwshim-project/10-VibeCoding_OS",
+  "created_at": "2026-03-16",
+  "updated_at": "2026-03-16",
+  "total_tasks": 30,
+  "task_ids": [
+    "S0DV1", "S0DV2", "S0DC1", "S0DC2",
+    "S1DS1", "S1CS1", "S1FE1", "S1FE2", "S1DV1",
+    "S2FE1", "S2FE2", "S2FE3", "S2FE4", "S2FE5", "S2FE6", "S2FE7", "S2CS1", "S2CS2",
+    "S3FE1", "S3FE2", "S3FE3", "S3FE4", "S3FE5",
+    "S4FE1", "S4FE2", "S4FE3", "S4FE4", "S4DC1", "S4TS1", "S4DV1"
+  ]
 }
