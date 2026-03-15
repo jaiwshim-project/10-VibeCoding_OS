@@ -411,11 +411,11 @@
 <div id="footerArea"></div>
 <script src="../vcos.js"></script>
 <script>
-document.getElementById('navArea').innerHTML = buildNav('1', false);
-document.getElementById('progressBar').innerHTML = buildProgress('1');
+document.getElementById('navArea').innerHTML = buildNav('2', false);
+document.getElementById('progressBar').innerHTML = buildProgress('2');
 document.getElementById('footerArea').innerHTML = buildFooter(false);
 
-const STORAGE_KEY = 'vcosAiCollab';
+const COLLAB_KEY = 'vcosAiCollab';
 
 /* ── 초기화 ── */
 function init() {
@@ -437,7 +437,7 @@ function init() {
   } catch(e) {}
 
   // 저장된 값 복원
-  const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  const saved = JSON.parse(localStorage.getItem(COLLAB_KEY) || '{}');
   const fields = ['realProblem','refinedIntent','memoDecided','memoPending','memoContext'];
   fields.forEach(id => {
     if (saved[id]) {
@@ -472,9 +472,9 @@ function init() {
 /* ── 자동 저장 ── */
 function autoSave(el, key) {
   el.classList.toggle('filled', el.value.trim().length > 0);
-  const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  const saved = JSON.parse(localStorage.getItem(COLLAB_KEY) || '{}');
   saved[key] = el.value;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+  localStorage.setItem(COLLAB_KEY, JSON.stringify(saved));
   const si = document.getElementById('si_' + key);
   if (si) { si.classList.add('show'); setTimeout(() => si.classList.remove('show'), 1500); }
 }
@@ -485,7 +485,7 @@ function updateProgress() {
   ['realProblem','refinedIntent','memoDecided','memoPending','memoContext'].forEach(id => {
     if (document.getElementById(id).value.trim()) filled++;
   });
-  const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  const saved = JSON.parse(localStorage.getItem(COLLAB_KEY) || '{}');
   const selectedQ = document.querySelectorAll('.q-item.selected').length;
   if (selectedQ > 0) { filled++; total++; }
 
@@ -510,7 +510,7 @@ function exportMemo() {
   const pending  = document.getElementById('memoPending').value  || '(미입력)';
   const context  = document.getElementById('memoContext').value  || '(미입력)';
   const problem  = document.getElementById('realProblem').value  || '(미입력)';
-  const saved    = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  const saved    = JSON.parse(localStorage.getItem(COLLAB_KEY) || '{}');
   const loops    = 5;
   const qs       = [...document.querySelectorAll('.q-item.selected')].map(el => '- ' + el.dataset.q).join('\n') || '(미선택)';
   const now      = new Date().toLocaleDateString('ko-KR');
@@ -545,10 +545,10 @@ ${qs}
 /* ── 질문 노트 저장 ── */
 function saveQNote(idx, el) {
   el.classList.toggle('filled', el.value.trim().length > 0);
-  const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  const saved = JSON.parse(localStorage.getItem(COLLAB_KEY) || '{}');
   if (!saved.qNotes) saved.qNotes = Array(6).fill('');
   saved.qNotes[idx] = el.value;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+  localStorage.setItem(COLLAB_KEY, JSON.stringify(saved));
   const si = document.getElementById('qns_' + idx);
   if (si) { si.classList.add('show'); setTimeout(() => si.classList.remove('show'), 1500); }
 }
@@ -556,9 +556,9 @@ function saveQNote(idx, el) {
 /* ── 질문 토글 (선택 = 명령어 반영 여부) ── */
 function toggleQ(el) {
   el.classList.toggle('selected');
-  const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  const saved = JSON.parse(localStorage.getItem(COLLAB_KEY) || '{}');
   saved.selectedQ = [...document.querySelectorAll('.q-item.selected')].map(e => e.dataset.q);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+  localStorage.setItem(COLLAB_KEY, JSON.stringify(saved));
   updateProgress();
 }
 
