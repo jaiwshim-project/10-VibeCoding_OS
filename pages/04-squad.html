@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VCOS — 04 분대 편성</title>
+<link rel="stylesheet" href="../vcos.css">
+<style>
+/* 03 분대 편성 */
+.squad-card {
+  border-radius:var(--r-lg);padding:18px;border:2px solid;margin-bottom:14px;
+  background:var(--bg);box-shadow:var(--shadow-sm);
+  transition:transform var(--med),box-shadow var(--med);position:relative;overflow:hidden;
+}
+.squad-card::before {
+  content:'';position:absolute;top:0;left:0;bottom:0;width:4px;background:currentColor;opacity:.6;
+}
+.squad-card:hover { transform:translateY(-2px);box-shadow:var(--shadow-md) }
+.squad-header { display:flex;align-items:center;gap:10px;margin-bottom:13px;padding-left:10px }
+.squad-icon   { font-size:26px }
+.squad-name   { font-size:15.5px;font-weight:800;color:var(--text) }
+.squad-role   { font-size:10.5px;color:var(--text3);margin-top:2px;font-weight:500 }
+.agent-row {
+  display:flex;align-items:center;gap:8px;padding:8px 11px;
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--r-sm);margin-bottom:5px;
+  transition:background var(--fast);
+}
+.agent-row:hover { background:var(--accent-light) }
+.agent-name   { flex:1;font-size:12px;font-weight:600;color:var(--text) }
+.org-chart    { display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 0 }
+.org-hq {
+  background:var(--purple-bg);border:2px solid rgba(124,58,237,.35);
+  border-radius:var(--r-md);padding:10px 20px;text-align:center;width:100%;
+}
+.org-connector { width:2px;height:16px;background:var(--border);margin:0 auto }
+.org-squads { display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;width:100% }
+.org-sq {
+  border-radius:var(--r-sm);padding:9px 6px;text-align:center;
+  font-size:11px;font-weight:600;border:1.5px solid;
+  transition:transform var(--fast);
+}
+.org-sq:hover { transform:scale(1.04) }
+.total-badge {
+  display:inline-flex;align-items:center;gap:6px;padding:7px 16px;
+  border-radius:var(--r-sm);font-size:12.5px;font-weight:700;border:1.5px solid;
+}
+</style>
+</head>
+<body>
+<div class="vcos-header"><div id="navArea"></div></div>
+<div class="container"><div class="page-body">
+
+<div class="progress-steps" id="progressBar"></div>
+
+<div class="page-title">
+  <div class="page-num" style="background:linear-gradient(135deg,#f87171,#dc2626);box-shadow:0 3px 12px rgba(220,38,38,.4)">4</div>
+  <div><div class="page-name">분대 편성</div><div class="page-eng">Dynamic Squad Deployment — 복잡도 기반 AI 개발팀 자동 편성</div></div>
+  <div class="page-badge">AUTO GENERATED</div>
+</div>
+
+<div id="content"></div>
+
+<div class="page-nav">
+  <a href="03-complexity.html" class="btn btn-secondary">← 이전: 복잡도 분석</a>
+  <div class="page-nav-center">Section 4 / 7</div>
+  <a href="05-skills.html" class="btn btn-primary">다음: 스킬 전략 →</a>
+</div>
+
+</div></div>
+<div id="footerArea"></div>
+<script src="../vcos.js"></script>
+<script>
+document.getElementById('navArea').innerHTML = buildNav('3', false);
+document.getElementById('progressBar').innerHTML = buildProgress('3');
+document.getElementById('footerArea').innerHTML = buildFooter(false);
+
+const p = requireProject('../pages/01-intent.html');
+if (!p) throw new Error('no project');
+
+const c = calcComplexity(p);
+const type = getProjectType(c.total);
+const squads = buildSquads(p, c);
+
+const totalAgents = squads.reduce((sum, sq) => sum + sq.agents.length, 0);
+const haikuCount = squads.flatMap(sq=>sq.agents).filter(a=>a.model==='haiku').length;
+const sonnetCount = squads.flatMap(sq=>sq.agents).filter(a=>a.model==='sonnet').length;
+const opusCount = squads.flatMap(sq=>sq.agents).filter(a=>a.model==='opus').length;
+
+function modelBadge(m) {
+  if (m === 'haiku')  return `<span class="model-badge model-haiku">Haiku</span>`;
+  if (m === 'sonnet') return `<span class="model-badge model-sonnet">Sonnet</span>`;
+  if (m === 'opus')   return `<span class="model-badge model-opus">Opus</span>`;
+  return `<span class="model-badge model-ext">External</span>`;
+}
+
+const squadCards = squads.map(sq => `
+  <div class="squad-card" style="background:${sq.colorBg};border-color:${sq.colorBorder}">
+    <div class="squad-header">
+      <div class="squad-icon">${sq.emoji}</div>
+      <div>
+        <div class="squad-name" style="color:${sq.color}">${sq.name}</div>
+        <div class="squad-role">${sq.role}</div>
+      </div>
+      <span style="margin-left:auto;font-size:11px;color:var(--text3)">${sq.agents.length}명</span>
+    </div>
+    ${sq.agents.map(a => `
+      <div class="agent-row">
+        <span style="font-size:14px">🤖</span>
+        <div class="agent-name">${a.name}</div>
+        ${modelBadge(a.model)}
+      </div>
+    `).join('')}
+  </div>
+`).join('');
+
+// Org chart
+const orgSquads = squads.filter(s => s.id !== 'hq');
+const orgChart = `
+  <div class="org-chart">
+    <div class="org-hq">
+      <div style="font-size:13px;font-weight:700;color:var(--purple)">🏛️ HQ 본부</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:2px">소대장 + 연락병</div>
+    </div>
+    <div class="org-connector"></div>
+    <div class="org-squads">
+      ${orgSquads.map(sq => `
+        <div class="org-sq" style="background:${sq.colorBg};border-color:${sq.colorBorder}">
+          <div style="font-size:18px">${sq.emoji}</div>
+          <div style="font-size:10px;font-weight:700;color:${sq.color};margin-top:4px">${sq.name}</div>
+          <div style="font-size:9px;color:var(--text3);margin-top:2px">${sq.agents.length}명</div>
+        </div>
+      `).join('')}
+    </div>
+  </div>
+`;
+
+document.getElementById('content').innerHTML = `
+<div class="stat-row">
+  <div class="stat-box"><div class="stat-val" style="color:${type.color}">${squads.length}</div><div class="stat-lbl">투입 분대</div></div>
+  <div class="stat-box"><div class="stat-val">${totalAgents}</div><div class="stat-lbl">총 AI 요원</div></div>
+  <div class="stat-box"><div class="stat-val" style="color:var(--green)">${haikuCount}</div><div class="stat-lbl">Haiku 요원</div></div>
+  <div class="stat-box"><div class="stat-val" style="color:var(--accent)">${sonnetCount}</div><div class="stat-lbl">Sonnet 요원</div></div>
+  <div class="stat-box"><div class="stat-val" style="color:var(--purple)">${opusCount}</div><div class="stat-lbl">Opus 요원</div></div>
+</div>
+
+<div class="grid-2">
+  <div>
+    <div class="notice" style="margin-bottom:14px">
+      <span class="notice-icon">🎯</span>
+      <span><strong style="color:${type.color}">${type.label}</strong> 프로젝트 — 복잡도 ${c.total}점에 최적화된 ${squads.length}개 분대 편성. 불필요한 분대는 투입하지 않아 토큰을 절감합니다.</span>
+    </div>
+    ${squadCards}
+  </div>
+  <div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title">분대 조직도</div>
+      ${orgChart}
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title">모델 배분 전략</div>
+      <div style="margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span class="model-badge model-haiku" style="font-size:11px;padding:3px 8px">Haiku</span>
+          <div style="flex:1">
+            <div class="meter"><div class="meter-fill" style="width:${Math.round(haikuCount/totalAgents*100)}%;background:var(--green)"></div></div>
+          </div>
+          <span style="font-size:11px;color:var(--text2);width:50px;text-align:right">${haikuCount}명 (${Math.round(haikuCount/totalAgents*100)}%)</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span class="model-badge model-sonnet" style="font-size:11px;padding:3px 8px">Sonnet</span>
+          <div style="flex:1">
+            <div class="meter"><div class="meter-fill" style="width:${Math.round(sonnetCount/totalAgents*100)}%;background:var(--accent)"></div></div>
+          </div>
+          <span style="font-size:11px;color:var(--text2);width:50px;text-align:right">${sonnetCount}명 (${Math.round(sonnetCount/totalAgents*100)}%)</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="model-badge model-opus" style="font-size:11px;padding:3px 8px">Opus</span>
+          <div style="flex:1">
+            <div class="meter"><div class="meter-fill" style="width:${Math.round(opusCount/totalAgents*100)}%;background:var(--purple)"></div></div>
+          </div>
+          <span style="font-size:11px;color:var(--text2);width:50px;text-align:right">${opusCount}명 (${Math.round(opusCount/totalAgents*100)}%)</span>
+        </div>
+      </div>
+      <div style="font-size:10px;color:var(--text3);line-height:1.6;margin-top:8px;padding-top:8px;border-top:1px solid var(--border2)">
+        💡 Haiku First 원칙 — 단순/반복 작업은 Haiku로 처리해 비용 최소화. Sonnet은 복잡한 설계/구현에만 투입. Opus는 소대장(오케스트레이터) 역할 전담.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">분대 투입 명령어</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:8px">Claude Code 터미널에서 실행:</div>
+      ${type.type === 'Small' || type.type === 'Medium' ?
+        `<div class="code-block" id="cmdBox">/platoon-formation-v1\n\n# ${squads.length}개 분대 자동 편성\n# 소대장(HQ) + ${orgSquads.map(s=>s.name).join(' + ')}</div>` :
+        `<div class="code-block" id="cmdBox">/platoon-formation-v2\n\n# 풀패키지 분대 편성\n# 소대장(HQ) + ${orgSquads.map(s=>s.name).join(' + ')}\n# Delta/Echo 분대 포함 고도화 체계</div>`
+      }
+      <div class="copy-bar">
+        <button class="btn btn-secondary" onclick="copyText(document.getElementById('cmdBox').textContent, this)">📋 복사</button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+</script>
+</body>
+</html>

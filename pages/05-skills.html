@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VCOS — 05 스킬 전략</title>
+<link rel="stylesheet" href="../vcos.css">
+<style>
+/* 04 스킬 전략 */
+.skill-card {
+  background:var(--bg);border:1.5px solid var(--border);
+  border-radius:var(--r-md);padding:12px 14px;margin-bottom:7px;
+  box-shadow:var(--shadow-xs);transition:all var(--fast);
+}
+.skill-card.active-p1 {
+  border-color:rgba(37,99,235,.3);background:linear-gradient(135deg,#f8fbff,#fff);
+  box-shadow:0 2px 8px rgba(37,99,235,.08);
+}
+.skill-card.active-p2 {
+  border-color:rgba(234,88,12,.25);background:linear-gradient(135deg,#fffaf7,#fff);
+  box-shadow:0 2px 8px rgba(234,88,12,.07);
+}
+.skill-card.inactive { opacity:.38;filter:grayscale(.3) }
+.skill-header { display:flex;align-items:center;gap:8px;margin-bottom:6px }
+.skill-emoji  { font-size:18px;flex-shrink:0 }
+.skill-name   { font-size:11.5px;font-weight:700;color:var(--text);font-family:monospace }
+.skill-short  { font-size:10px;color:var(--text3);margin-top:1px }
+.skill-meta   { display:flex;gap:5px;flex-wrap:wrap;margin-bottom:5px;align-items:center }
+.skill-desc   { font-size:10.5px;color:var(--text3);line-height:1.55 }
+.skill-when   { font-size:10px;margin-top:5px;font-weight:600 }
+.skill-condition {
+  font-size:9px;padding:2px 7px;border-radius:var(--r-full);font-weight:600;
+  background:var(--bg2);color:var(--text3);border:1px solid var(--border);
+}
+
+.phase-header {
+  display:flex;align-items:center;gap:10px;padding:10px 16px;
+  border-radius:var(--r-md);margin-bottom:12px;
+}
+.phase-header-p1 { background:linear-gradient(135deg,#2563eb,#1d4ed8);box-shadow:0 2px 12px rgba(37,99,235,.3) }
+.phase-header-p2 { background:linear-gradient(135deg,#ea580c,#c2410c);box-shadow:0 2px 12px rgba(234,88,12,.3) }
+.phase-label { color:#fff;font-size:14px;font-weight:800;letter-spacing:.3px }
+.phase-sub   { color:rgba(255,255,255,.8);font-size:11px;font-weight:500 }
+.phase-count { margin-left:auto;background:rgba(255,255,255,.2);color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:9999px }
+
+.col-wrap { display:flex;flex-direction:column }
+
+.show-all-toggle {
+  font-size:10.5px;padding:4px 11px;border-radius:var(--r-full);
+  border:1px solid var(--border);background:var(--bg);color:var(--text3);
+  cursor:pointer;transition:all var(--fast);font-weight:600;
+}
+.show-all-toggle:hover { border-color:var(--accent);color:var(--accent) }
+.show-all-toggle.on { border-color:var(--accent);color:var(--accent);background:var(--accent-light) }
+</style>
+</head>
+<body>
+<div class="vcos-header"><div id="navArea"></div></div>
+<div class="container"><div class="page-body">
+
+<div class="progress-steps" id="progressBar"></div>
+
+<div class="page-title">
+  <div class="page-num" style="background:linear-gradient(135deg,#4ade80,#16a34a);box-shadow:0 3px 12px rgba(22,163,74,.4)">5</div>
+  <div><div class="page-name">스킬 전략</div><div class="page-eng">Skill Graph Engine — 20개 스킬 중 프로젝트 최적 스킬 자동 선택</div></div>
+  <div class="page-badge">AUTO GENERATED</div>
+</div>
+
+<div id="content"></div>
+
+<div class="page-nav">
+  <a href="04-squad.html" class="btn btn-secondary">← 이전: 분대 편성</a>
+  <div class="page-nav-center">Section 5 / 7</div>
+  <a href="06-token.html" class="btn btn-primary">다음: 토큰 최적화 →</a>
+</div>
+
+</div></div>
+<div id="footerArea"></div>
+<script src="../vcos.js"></script>
+<script>
+document.getElementById('navArea').innerHTML = buildNav('4', false);
+document.getElementById('progressBar').innerHTML = buildProgress('4');
+document.getElementById('footerArea').innerHTML = buildFooter(false);
+
+const p = requireProject('../pages/01-intent.html');
+if (!p) throw new Error('no project');
+
+const c = calcComplexity(p);
+const allSkills = getRelevantSkills(p, c);
+
+const p1All = allSkills.filter(s => s.phase === 'P1');
+const p2All = allSkills.filter(s => s.phase === 'P2');
+const p1Active = p1All.filter(s => s.active);
+const p2Active = p2All.filter(s => s.active);
+
+let showInactive = false;
+
+function modelBadge(m) {
+  if (m === 'haiku')  return `<span class="mtag mtag-haiku">Haiku</span>`;
+  if (m === 'sonnet') return `<span class="mtag mtag-sonnet">Sonnet</span>`;
+  if (m === 'opus')   return `<span class="mtag mtag-opus">Opus</span>`;
+  return `<span class="mtag" style="background:rgba(240,136,62,.2);color:var(--orange)">External</span>`;
+}
+
+function skillCard(s) {
+  const cls = !s.active ? 'inactive' : s.phase === 'P1' ? 'active-p1' : 'active-p2';
+  const whenColor = s.phase === 'P1' ? 'var(--accent)' : '#ea580c';
+  const alwaysStyle = s.condition === '항상'
+    ? `background:${s.phase==='P1'?'rgba(37,99,235,.1)':'rgba(234,88,12,.1)'};color:${s.phase==='P1'?'var(--accent)':'#ea580c'};border-color:${s.phase==='P1'?'rgba(37,99,235,.25)':'rgba(234,88,12,.25)'}`
+    : '';
+  return `
+    <div class="skill-card ${cls}">
+      <div class="skill-header">
+        <div class="skill-emoji">${s.emoji}</div>
+        <div style="flex:1;min-width:0">
+          <div class="skill-name">${s.name}</div>
+          <div class="skill-short">${s.short}</div>
+        </div>
+        ${s.active
+          ? `<span style="font-size:9px;padding:2px 7px;border-radius:9999px;font-weight:700;background:${s.phase==='P1'?'rgba(37,99,235,.12)':'rgba(234,88,12,.1)'};color:${s.phase==='P1'?'var(--accent)':'#ea580c'};border:1px solid ${s.phase==='P1'?'rgba(37,99,235,.2)':'rgba(234,88,12,.2)'}">✓ 적용</span>`
+          : `<span style="font-size:9px;padding:2px 7px;border-radius:9999px;font-weight:700;background:var(--bg2);color:var(--text4);border:1px solid var(--border)">미사용</span>`
+        }
+      </div>
+      <div class="skill-meta">
+        ${modelBadge(s.model)}
+        <span class="skill-condition" style="${alwaysStyle}">${s.condition}</span>
+        <code style="font-size:9.5px;color:var(--text3);background:var(--bg2);padding:1px 5px;border-radius:3px">${s.cmd}</code>
+      </div>
+      <div class="skill-desc">${s.desc}</div>
+      ${s.active ? `<div class="skill-when" style="color:${whenColor}">⏰ ${s.when}</div>` : ''}
+    </div>`;
+}
+
+function renderAll() {
+  const p1List = (showInactive ? p1All : p1Active).map(skillCard).join('') ||
+    '<div style="padding:16px;text-align:center;color:var(--text3);font-size:12px">적용 스킬 없음</div>';
+  const p2List = (showInactive ? p2All : p2Active).map(skillCard).join('') ||
+    '<div style="padding:16px;text-align:center;color:var(--text3);font-size:12px">적용 스킬 없음</div>';
+  document.getElementById('p1List').innerHTML = p1List;
+  document.getElementById('p2List').innerHTML = p2List;
+  document.getElementById('p1Count').textContent = `${p1Active.length}개 활성`;
+  document.getElementById('p2Count').textContent = `${p2Active.length}개 활성`;
+}
+
+function toggleInactive() {
+  showInactive = !showInactive;
+  const btn = document.getElementById('toggleBtn');
+  btn.textContent = showInactive ? '활성 스킬만 보기' : '비활성 포함 전체 보기';
+  btn.classList.toggle('on', showInactive);
+  renderAll();
+}
+
+document.getElementById('content').innerHTML = `
+<div class="stat-row" style="margin-bottom:16px">
+  <div class="stat-box stat-box-blue">
+    <div class="stat-val" style="color:var(--accent)">${p1Active.length}</div>
+    <div class="stat-lbl">Phase 1 활성</div>
+  </div>
+  <div class="stat-box" style="border-color:rgba(234,88,12,.3);background:linear-gradient(135deg,#fff7ed,#fff)">
+    <div class="stat-val" style="color:#ea580c">${p2Active.length}</div>
+    <div class="stat-lbl">Phase 2 활성</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-val">${p1Active.length + p2Active.length}</div>
+    <div class="stat-lbl">총 활성 스킬</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-val" style="color:var(--text3)">${allSkills.length - p1Active.length - p2Active.length}</div>
+    <div class="stat-lbl">미사용 스킬</div>
+  </div>
+</div>
+
+<div class="notice" style="margin-bottom:16px">
+  <span class="notice-icon">🧠</span>
+  <span>선택된 기능·복잡도 기반으로 <strong style="color:var(--accent)">Phase 1 ${p1Active.length}개</strong> + <strong style="color:#ea580c">Phase 2 ${p2Active.length}개</strong> = 총 <strong>${p1Active.length+p2Active.length}개 스킬</strong>이 선택되었습니다. 미사용 ${allSkills.length-p1Active.length-p2Active.length}개는 이 프로젝트에서 조건 미충족.</span>
+</div>
+
+<div style="display:flex;justify-content:flex-end;margin-bottom:10px">
+  <button id="toggleBtn" class="show-all-toggle" onclick="toggleInactive()">비활성 포함 전체 보기</button>
+</div>
+
+<div class="grid-2">
+  <!-- Phase 1 -->
+  <div class="col-wrap">
+    <div class="phase-header phase-header-p1">
+      <span style="font-size:18px">🚀</span>
+      <div>
+        <div class="phase-label">Phase 1 — 빌드</div>
+        <div class="phase-sub">명령어 생성 전 선택 · 개발 중 실행</div>
+      </div>
+      <div class="phase-count" id="p1Count">${p1Active.length}개 활성</div>
+    </div>
+    <div id="p1List"></div>
+  </div>
+
+  <!-- Phase 2 -->
+  <div class="col-wrap">
+    <div class="phase-header phase-header-p2">
+      <span style="font-size:18px">🔥</span>
+      <div>
+        <div class="phase-label">Phase 2 — 고도화</div>
+        <div class="phase-sub">Phase 1 결과물 완성 후 사용</div>
+      </div>
+      <div class="phase-count" id="p2Count">${p2Active.length}개 활성</div>
+    </div>
+    <div id="p2List"></div>
+  </div>
+</div>
+`;
+
+renderAll();
+</script>
+</body>
+</html>
