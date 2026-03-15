@@ -54,36 +54,11 @@
 .loop-content   { flex:1;font-size:13px;color:var(--text2);line-height:1.6 }
 .loop-title     { font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px }
 
-/* 폴더 입력 영역 */
-.folder-entry-card {
-  background:linear-gradient(135deg,#fff7ed,#ffedd5);
-  border:1.5px solid rgba(234,88,12,.3);
-  border-radius:var(--r-lg);padding:32px 28px;
-  text-align:center;max-width:600px;margin:40px auto;
-}
-.folder-entry-icon { font-size:48px;margin-bottom:16px }
-.folder-entry-title { font-size:18px;font-weight:800;color:#c2410c;margin-bottom:8px }
-.folder-entry-desc { font-size:13.5px;color:#9a3412;margin-bottom:24px;line-height:1.6 }
-.folder-input-wrap { display:flex;gap:8px;margin-bottom:12px }
-.folder-input-wrap input {
-  flex:1;padding:10px 14px;border-radius:var(--r-md);
-  border:1.5px solid rgba(234,88,12,.4);background:#fff;
-  font-size:14px;color:var(--text);outline:none;
-  transition:border-color var(--fast);
-}
-.folder-input-wrap input:focus { border-color:#ea580c;box-shadow:0 0 0 3px rgba(234,88,12,.15) }
-.folder-hint { font-size:12px;color:#9a3412;text-align:left;opacity:.8 }
-
 /* 현재 폴더 배너 */
 .folder-banner {
   display:flex;align-items:center;gap:10px;
   background:rgba(234,88,12,.08);border:1px solid rgba(234,88,12,.25);
   border-radius:var(--r-md);padding:10px 14px;margin-bottom:18px;
-}
-.folder-banner-path {
-  flex:1;font-size:13px;font-weight:600;color:#c2410c;
-  font-family:'JetBrains Mono','Fira Code',monospace;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
 .folder-change-btn {
   font-size:12px;padding:4px 10px;border-radius:var(--r-full);
@@ -92,34 +67,77 @@
   transition:background var(--fast);
 }
 .folder-change-btn:hover { background:rgba(234,88,12,.22) }
+
+/* ── 명령어 생성기 런처 ── */
+.re-launcher {
+  background:linear-gradient(145deg,#0f0f1a,#1a0a05,#0f172a);
+  border:2px solid rgba(234,88,12,.35);
+  border-radius:var(--r-xl);padding:28px;
+  box-shadow:0 8px 32px rgba(234,88,12,.15),inset 0 1px 0 rgba(234,88,12,.1);
+}
+.re-launcher-title {
+  font-size:17px;font-weight:800;color:#fff;margin-bottom:4px;
+  text-shadow:0 0 20px rgba(234,88,12,.4);
+  display:flex;align-items:center;gap:10px;
+}
+.re-launcher-sub { font-size:12px;color:rgba(255,255,255,.5);margin-bottom:20px; }
+.re-input-row { display:flex;align-items:center;gap:10px;margin-bottom:14px; }
+.re-input-label { font-size:12px;font-weight:700;color:rgba(255,255,255,.7);white-space:nowrap;min-width:80px; }
+.re-folder-input {
+  flex:1;background:rgba(255,255,255,.07);border:1.5px solid rgba(234,88,12,.3);
+  border-radius:8px;padding:9px 14px;color:#fff;font-size:13px;outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+.re-folder-input::placeholder { color:rgba(255,255,255,.3); }
+.re-folder-input:focus { border-color:rgba(234,88,12,.65);box-shadow:0 0 0 3px rgba(234,88,12,.15);background:rgba(255,255,255,.1); }
+.re-cmd-box {
+  background:rgba(0,0,0,.4);border:1.5px solid rgba(234,88,12,.25);
+  border-radius:10px;padding:14px 16px;
+  font-family:'Courier New',monospace;font-size:12px;
+  color:#fed7aa;line-height:1.7;min-height:90px;
+  white-space:pre-wrap;word-break:break-all;
+  max-height:340px;overflow-y:auto;
+}
+.re-copy-btn {
+  display:block;width:100%;margin-top:12px;padding:11px;
+  background:linear-gradient(135deg,#ea580c,#c2410c);
+  border:none;border-radius:9px;color:#fff;font-size:14px;
+  font-weight:800;cursor:pointer;letter-spacing:.3px;
+  transition:transform .15s,box-shadow .15s,filter .15s;
+  box-shadow:0 4px 14px rgba(234,88,12,.35);
+}
+.re-copy-btn:hover { transform:translateY(-1px);box-shadow:0 6px 20px rgba(234,88,12,.45);filter:brightness(1.1); }
+.re-copy-btn:active { transform:translateY(0); }
 </style>
 </head>
 <body>
 <div class="vcos-header"><div id="navArea"></div></div>
 <div class="container"><div class="page-body">
 
-<div style="background:linear-gradient(135deg,#fff7ed,#ffedd5);border:1.5px solid rgba(234,88,12,.3);border-radius:var(--r-lg);padding:10px 18px;margin-bottom:18px;display:flex;align-items:center;gap:10px">
-  <span style="font-size:22px">🔥</span>
-  <span style="font-size:15.5px;font-weight:700;color:#c2410c">Phase 2 — 개발 완료된 결과물 폴더에 독립 적용</span>
-  <a href="../index.html" style="margin-left:auto;font-size:14px;color:#ea580c;font-weight:600">← 홈으로 돌아가기</a>
+<div class="phase-banner" style="background:linear-gradient(135deg,#7c2d12,#ea580c,#c2410c);box-shadow:0 4px 24px rgba(234,88,12,.3),inset 0 1px 0 rgba(255,255,255,.15)">
+  <div class="phase-banner-icon">🔥</div>
+  <div class="phase-banner-body">
+    <div class="phase-banner-title">결과물 고도화 엔진</div>
+    <div class="phase-banner-desc">개발 완료된 결과물 폴더에 독립 적용 · V1(70점) → V4(97점+) 자동 품질 루프</div>
+    <div class="phase-banner-tags">
+      <span class="phase-banner-tag">아키텍처 품질</span>
+      <span class="phase-banner-tag">코드 품질</span>
+      <span class="phase-banner-tag">보안</span>
+      <span class="phase-banner-tag">성능</span>
+      <span class="phase-banner-tag">유지보수성</span>
+    </div>
+  </div>
 </div>
 
-<div class="page-title">
-  <div class="page-num" style="background:linear-gradient(135deg,#fb923c,#ea580c);box-shadow:0 3px 12px rgba(234,88,12,.4);font-size:15px;width:48px">P2</div>
-  <div><div class="page-name">결과물 고도화 엔진</div><div class="page-eng">Self-Improving Engine — V1(70점) → V4(97점) 자동 품질 루프 | 완성된 폴더 지정 후 /review-evaluate 실행</div></div>
-  <div class="page-badge" style="background:#fff7ed;color:#c2410c;border-color:rgba(234,88,12,.3)">PHASE 2</div>
-</div>
-
-<!-- 폴더 입력 배너 (항상 표시) -->
-<div class="folder-banner" style="margin-bottom:18px">
-  <span style="font-size:18px">📁</span>
-  <input type="text" id="folderInput"
-    placeholder="프로젝트 폴더 경로 입력 (예: C:\01 Claude-Code\MyProject)"
-    autocomplete="off"
-    onkeydown="if(event.key==='Enter') updateFolder()"
-    oninput="updateFolder()"
-    style="flex:1;padding:7px 10px;border-radius:var(--r-md);border:1px solid rgba(234,88,12,.3);background:rgba(255,255,255,.8);font-size:13.5px;color:var(--text);outline:none;font-family:'JetBrains Mono','Fira Code',monospace">
-  <button class="folder-change-btn" onclick="clearFolder()">✕ 초기화</button>
+<div class="page-hero">
+  <div class="page-hero-icon" style="background:linear-gradient(135deg,#fb923c,#ea580c);box-shadow:0 4px 14px rgba(234,88,12,.35);border:2px solid rgba(234,88,12,.3)">🔥</div>
+  <div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span class="page-hero-badge" style="color:#ea580c;background:rgba(234,88,12,.1);border:1.5px solid rgba(234,88,12,.25)">Phase 2</span>
+      <h1 class="page-hero-name">결과물 고도화 엔진</h1>
+    </div>
+    <p class="page-hero-desc">V1 → V4 자동 품질 루프 · <code class="page-hero-skill" style="background:rgba(234,88,12,.08);border:1px solid rgba(234,88,12,.2);color:#c2410c">/review-evaluate</code></p>
+  </div>
 </div>
 
 <!-- 스탯 -->
@@ -129,6 +147,37 @@
   <div class="stat-box"><div class="stat-val" style="color:#3fb950">90</div><div class="stat-lbl">V3 2차</div></div>
   <div class="stat-box"><div class="stat-val" style="color:#58a6ff">97</div><div class="stat-lbl">V4 목표</div></div>
   <div class="stat-box"><div class="stat-val" style="color:var(--accent)">3+</div><div class="stat-lbl">최소 반복</div></div>
+</div>
+
+<!-- 실행 명령어 생성기 -->
+<div style="margin-bottom:24px">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+    <div style="height:2px;flex:1;background:linear-gradient(90deg,transparent,rgba(234,88,12,.4))"></div>
+    <span style="font-size:12px;font-weight:800;color:#ea580c;letter-spacing:.5px;text-transform:uppercase;padding:4px 14px;background:rgba(234,88,12,.08);border:1.5px solid rgba(234,88,12,.2);border-radius:9999px">실행 명령어 생성기</span>
+    <div style="height:2px;flex:1;background:linear-gradient(90deg,rgba(234,88,12,.4),transparent)"></div>
+  </div>
+  <div class="re-launcher">
+    <div class="re-launcher-title">
+      <span style="width:32px;height:32px;border-radius:10px;background:rgba(234,88,12,.25);border:1.5px solid rgba(234,88,12,.4);display:flex;align-items:center;justify-content:center;font-size:16px">🔥</span>
+      /review-evaluate 스킬 실행기
+    </div>
+    <div class="re-launcher-sub">프로젝트 폴더를 입력하면 cd 명령어 + 스킬 전문이 자동 생성됩니다</div>
+    <div class="re-input-row">
+      <div class="re-input-label">📁 프로젝트 폴더</div>
+      <input type="text" class="re-folder-input" id="folderInput"
+        placeholder="예: C:\01 Claude-Code\MyProject"
+        autocomplete="off"
+        onkeydown="if(event.key==='Enter') updateFolder()"
+        oninput="updateFolder()" />
+    </div>
+    <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:10px;margin-top:-6px">
+      ⚡ 폴더 경로 입력 시 자동 생성 · 빈칸이면 스킬 내용만 표시
+    </div>
+    <div class="re-cmd-box" id="refineCmd">로딩 중...</div>
+    <button class="re-copy-btn" onclick="copyText(document.getElementById('refineCmd').textContent, this)">
+      📋 전체 복사 (cd 명령어 + review-evaluate 스킬)
+    </button>
+  </div>
 </div>
 
 <div class="grid-2">
@@ -148,22 +197,13 @@
 
   </div>
 
-  <!-- 오른쪽: 스킬 명령어 + 루프 실행 방법 -->
+  <!-- 오른쪽: 루프 실행 방법 -->
   <div>
-    <div class="card" style="margin-bottom:14px">
-      <div class="card-title" style="display:flex;align-items:center;gap:8px">
-        /review-evaluate 스킬
-        <span id="skillLoadStatus" style="font-size:12px;color:var(--text3);font-weight:500">로딩 중...</span>
-      </div>
-      <div class="code-block" id="refineCmd" style="max-height:520px;overflow-y:auto;font-size:12.5px;line-height:1.6">로딩 중...</div>
-      <div class="copy-bar">
-        <button class="btn btn-secondary" onclick="copyText(document.getElementById('refineCmd').textContent, this)">📋 복사</button>
-        <span style="font-size:12px;color:var(--text3);margin-left:auto">Claude Code 터미널에 붙여넣기</span>
-      </div>
-    </div>
-
     <div class="card">
-      <div class="card-title">고도화 루프 실행 방법</div>
+      <div class="card-title" style="display:flex;align-items:center;gap:8px">
+        <span id="skillLoadStatus" style="font-size:12px;font-weight:500;margin-left:auto;color:var(--text3)">로딩 중...</span>
+        고도화 루프 실행 방법
+      </div>
       <div id="loopSteps"></div>
     </div>
   </div>
@@ -271,8 +311,10 @@ async function loadSkill() {
 }
 
 function renderCmd() {
+  var box = document.getElementById('refineCmd');
+  if (!box) return;
   var prefix = folderPath ? 'cd "' + folderPath + '"\n\n' : '';
-  document.getElementById('refineCmd').textContent = prefix + (skillContent || '/review-evaluate');
+  box.textContent = prefix + (skillContent || '/review-evaluate');
 }
 
 // ── 루프 실행 방법 렌더 ──────────────────────────────────
@@ -291,6 +333,18 @@ document.getElementById('loopSteps').innerHTML = loopSteps.map(s => `
       ${s.desc}
     </div>
   </div>`).join('');
+
+function copyText(text, btn) {
+  navigator.clipboard.writeText(text).then(function() {
+    var orig = btn.textContent;
+    btn.textContent = '✅ 복사됨!';
+    btn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
+    setTimeout(function() {
+      btn.textContent = orig;
+      btn.style.background = 'linear-gradient(135deg,#ea580c,#c2410c)';
+    }, 2000);
+  });
+}
 
 // 초기화
 loadSkill();

@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VCOS — 5times Debug Loop</title>
+<link rel="stylesheet" href="../vcos.css">
+<style>
+/* ══════════════════════════════════════════════════
+   Debug Loop 전용 디자인 시스템
+   ══════════════════════════════════════════════════ */
+:root {
+  --dl:#e11d48;
+  --dl2:#f43f5e;
+  --dl3:#fb7185;
+  --dl-dark:#881337;
+  --dl-light:#fff1f2;
+  --dl-mid:#ffe4e6;
+  --dl-border:rgba(225,29,72,.28);
+  --dl-border-strong:rgba(225,29,72,.5);
+  --dl-glow:0 0 0 3px rgba(225,29,72,.15);
+  --dl-shadow:0 4px 20px rgba(225,29,72,.18);
+  --dl-shadow-lg:0 8px 32px rgba(225,29,72,.25);
+}
+
+/* 페이지 배경 */
+.page-body { background:linear-gradient(180deg,rgba(255,241,242,.35) 0%,transparent 300px); }
+
+/* ── 카드 공통 오버라이드 ── */
+.card {
+  border:1.5px solid var(--dl-border) !important;
+  background:linear-gradient(155deg,#ffffff,#fffafa) !important;
+  box-shadow:0 2px 12px rgba(225,29,72,.08) !important;
+}
+.card::before { background:linear-gradient(90deg,var(--dl),var(--dl3)) !important;opacity:.6 }
+.card:hover::before { opacity:1 }
+.card-title {
+  color:var(--dl-dark);
+  border-bottom:1.5px solid var(--dl-border);
+  padding-bottom:10px;margin-bottom:12px;
+}
+
+/* ── stat-row 오버라이드 ── */
+.stat-box {
+  background:linear-gradient(145deg,#fff,var(--dl-light)) !important;
+  border:1.5px solid var(--dl-border) !important;
+  border-top:3px solid var(--dl) !important;
+  box-shadow:0 2px 8px rgba(225,29,72,.1) !important;
+}
+.stat-box .stat-val { color:var(--dl) }
+
+/* ── Round 카드 ── */
+.dl-round-card {
+  border-radius:var(--r-lg);padding:16px 18px;border:2px solid;margin-bottom:10px;
+  background:linear-gradient(135deg,#fff,#fffafa);
+  box-shadow:0 2px 12px rgba(225,29,72,.08);
+  position:relative;overflow:hidden;
+  transition:transform var(--med),box-shadow var(--med);
+  display:flex;align-items:flex-start;gap:14px;
+}
+.dl-round-card:hover {
+  transform:translateY(-2px);
+  box-shadow:var(--dl-shadow);
+  background:linear-gradient(135deg,#fffafa,var(--dl-light));
+}
+.dl-round-card::before {
+  content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:4px 0 0 4px;
+}
+.dl-round-card .round-icon {
+  width:44px;height:44px;border-radius:12px;display:flex;align-items:center;
+  justify-content:center;font-size:20px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--dl-light),var(--dl-mid));
+  border:1.5px solid var(--dl-border);
+}
+.dl-round-card .round-body { flex:1; }
+.dl-round-card .round-label {
+  font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
+  margin-bottom:4px;display:flex;align-items:center;gap:6px;
+}
+.dl-round-card .round-title {
+  font-size:15px;font-weight:700;color:var(--text1);margin-bottom:5px;
+}
+.dl-round-card .round-desc {
+  font-size:12.5px;color:var(--text2);line-height:1.55;
+}
+
+/* ── 검증 방법 카드 ── */
+.dl-verify-card {
+  border-radius:var(--r-lg);padding:14px 16px;border:2px solid;
+  background:linear-gradient(135deg,#fff,#fffafa);
+  box-shadow:0 2px 10px rgba(225,29,72,.07);
+  transition:transform var(--med),box-shadow var(--med);
+}
+.dl-verify-card:hover {
+  transform:translateY(-2px);
+  box-shadow:var(--dl-shadow);
+}
+.dl-verify-card .verify-header {
+  display:flex;align-items:center;gap:10px;margin-bottom:10px;
+}
+.dl-verify-card .verify-icon {
+  width:36px;height:36px;border-radius:10px;display:flex;align-items:center;
+  justify-content:center;font-size:17px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--dl-light),var(--dl-mid));
+  border:1.5px solid var(--dl-border);
+}
+.dl-verify-card .verify-title { font-size:14px;font-weight:700;color:var(--text1); }
+.dl-verify-card .verify-sub { font-size:11px;color:var(--text3);margin-top:1px; }
+.dl-verify-card .verify-code {
+  background:linear-gradient(135deg,#0f172a,#1e1b4b);
+  border:1.5px solid rgba(225,29,72,.2);
+  border-radius:8px;padding:10px 12px;
+  font-family:'Courier New',monospace;font-size:11.5px;
+  color:#e2e8f0;line-height:1.6;
+  white-space:pre-wrap;word-break:break-all;
+}
+
+/* ── CSS 패턴 테이블 ── */
+.dl-pattern-table {
+  width:100%;border-collapse:collapse;font-size:12.5px;
+}
+.dl-pattern-table th {
+  text-align:left;padding:8px 12px;
+  background:linear-gradient(135deg,var(--dl-dark),#9f1239);
+  color:rgba(255,255,255,.9);font-weight:700;font-size:11.5px;
+}
+.dl-pattern-table th:first-child { border-radius:8px 0 0 0; }
+.dl-pattern-table th:last-child { border-radius:0 8px 0 0; }
+.dl-pattern-table td {
+  padding:8px 12px;border-bottom:1px solid rgba(225,29,72,.1);
+  vertical-align:top;color:var(--text2);
+}
+.dl-pattern-table tr:last-child td { border-bottom:none; }
+.dl-pattern-table tr:hover td { background:rgba(225,29,72,.04); }
+.dl-pattern-table code {
+  background:rgba(225,29,72,.08);border:1px solid rgba(225,29,72,.15);
+  border-radius:4px;padding:1px 5px;font-size:11px;
+  color:var(--dl-dark);font-family:'Courier New',monospace;
+}
+
+/* ── 다크 론처 박스 ── */
+.dl-launcher {
+  background:linear-gradient(145deg,#0f0f1a,#1a0a10,#0f172a);
+  border:2px solid rgba(225,29,72,.35);
+  border-radius:var(--r-xl);padding:28px;
+  box-shadow:0 8px 32px rgba(225,29,72,.15), inset 0 1px 0 rgba(225,29,72,.1);
+}
+.dl-launcher-title {
+  font-size:17px;font-weight:800;color:#fff;margin-bottom:4px;
+  text-shadow:0 0 20px rgba(225,29,72,.4);
+  display:flex;align-items:center;gap:10px;
+}
+.dl-launcher-sub { font-size:12px;color:rgba(255,255,255,.5);margin-bottom:20px; }
+
+.dl-input-row {
+  display:flex;align-items:center;gap:10px;margin-bottom:14px;
+}
+.dl-input-label {
+  font-size:12px;font-weight:700;color:rgba(255,255,255,.7);
+  white-space:nowrap;min-width:80px;
+}
+.dl-folder-input {
+  flex:1;background:rgba(255,255,255,.07);
+  border:1.5px solid rgba(225,29,72,.3);
+  border-radius:8px;padding:9px 14px;
+  color:#fff;font-size:13px;outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+.dl-folder-input::placeholder { color:rgba(255,255,255,.3); }
+.dl-folder-input:focus {
+  border-color:rgba(225,29,72,.65);
+  box-shadow:var(--dl-glow);
+  background:rgba(255,255,255,.1);
+}
+
+.dl-cmd-box {
+  background:rgba(0,0,0,.4);border:1.5px solid rgba(225,29,72,.25);
+  border-radius:10px;padding:14px 16px;
+  font-family:'Courier New',monospace;font-size:12px;
+  color:#e2e8f0;line-height:1.7;min-height:90px;
+  white-space:pre-wrap;word-break:break-all;
+  max-height:340px;overflow-y:auto;
+}
+
+.dl-copy-btn {
+  display:block;width:100%;margin-top:12px;padding:11px;
+  background:linear-gradient(135deg,var(--dl),var(--dl-dark));
+  border:none;border-radius:9px;color:#fff;font-size:14px;
+  font-weight:800;cursor:pointer;letter-spacing:.3px;
+  transition:transform .15s,box-shadow .15s,filter .15s;
+  box-shadow:0 4px 14px rgba(225,29,72,.35);
+}
+.dl-copy-btn:hover {
+  transform:translateY(-1px);
+  box-shadow:0 6px 20px rgba(225,29,72,.45);
+  filter:brightness(1.1);
+}
+.dl-copy-btn:active { transform:translateY(0); }
+
+/* ── 완료 판정 박스 ── */
+.dl-completion-box {
+  border:2px solid var(--dl-border);
+  border-radius:var(--r-lg);padding:18px 20px;
+  background:linear-gradient(135deg,#fff,var(--dl-light));
+  box-shadow:var(--dl-shadow);
+}
+
+/* ── 배너 ── */
+.dl-banner {
+  background:linear-gradient(135deg,#881337,#e11d48,#be123c);
+  border-radius:var(--r-xl);padding:20px 28px;margin-bottom:20px;
+  display:flex;align-items:center;gap:18px;
+  border:1.5px solid rgba(255,255,255,.12);
+  box-shadow:0 4px 24px rgba(225,29,72,.3),inset 0 1px 0 rgba(255,255,255,.15);
+  position:relative;overflow:hidden;
+}
+.dl-banner::after {
+  content:'';position:absolute;right:-20px;top:-20px;
+  width:160px;height:160px;border-radius:50%;
+  background:rgba(255,255,255,.05);
+}
+.dl-banner-icon {
+  font-size:36px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.3));
+  position:relative;z-index:1;
+}
+.dl-banner-body { position:relative;z-index:1; }
+.dl-banner-title {
+  font-size:20px;font-weight:900;color:#fff;letter-spacing:-.3px;
+  text-shadow:0 2px 8px rgba(0,0,0,.3);
+}
+.dl-banner-desc { font-size:13px;color:rgba(255,255,255,.8);margin-top:3px; }
+
+/* ── 단계 흐름 배지 ── */
+.flow-badges { display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:10px; }
+.flow-badge {
+  padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;
+  background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.2);
+}
+.flow-arrow { color:rgba(255,255,255,.5);font-size:12px; }
+</style>
+</head>
+<body class="page-body">
+
+<header class="vcos-header">
+  <div id="nav-placeholder"></div>
+</header>
+
+<main class="page-main">
+  <div class="page-inner">
+
+    <!-- BANNER -->
+    <div class="phase-banner" style="background:linear-gradient(135deg,#881337,#e11d48,#be123c);box-shadow:0 4px 24px rgba(225,29,72,.3),inset 0 1px 0 rgba(255,255,255,.15)">
+      <div class="phase-banner-icon">🔁</div>
+      <div class="phase-banner-body">
+        <div class="phase-banner-title">5times Debug Loop</div>
+        <div class="phase-banner-desc">분석 → 수정 → 검증 최대 5회 자동 반복 · Playwright 스크린샷 시각 검증</div>
+        <div class="phase-banner-tags">
+          <span class="phase-banner-tag">1. 문제 분석</span>
+          <span class="phase-banner-tag">2. 원인 진단</span>
+          <span class="phase-banner-tag">3. 수정</span>
+          <span class="phase-banner-tag">4. 검증</span>
+          <span class="phase-banner-tag">5. 완료 판정</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE TITLE -->
+    <div class="page-hero">
+      <div class="page-hero-icon" style="background:linear-gradient(135deg,#fb7185,#e11d48);box-shadow:0 4px 14px rgba(225,29,72,.35);border:2px solid rgba(225,29,72,.3)">🔁</div>
+      <div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="page-hero-badge" style="color:#e11d48;background:rgba(225,29,72,.1);border:1.5px solid rgba(225,29,72,.25)">Phase 4</span>
+          <h1 class="page-hero-name">5times Debug Loop</h1>
+        </div>
+        <p class="page-hero-desc">분석→수정→검증 최대 5회 반복 · <code class="page-hero-skill" style="background:rgba(225,29,72,.08);border:1px solid rgba(225,29,72,.2);color:var(--dl-dark)">/5times-debug-loop</code></p>
+      </div>
+    </div>
+
+    <!-- STAT ROW -->
+    <div class="stat-row" style="margin-bottom:24px">
+      <div class="stat-box">
+        <div class="stat-num" style="color:var(--dl)">5</div>
+        <div class="stat-label">최대 Rounds</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" style="color:var(--dl);font-size:22px">3</div>
+        <div class="stat-label">검증 방법</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" style="color:var(--dl);font-size:18px">📸</div>
+        <div class="stat-label">Playwright 지원</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" style="color:var(--dl);font-size:18px">📋</div>
+        <div class="stat-label">자동 보고서</div>
+      </div>
+    </div>
+
+    <!-- 실행 명령어 생성기 -->
+    <div style="margin-bottom:24px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="height:2px;flex:1;background:linear-gradient(90deg,transparent,rgba(225,29,72,.4))"></div>
+        <span style="font-size:12px;font-weight:800;color:var(--dl);letter-spacing:.5px;text-transform:uppercase;padding:4px 14px;background:rgba(225,29,72,.08);border:1.5px solid rgba(225,29,72,.2);border-radius:9999px">실행 명령어 생성기</span>
+        <div style="height:2px;flex:1;background:linear-gradient(90deg,rgba(225,29,72,.4),transparent)"></div>
+      </div>
+      <div class="dl-launcher">
+        <div class="dl-launcher-title">
+          <span style="width:32px;height:32px;border-radius:10px;background:rgba(225,29,72,.25);border:1.5px solid rgba(225,29,72,.4);display:flex;align-items:center;justify-content:center;font-size:16px">🔁</span>
+          /5times-debug-loop 스킬 실행기
+        </div>
+        <div class="dl-launcher-sub">프로젝트 폴더를 입력하면 cd 명령어 + 스킬 전문이 자동 생성됩니다</div>
+        <div class="dl-input-row">
+          <div class="dl-input-label">📁 프로젝트 폴더</div>
+          <input type="text" class="dl-folder-input" id="dl-folder-input"
+            placeholder="예: C:\MyProject\frontend"
+            oninput="renderDlCmd()" />
+        </div>
+        <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:10px;margin-top:-6px">
+          ⚡ 폴더 경로 입력 시 자동 생성 · 빈칸이면 스킬 내용만 표시
+        </div>
+        <div id="dl-cmd-box" class="dl-cmd-box">폴더를 입력하면 명령어가 생성됩니다...</div>
+        <button class="dl-copy-btn" onclick="copyDlCmd(this)">
+          📋 전체 복사 (cd 명령어 + 5times-debug-loop 스킬)
+        </button>
+      </div>
+    </div>
+
+    <!-- GRID 2COL -->
+    <div class="grid-2" style="margin-bottom:24px">
+
+      <!-- LEFT: 루프 구조 -->
+      <div>
+        <div class="card">
+          <div class="card-title" style="display:flex;align-items:center;gap:8px">
+            <span style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--dl-light),var(--dl-mid));border:1.5px solid var(--dl-border);display:flex;align-items:center;justify-content:center;font-size:14px">🔄</span>
+            루프 구조 (최대 5회)
+          </div>
+
+          <!-- Round 단계 카드 -->
+          <div class="dl-round-card" style="border-color:rgba(225,29,72,.3)">
+            <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--dl),var(--dl-dark));border-radius:4px 0 0 4px"></div>
+            <div class="round-icon">🔍</div>
+            <div class="round-body">
+              <div class="round-label" style="color:var(--dl)">Step 1 · 분석</div>
+              <div class="round-title">문제 분석 & 원인 진단</div>
+              <div class="round-desc">현재 상태를 파악하고 근본 원인을 특정한다. 스크린샷, 에러 메시지, 로그를 기반으로 가설을 수립.</div>
+            </div>
+          </div>
+
+          <div class="dl-round-card" style="border-color:rgba(249,115,22,.3)">
+            <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#f97316,#ea580c);border-radius:4px 0 0 4px"></div>
+            <div class="round-icon" style="background:linear-gradient(135deg,#fff7ed,#ffedd5);border-color:rgba(249,115,22,.3)">🔧</div>
+            <div class="round-body">
+              <div class="round-label" style="color:#ea580c">Step 2 · 수정</div>
+              <div class="round-title">코드 / 설정 변경</div>
+              <div class="round-desc">진단된 원인에 맞는 최소한의 수정을 적용한다. 여러 원인이 있으면 가장 가능성 높은 것부터 순서대로.</div>
+            </div>
+          </div>
+
+          <div class="dl-round-card" style="border-color:rgba(16,185,129,.3)">
+            <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#10b981,#059669);border-radius:4px 0 0 4px"></div>
+            <div class="round-icon" style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-color:rgba(16,185,129,.3)">✅</div>
+            <div class="round-body">
+              <div class="round-label" style="color:#059669">Step 3 · 검증</div>
+              <div class="round-title">결과 확인 & 완료 판정</div>
+              <div class="round-desc">Playwright 스크린샷 / 빌드 실행 / API 응답으로 수정 결과 검증. OK면 종료, 아니면 다음 Round.</div>
+            </div>
+          </div>
+
+          <!-- 완료 판정 -->
+          <div class="dl-completion-box" style="margin-top:14px">
+            <div style="font-size:13px;font-weight:800;color:var(--dl-dark);margin-bottom:10px;display:flex;align-items:center;gap:7px">
+              <span>🏁</span> 완료 판정 기준
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;font-size:12.5px">
+              <div style="display:flex;align-items:flex-start;gap:8px">
+                <span style="color:#10b981;font-weight:800;flex-shrink:0">✅</span>
+                <span style="color:var(--text2)">문제가 해결된 경우 (스크린샷/테스트/로그 확인)</span>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:8px">
+                <span style="color:#10b981;font-weight:800;flex-shrink:0">✅</span>
+                <span style="color:var(--text2)">사용자가 <strong>"OK" / "퍼펙트" / "좋아"</strong> 라고 한 경우</span>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:8px;margin-top:4px;padding-top:8px;border-top:1px solid var(--dl-border)">
+                <span style="color:var(--dl);font-weight:800;flex-shrink:0">⚠️</span>
+                <span style="color:var(--text2)">5회 소진 후 미해결 → 결과 보고서 + 다음 접근법 제안</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: 검증 방법별 가이드 -->
+      <div>
+        <div class="card">
+          <div class="card-title" style="display:flex;align-items:center;gap:8px">
+            <span style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--dl-light),var(--dl-mid));border:1.5px solid var(--dl-border);display:flex;align-items:center;justify-content:center;font-size:14px">🔬</span>
+            검증 방법별 가이드
+          </div>
+
+          <!-- 방법 1: Playwright -->
+          <div class="dl-verify-card" style="border-color:rgba(225,29,72,.3);margin-bottom:12px">
+            <div class="verify-header">
+              <div class="verify-icon">📸</div>
+              <div>
+                <div class="verify-title">시각적 결과물 — Playwright 스크린샷</div>
+                <div class="verify-sub">UI / CSS / HTML 변경 시</div>
+              </div>
+            </div>
+            <div class="verify-code"># 기본 (1440×900)
+npx playwright screenshot "[URL]" \
+  /c/Users/home/AppData/Local/Temp/debug_shot_N.png \
+  --viewport-size="1440,900" \
+  --wait-for-timeout=3000
+
+# 모바일 (390×844)
+npx playwright screenshot "[URL]" \
+  /c/Users/home/AppData/Local/Temp/debug_shot_mobile_N.png \
+  --viewport-size="390,844" \
+  --wait-for-timeout=3000
+
+# PNG 읽기
+Read tool → "C:/Users/home/AppData/Local/Temp/debug_shot_N.png"</div>
+            <div style="margin-top:10px">
+              <div style="font-size:11.5px;font-weight:700;color:var(--dl-dark);margin-bottom:6px">체크 항목</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
+                <div style="font-size:11px;color:var(--text2);background:var(--dl-light);border:1px solid var(--dl-border);border-radius:6px;padding:4px 8px">여백 · 공백 크기</div>
+                <div style="font-size:11px;color:var(--text2);background:var(--dl-light);border:1px solid var(--dl-border);border-radius:6px;padding:4px 8px">오버플로우 여부</div>
+                <div style="font-size:11px;color:var(--text2);background:var(--dl-light);border:1px solid var(--dl-border);border-radius:6px;padding:4px 8px">요소 정렬 위치</div>
+                <div style="font-size:11px;color:var(--text2);background:var(--dl-light);border:1px solid var(--dl-border);border-radius:6px;padding:4px 8px">SVG 종횡비 유지</div>
+                <div style="font-size:11px;color:var(--text2);background:var(--dl-light);border:1px solid var(--dl-border);border-radius:6px;padding:4px 8px">반응형 레이아웃</div>
+                <div style="font-size:11px;color:var(--text2);background:var(--dl-light);border:1px solid var(--dl-border);border-radius:6px;padding:4px 8px">폰트/색상 대비</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 방법 2: 빌드/코드 -->
+          <div class="dl-verify-card" style="border-color:rgba(249,115,22,.3);margin-bottom:12px">
+            <div class="verify-header">
+              <div class="verify-icon" style="background:linear-gradient(135deg,#fff7ed,#ffedd5);border-color:rgba(249,115,22,.3)">🛠️</div>
+              <div>
+                <div class="verify-title">코드 / 빌드 — 명령어 실행</div>
+                <div class="verify-sub">TypeScript / npm 프로젝트</div>
+              </div>
+            </div>
+            <div class="verify-code" style="border-color:rgba(249,115,22,.2)">npm run build       # 빌드 확인
+npx tsc --noEmit    # 타입 체크
+npm test            # 테스트</div>
+          </div>
+
+          <!-- 방법 3: API/서버 -->
+          <div class="dl-verify-card" style="border-color:rgba(16,185,129,.3)">
+            <div class="verify-header">
+              <div class="verify-icon" style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-color:rgba(16,185,129,.3)">🌐</div>
+              <div>
+                <div class="verify-title">API / 서버 — 응답 확인</div>
+                <div class="verify-sub">REST API / 서버 응답 검증</div>
+              </div>
+            </div>
+            <div class="verify-code" style="border-color:rgba(16,185,129,.2)">curl -s "[URL]" | head -50</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CSS 수정 패턴 섹션 -->
+    <div class="card" style="margin-bottom:24px">
+      <div class="card-title" style="display:flex;align-items:center;gap:8px">
+        <span style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--dl-light),var(--dl-mid));border:1.5px solid var(--dl-border);display:flex;align-items:center;justify-content:center;font-size:14px">🎨</span>
+        자주 쓰는 CSS 수정 패턴
+      </div>
+
+      <div class="grid-2" style="gap:14px">
+        <!-- SVG 여백 -->
+        <div>
+          <div style="font-size:12px;font-weight:800;color:var(--dl-dark);margin-bottom:8px;display:flex;align-items:center;gap:6px">
+            <span style="width:20px;height:20px;border-radius:6px;background:var(--dl-light);border:1px solid var(--dl-border);display:flex;align-items:center;justify-content:center;font-size:10px">🗺️</span>
+            SVG 지도 여백 제거
+          </div>
+          <div class="dl-verify-card" style="border-color:rgba(225,29,72,.2);padding:12px 14px">
+            <div class="verify-code" style="font-size:11px">/* viewBox 타이트하게 조정 */
+viewBox="[left] [top] [width] [height]"
+
+/* height 기준 + auto width */
+#svg { height: calc(100vh - Npx); width: auto; }</div>
+          </div>
+        </div>
+
+        <!-- Flex 여백 -->
+        <div>
+          <div style="font-size:12px;font-weight:800;color:var(--dl-dark);margin-bottom:8px;display:flex;align-items:center;gap:6px">
+            <span style="width:20px;height:20px;border-radius:6px;background:var(--dl-light);border:1px solid var(--dl-border);display:flex;align-items:center;justify-content:center;font-size:10px">📐</span>
+            Flex 컨테이너 여백 제거
+          </div>
+          <div class="dl-verify-card" style="border-color:rgba(225,29,72,.2);padding:12px 14px">
+            <div class="verify-code" style="font-size:11px">.container { width: fit-content; }
+.parent { align-items: center; }</div>
+          </div>
+        </div>
+
+        <!-- 전체 화면 고정 -->
+        <div>
+          <div style="font-size:12px;font-weight:800;color:var(--dl-dark);margin-bottom:8px;display:flex;align-items:center;gap:6px">
+            <span style="width:20px;height:20px;border-radius:6px;background:var(--dl-light);border:1px solid var(--dl-border);display:flex;align-items:center;justify-content:center;font-size:10px">📏</span>
+            전체 화면 고정 (스크롤 없음)
+          </div>
+          <div class="dl-verify-card" style="border-color:rgba(225,29,72,.2);padding:12px 14px">
+            <div class="verify-code" style="font-size:11px">html, body { height: 100vh; overflow: hidden; }
+.main { height: calc(100vh - [header]px); overflow: hidden; }
+.side-col { height: 100%; overflow-y: auto; }</div>
+          </div>
+        </div>
+
+        <!-- 절대 배치 오버레이 -->
+        <div>
+          <div style="font-size:12px;font-weight:800;color:var(--dl-dark);margin-bottom:8px;display:flex;align-items:center;gap:6px">
+            <span style="width:20px;height:20px;border-radius:6px;background:var(--dl-light);border:1px solid var(--dl-border);display:flex;align-items:center;justify-content:center;font-size:10px">🏷️</span>
+            범례 / 오버레이 절대 배치
+          </div>
+          <div class="dl-verify-card" style="border-color:rgba(225,29,72,.2);padding:12px 14px">
+            <div class="verify-code" style="font-size:11px">.container { position: relative; }
+.legend {
+  position: absolute;
+  bottom: 20px; right: 20px;
+  background: rgba(255,255,255,0.92);
+  border-radius: 10px; padding: 8px 10px;
+  border: 1px solid #e5e7eb;
+}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 실전 교훈 테이블 -->
+      <div style="margin-top:18px">
+        <div style="font-size:12px;font-weight:800;color:var(--dl-dark);margin-bottom:10px;display:flex;align-items:center;gap:7px">
+          <span>📖</span> 실전 교훈 (2026-03-14, election-map-pages)
+        </div>
+        <div style="overflow-x:auto;border-radius:10px;border:1.5px solid var(--dl-border)">
+          <table class="dl-pattern-table">
+            <thead>
+              <tr>
+                <th>문제</th>
+                <th>원인</th>
+                <th>해결</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>SVG 옆에 여백 많음</td>
+                <td>viewBox가 실제 지도보다 넓음</td>
+                <td><code>viewBox</code> 타이트하게 + <code>width:auto; height:calc(100vh-Npx)</code></td>
+              </tr>
+              <tr>
+                <td>지도가 납작해짐</td>
+                <td><code>width:auto</code> flex item = 100% 아님</td>
+                <td>명시적 height + wrapper div</td>
+              </tr>
+              <tr>
+                <td>범례 위치 이상</td>
+                <td>flex row 안에 있어서 SVG 너비 잡아먹음</td>
+                <td><code>position:absolute</code>로 빈 공간에 overlay</td>
+              </tr>
+              <tr>
+                <td><code>width:fit-content</code> 무시됨</td>
+                <td>flex item은 항상 block</td>
+                <td>부모에 <code>align-items: center</code> + <code>width: fit-content</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 호출 예시 -->
+    <div class="card" style="margin-bottom:24px">
+      <div class="card-title" style="display:flex;align-items:center;gap:8px">
+        <span style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--dl-light),var(--dl-mid));border:1.5px solid var(--dl-border);display:flex;align-items:center;justify-content:center;font-size:14px">💬</span>
+        스킬 호출 예시
+      </div>
+
+      <div class="grid-2" style="gap:14px">
+        <div>
+          <div style="font-size:12px;font-weight:800;color:var(--dl-dark);margin-bottom:8px">시각적 문제 (Playwright)</div>
+          <div class="dl-verify-card" style="border-color:rgba(225,29,72,.2);padding:12px 14px">
+            <div class="verify-code" style="font-size:11.5px">/5times-debug-loop
+URL: https://my-app.vercel.app
+문제: 지도 우측 여백 너무 많고 카드가 좁음
+파일: C:/Project/index.html
+검증방법: Playwright 스크린샷 (1440x900)
+배포방식: vercel --prod</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:800;color:var(--dl-dark);margin-bottom:8px">빌드/코드 문제</div>
+          <div class="dl-verify-card" style="border-color:rgba(249,115,22,.2);padding:12px 14px">
+            <div class="verify-code" style="font-size:11.5px;border-color:rgba(249,115,22,.2)">/5times-debug-loop
+문제: TypeScript 빌드 오류
+파일: src/app/api/route.ts
+검증방법: npm run build</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /page-inner -->
+</main>
+
+<div id="footer-placeholder"></div>
+
+<script src="../vcos.js"></script>
+<script>
+/* ── 스킬 내용 (SKILL.md 전문) ─────────────────────── */
+const DL_SKILL_CONTENT = "---\ndescription: \"5\ud68c \ubc18\ubcf5 \ub514\ubc84\uae45 \ub8e8\ud504 \u2014 \ubb38\uc81c\ub97c \ubd84\uc11d\ud558\uace0 \uc218\uc815\ud558\uace0 \uac80\uc99d\ud558\uba70 \ucd5c\ub300 5\ud68c \ubc18\ubcf5. \uc2dc\uac01\uc801 \uacb0\uacfc\ubb3c\uc774 \uc788\ub294 \uacbd\uc6b0 Playwright \uc2a4\ud06c\ub9b0\uc0f7\uc73c\ub85c \uc790\ub3d9 \uac80\uc99d\"\nuser-invocable: true\n---\n\n# /5times-debug-loop\n\n**\ubb38\uc81c\ub97c \ubd84\uc11d \u2192 \uc218\uc815 \u2192 \uac80\uc99d \u2192 \uc7ac\ubd84\uc11d**\uc744 **\ucd5c\ub300 5\ud68c \ubc18\ubcf5**\ud558\uc5ec \uc790\ub3d9\uc73c\ub85c \ud574\uacb0\ud55c\ub2e4.\n\uc2dc\uac01\uc801 \uacb0\uacfc\ubb3c(UI/CSS/HTML)\uc774 \uc788\ub294 \uacbd\uc6b0, Playwright \uc2a4\ud06c\ub9b0\uc0f7\uc73c\ub85c \uac80\uc99d\ud55c\ub2e4.\n\n## \ube60\ub978 \uc2e4\ud589\n\n```\n\uc0ac\uc6a9\uc790: \"/5times-debug-loop\n         \ubb38\uc81c: [\ubb38\uc81c \uc124\uba85]\n         \ud30c\uc77c: [\uc218\uc815 \ub300\uc0c1 \ud30c\uc77c]\n         \uac80\uc99d\ubc29\ubc95: [\uc2a4\ud06c\ub9b0\uc0f7 URL / \ud14c\uc2a4\ud2b8 \uba85\ub839\uc5b4 / \ub85c\uadf8 \ud655\uc778 \ub4f1]\"\n\n\u2192 \ucd5c\ub300 5\ud68c \ub8e8\ud504 \uc790\ub3d9 \uc2e4\ud589\n```\n\n---\n\n## \ub8e8\ud504 \uad6c\uc870 (\ucd5c\ub300 5\ud68c)\n\n```\nRound N:\n  1. \ubb38\uc81c \ubd84\uc11d (\ud604\uc7ac \uc0c1\ud0dc \ud30c\uc545)\n  2. \uc6d0\uc778 \uc9c4\ub2e8 (\uadfc\ubcf8 \uc6d0\uc778 \ud2b9\uc815)\n  3. \uc218\uc815 (\ucf54\ub4dc/\uc124\uc815 \ubcc0\uacbd)\n  4. \uac80\uc99d (\uacb0\uacfc \ud655\uc778)\n     \u251c\u2500 \uc2dc\uac01\uc801 \uacb0\uacfc\ubb3c \u2192 Playwright \uc2a4\ud06c\ub9b0\uc0f7 \ucd2c\uc601 + Read tool\ub85c \ubd84\uc11d\n     \u251c\u2500 \ucf54\ub4dc/\ub85c\uc9c1 \u2192 \ud14c\uc2a4\ud2b8 \uc2e4\ud589 / \ube4c\ub4dc \ud655\uc778\n     \u2514\u2500 API/\uc11c\ubc84 \u2192 \uc751\ub2f5 \ud655\uc778 / \ub85c\uadf8 \ubd84\uc11d\n  5. \uc644\ub8cc \ud310\uc815 \u2192 OK\uba74 \uc885\ub8cc, \uc544\ub2c8\uba74 \ub2e4\uc74c Round\n```\n\n---\n\n## \uac80\uc99d \ubc29\ubc95\ubcc4 \uac00\uc774\ub4dc\n\n### 1. \uc2dc\uac01\uc801 \uacb0\uacfc\ubb3c (UI/CSS/HTML) \u2014 Playwright \uc2a4\ud06c\ub9b0\uc0f7\n\n```bash\n# \uae30\ubcf8 (1440\u00d7900)\nnpx playwright screenshot \"[URL]\" /c/Users/home/AppData/Local/Temp/debug_shot_N.png \\\n  --viewport-size=\"1440,900\" \\\n  --wait-for-timeout=3000\n\n# \ubaa8\ubc14\uc77c (390\u00d7844)\nnpx playwright screenshot \"[URL]\" /c/Users/home/AppData/Local/Temp/debug_shot_mobile_N.png \\\n  --viewport-size=\"390,844\" \\\n  --wait-for-timeout=3000\n```\n\n**PNG \uc77d\uae30:**\n```\nRead tool \u2192 file_path: \"C:/Users/home/AppData/Local/Temp/debug_shot_N.png\"\n```\n\n**\uccb4\ud06c \ud56d\ubaa9:**\n| \ud56d\ubaa9 | \ud655\uc778 \ub0b4\uc6a9 |\n|------|----------|\n| \uc5ec\ubc31 | \uc694\uc18c \uc8fc\ubcc0 \ubd88\ud544\uc694\ud55c \uacf5\ubc31 \ud06c\uae30 |\n| \uc624\ubc84\ud50c\ub85c\uc6b0 | \ucf58\ud150\uce20\uac00 \ud654\uba74 \ubc16\uc73c\ub85c \ub098\uac00\ub294\uc9c0 |\n| \uc815\ub82c | \uc694\uc18c\ub4e4\uc774 \uc758\ub3c4\ud55c \uc704\uce58\uc5d0 \uc788\ub294\uc9c0 |\n| \ube44\uc728 | SVG/\uc774\ubbf8\uc9c0 \uc885\ud6a1\ube44 \uc720\uc9c0 \uc5ec\ubd80 |\n| \ubc18\uc751\ud615 | \ube37\ud3ec\ud2b8 \ud06c\uae30\uc5d0 \ub530\ub77c \ub808\uc774\uc544\uc6c3 \ubcc0\ud654 |\n| \ud3f0\ud2b8/\uc0c9\uc0c1 | \ud14d\uc2a4\ud2b8 \uac00\ub3c5\uc131, \uc0c9\uc0c1 \ub300\ube44 |\n\n### 2. \ucf54\ub4dc/\ube4c\ub4dc \u2014 \uba85\ub839\uc5b4 \uc2e4\ud589\n\n```bash\n# \ube4c\ub4dc \ud655\uc778\nnpm run build\n\n# \ud0c0\uc785 \uccb4\ud06c\nnpx tsc --noEmit\n\n# \ud14c\uc2a4\ud2b8\nnpm test\n```\n\n### 3. API/\uc11c\ubc84 \u2014 \uc751\ub2f5 \ud655\uc778\n\n```bash\ncurl -s \"[URL]\" | head -50\n```\n\n---\n\n## \ubc30\ud3ec \ud328\ud134 (\uc2dc\uac01\uc801 \uacb0\uacfc\ubb3c \uc218\uc815 \ud6c4)\n\n### Vercel CLI\n```bash\ncd [repo-root] && vercel --prod\n# \u26a0\ufe0f \uc11c\ube0c\ud3f4\ub354\uc5d0\uc11c \uc2e4\ud589 \uae08\uc9c0 (rootDirectory \uc124\uc815 \ucda9\ub3cc)\n```\n\n### Git Push (GitHub Pages \ub4f1)\n```bash\ngit add . && git commit -m \"fix: ...\" && git push\n```\n\n---\n\n## \uc644\ub8cc \ud310\uc815 \uae30\uc900\n\n\ub8e8\ud504\ub97c **\uc870\uae30 \uc885\ub8cc**\ud558\ub294 \uc870\uac74:\n- \u2705 \ubb38\uc81c\uac00 \ud574\uacb0\ub41c \uacbd\uc6b0 (\uc2a4\ud06c\ub9b0\uc0f7/\ud14c\uc2a4\ud2b8/\ub85c\uadf8\ub85c \ud655\uc778)\n- \u2705 \uc0ac\uc6a9\uc790\uac00 \"OK\" / \"\ud37c\ud39d\ud2b8\" / \"\uc88b\uc544\" \ub77c\uace0 \ud55c \uacbd\uc6b0\n\n**5\ud68c \uc18c\uc9c4 \ud6c4\uc5d0\ub3c4 \ubbf8\ud574\uacb0 \uc2dc:**\n```\n\"5\ud68c \ub514\ubc84\uae45 \ub8e8\ud504 \uc644\ub8cc. \ud604\uc7ac \uc0c1\ud0dc:\n- Round 1: [\ubb38\uc81c] \u2192 [\uc2dc\ub3c4]\n- Round 2: [\ubb38\uc81c] \u2192 [\uc2dc\ub3c4]\n...\n- \ub0a8\uc740 \ubb38\uc81c: [\uc124\uba85]\n- \uc81c\uc548: [\ub2e4\uc74c \uc811\uadfc\ubc95]\"\n```\n\n---\n\n## \uc790\uc8fc \uc4f0\ub294 CSS \uc218\uc815 \ud328\ud134\n\n### SVG \uc9c0\ub3c4 \uc5ec\ubc31 \uc81c\uac70\n```css\n/* \uc6d0\uc778: viewBox\uac00 \uc2e4\uc81c \ucf58\ud150\uce20\ubcf4\ub2e4 \ub113\uc74c */\nviewBox=\"[left] [top] [width] [height]\"  /* \ud0c0\uc774\ud2b8\ud558\uac8c \uc870\uc815 */\n\n/* \uc6d0\uc778: height:100% + width:auto \u2192 \uc2e4\uc81c width \uc791\uc74c */\n#svg { height: calc(100vh - Npx); width: auto; }\n```\n\n### Flex \ucee8\ud14c\uc774\ub108 \uc5ec\ubc31 \uc81c\uac70\n```css\n.container { width: fit-content; }\n.parent { align-items: center; }  /* \uc790\uc2dd\uc774 \ub0b4\uc6a9 \ud06c\uae30\ub85c */\n```\n\n### \uc804\uccb4 \ud654\uba74 \ub192\uc774 \uace0\uc815 (\uc2a4\ud06c\ub864 \uc5c6\uc74c)\n```css\nhtml, body { height: 100vh; overflow: hidden; }\n.main { height: calc(100vh - [header]px); overflow: hidden; }\n.side-col { height: 100%; overflow-y: auto; }\n```\n\n### \ubc94\ub840/\uc624\ubc84\ub808\uc774 \uc808\ub300 \ubc30\uce58\n```css\n.container { position: relative; }\n.legend {\n  position: absolute;\n  bottom: 20px; right: 20px;\n  background: rgba(255,255,255,0.92);\n  border-radius: 10px; padding: 8px 10px;\n  border: 1px solid #e5e7eb;\n}\n```\n\n---\n\n## \uc2e4\uc804 \uad50\ud6c8 (2026-03-14, election-map-pages)\n\n| \ubb38\uc81c | \uc6d0\uc778 | \ud574\uacb0 |\n|------|------|------|\n| SVG \uc606\uc5d0 \uc5ec\ubc31 \ub9ce\uc74c | SVG viewBox\uac00 \uc2e4\uc81c \uc9c0\ub3c4\ubcf4\ub2e4 \ub113\uc74c + \uc694\uc18c \ud06c\uae30 \ubd88\uc77c\uce58 | viewBox \ud0c0\uc774\ud2b8\ud558\uac8c + `width:auto; height:calc(100vh-Npx)` |\n| \uc9c0\ub3c4\uac00 \ub099\uc791\ud574\uc9d8 | `width:auto` flex item = 100% \uc544\ub2d8, SVG \uae30\ubcf8 \ud06c\uae30(300px) | \uba85\uc2dc\uc801 height + wrapper div |\n| \ubc94\ub840 \uc704\uce58 \uc774\uc0c1 | flex row \uc548\uc5d0 \uc788\uc5b4\uc11c SVG \ub108\ube44 \uc7a1\uc544\uba39\uc74c | `position:absolute`\ub85c \ube48 \uacf5\uac04\uc5d0 overlay |\n| \uce74\ub4dc \ub108\ube44 \uc870\uc815 | grid column px \uc9c1\uc811 \uc218\uc815 | `200px \u2192 240px` (20% \uc99d\uac00) |\n| `width:fit-content` \ubb34\uc2dc\ub428 | flex item\uc740 \ud56d\uc0c1 block \u2192 `align-items: center` \ud544\uc694 | \ubd80\ubaa8\uc5d0 `align-items: center` + `width: fit-content` |\n\n---\n\n## \uc2a4\ud038 \ud638\ucd9c \uc608\uc2dc\n\n### \uc2dc\uac01\uc801 \ubb38\uc81c\n```\n/5times-debug-loop\nURL: https://election-map-pages.vercel.app\n\ubb38\uc81c: \uc9c0\ub3c4 \uc6b0\uce21 \uc5ec\ubc31 \ub108\ubb34 \ub9ce\uace0 \uce74\ub4dc\uac00 \uc88c\uc74c\n\ud30c\uc77c: C:/Development_PoliticianFinder_com/election-map-pages/index.html\n\uac80\uc99d\ubc29\ubc95: Playwright \uc2a4\ud06c\ub9b0\uc0f7 (1440x900)\n\ubc30\ud3ec\ubc29\uc2dd: vercel --prod (election-map-pages \ud3f4\ub354\uc5d0\uc11c)\n```\n\n### \ube4c\ub4dc/\ucf54\ub4dc \ubb38\uc81c\n```\n/5times-debug-loop\n\ubb38\uc81c: TypeScript \ube4c\ub4dc \uc624\ub958\n\ud30c\uc77c: 1_Frontend/src/app/api/report-purchase/route.ts\n\uac80\uc99d\ubc29\ubc95: npm run build\n```\n";
+
+/* ── 렌더링 & localStorage ─────────────────────────── */
+const DL_STORAGE_KEY = 'vcos_debugloop_folder';
+
+function renderDlCmd() {
+  const input  = document.getElementById('dl-folder-input');
+  const box    = document.getElementById('dl-cmd-box');
+  const folder = input.value.trim();
+  if (folder) localStorage.setItem(DL_STORAGE_KEY, folder);
+
+  const cdLine = folder ? 'cd "' + folder + '"\n\n' : '';
+  box.textContent = cdLine + DL_SKILL_CONTENT;
+}
+
+function copyDlCmd(btn) {
+  const box = document.getElementById('dl-cmd-box');
+  copyText(box.textContent, btn);
+}
+
+/* ── 초기화 ─────────────────────────────────────────── */
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('nav-placeholder').innerHTML = buildNav('D4', false);
+  document.getElementById('footer-placeholder').innerHTML = buildFooter(false);
+
+  const saved = localStorage.getItem(DL_STORAGE_KEY);
+  if (saved) {
+    document.getElementById('dl-folder-input').value = saved;
+  }
+  renderDlCmd();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VCOS — Slideshow Web</title>
+<link rel="stylesheet" href="../vcos.css">
+<style>
+/* ══════════════════════════════════════════════════
+   Slideshow Web 전용 디자인 시스템
+   ══════════════════════════════════════════════════ */
+:root {
+  --sw:#7c3aed;
+  --sw2:#8b5cf6;
+  --sw3:#a78bfa;
+  --sw-dark:#4c1d95;
+  --sw-light:#f5f3ff;
+  --sw-mid:#ede9fe;
+  --sw-border:rgba(124,58,237,.28);
+  --sw-border-strong:rgba(124,58,237,.5);
+  --sw-glow:0 0 0 3px rgba(124,58,237,.15);
+  --sw-shadow:0 4px 20px rgba(124,58,237,.18);
+  --sw-shadow-lg:0 8px 32px rgba(124,58,237,.25);
+}
+
+.page-body { background:linear-gradient(180deg,rgba(245,243,255,.35) 0%,transparent 300px); }
+
+.card {
+  border:1.5px solid var(--sw-border) !important;
+  background:linear-gradient(155deg,#ffffff,#fdfcff) !important;
+  box-shadow:0 2px 12px rgba(124,58,237,.08) !important;
+}
+.card::before { background:linear-gradient(90deg,var(--sw),var(--sw3)) !important;opacity:.6 }
+.card:hover::before { opacity:1 }
+.card-title {
+  color:var(--sw-dark);
+  border-bottom:1.5px solid var(--sw-border);
+  padding-bottom:10px;margin-bottom:12px;
+}
+.stat-box {
+  background:linear-gradient(145deg,#fff,var(--sw-light)) !important;
+  border:1.5px solid var(--sw-border) !important;
+  border-top:3px solid var(--sw) !important;
+  box-shadow:0 2px 8px rgba(124,58,237,.1) !important;
+}
+.stat-box .stat-val { color:var(--sw) }
+
+/* ── 페이즈 카드 ── */
+.sw-phase-card {
+  border-radius:var(--r-lg);padding:16px 18px;border:2px solid;margin-bottom:10px;
+  background:linear-gradient(135deg,#fff,#fdfcff);
+  box-shadow:0 2px 12px rgba(124,58,237,.08);
+  position:relative;overflow:hidden;
+  transition:transform var(--med),box-shadow var(--med);
+  display:flex;align-items:flex-start;gap:14px;
+}
+.sw-phase-card:hover {
+  transform:translateY(-2px);
+  box-shadow:var(--sw-shadow);
+  background:linear-gradient(135deg,#fdfcff,var(--sw-light));
+}
+.sw-phase-card .phase-icon {
+  width:44px;height:44px;border-radius:12px;display:flex;align-items:center;
+  justify-content:center;font-size:20px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--sw-light),var(--sw-mid));
+  border:1.5px solid var(--sw-border);
+}
+.sw-phase-card .phase-body { flex:1; }
+.sw-phase-card .phase-badge {
+  font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
+  padding:2px 8px;border-radius:9999px;display:inline-block;margin-bottom:5px;
+}
+.sw-phase-card .phase-title {
+  font-size:15px;font-weight:700;color:var(--text1);margin-bottom:5px;
+}
+.sw-phase-card .phase-desc {
+  font-size:12.5px;color:var(--text2);line-height:1.55;
+}
+
+/* ── 모드 비교 카드 ── */
+.sw-mode-card {
+  border-radius:var(--r-lg);padding:16px 18px;border:2px solid;
+  background:linear-gradient(135deg,#fff,#fdfcff);
+  box-shadow:0 2px 10px rgba(124,58,237,.07);
+  transition:transform var(--med),box-shadow var(--med);
+  height:100%;
+}
+.sw-mode-card:hover {
+  transform:translateY(-2px);
+  box-shadow:var(--sw-shadow);
+}
+.sw-mode-card .mode-header {
+  display:flex;align-items:center;gap:10px;margin-bottom:12px;
+  padding-bottom:10px;border-bottom:1.5px solid var(--sw-border);
+}
+.sw-mode-card .mode-icon {
+  width:40px;height:40px;border-radius:11px;display:flex;align-items:center;
+  justify-content:center;font-size:18px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--sw-light),var(--sw-mid));
+  border:1.5px solid var(--sw-border);
+}
+.sw-mode-card .mode-title { font-size:14px;font-weight:800;color:var(--text1); }
+.sw-mode-card .mode-sub { font-size:11px;color:var(--text3);margin-top:2px; }
+.sw-mode-list {
+  list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:5px;
+}
+.sw-mode-list li {
+  font-size:12.5px;color:var(--text2);display:flex;align-items:flex-start;gap:7px;
+  line-height:1.4;
+}
+.sw-mode-list li::before {
+  content:'→';color:var(--sw);font-weight:800;flex-shrink:0;font-size:11px;margin-top:1px;
+}
+
+/* ── 코드 박스 ── */
+.sw-code {
+  background:linear-gradient(135deg,#0f172a,#1e1b4b);
+  border:1.5px solid rgba(124,58,237,.2);
+  border-radius:8px;padding:10px 12px;
+  font-family:'Courier New',monospace;font-size:11.5px;
+  color:#e2e8f0;line-height:1.6;
+  white-space:pre-wrap;word-break:break-all;
+}
+
+/* ── 배너 ── */
+.sw-banner {
+  background:linear-gradient(135deg,#4c1d95,#7c3aed,#6d28d9);
+  border-radius:var(--r-xl);padding:20px 28px;margin-bottom:20px;
+  display:flex;align-items:center;gap:18px;
+  border:1.5px solid rgba(255,255,255,.12);
+  box-shadow:0 4px 24px rgba(124,58,237,.3),inset 0 1px 0 rgba(255,255,255,.15);
+  position:relative;overflow:hidden;
+}
+.sw-banner::after {
+  content:'';position:absolute;right:-20px;top:-20px;
+  width:160px;height:160px;border-radius:50%;
+  background:rgba(255,255,255,.05);
+}
+.sw-banner-icon {
+  font-size:36px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.3));
+  position:relative;z-index:1;
+}
+.sw-banner-body { position:relative;z-index:1; }
+.sw-banner-title {
+  font-size:20px;font-weight:900;color:#fff;letter-spacing:-.3px;
+  text-shadow:0 2px 8px rgba(0,0,0,.3);
+}
+.sw-banner-desc { font-size:13px;color:rgba(255,255,255,.8);margin-top:3px; }
+.sw-banner-tags { display:flex;gap:7px;flex-wrap:wrap;margin-top:8px; }
+.sw-banner-tag {
+  padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;
+  background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.2);
+}
+
+/* ── 론처 ── */
+.sw-launcher {
+  background:linear-gradient(145deg,#0f0f1a,#12082a,#0f172a);
+  border:2px solid rgba(124,58,237,.35);
+  border-radius:var(--r-xl);padding:28px;
+  box-shadow:0 8px 32px rgba(124,58,237,.15), inset 0 1px 0 rgba(124,58,237,.1);
+}
+.sw-launcher-title {
+  font-size:17px;font-weight:800;color:#fff;margin-bottom:4px;
+  text-shadow:0 0 20px rgba(124,58,237,.4);
+  display:flex;align-items:center;gap:10px;
+}
+.sw-launcher-sub { font-size:12px;color:rgba(255,255,255,.5);margin-bottom:20px; }
+.sw-input-row { display:flex;align-items:center;gap:10px;margin-bottom:14px; }
+.sw-input-label { font-size:12px;font-weight:700;color:rgba(255,255,255,.7);white-space:nowrap;min-width:80px; }
+.sw-folder-input {
+  flex:1;background:rgba(255,255,255,.07);
+  border:1.5px solid rgba(124,58,237,.3);
+  border-radius:8px;padding:9px 14px;
+  color:#fff;font-size:13px;outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+.sw-folder-input::placeholder { color:rgba(255,255,255,.3); }
+.sw-folder-input:focus {
+  border-color:rgba(124,58,237,.65);
+  box-shadow:var(--sw-glow);
+  background:rgba(255,255,255,.1);
+}
+.sw-cmd-box {
+  background:rgba(0,0,0,.4);border:1.5px solid rgba(124,58,237,.25);
+  border-radius:10px;padding:14px 16px;
+  font-family:'Courier New',monospace;font-size:12px;
+  color:#e2e8f0;line-height:1.7;min-height:90px;
+  white-space:pre-wrap;word-break:break-all;
+  max-height:340px;overflow-y:auto;
+}
+.sw-copy-btn {
+  display:block;width:100%;margin-top:12px;padding:11px;
+  background:linear-gradient(135deg,var(--sw),var(--sw-dark));
+  border:none;border-radius:9px;color:#fff;font-size:14px;
+  font-weight:800;cursor:pointer;letter-spacing:.3px;
+  transition:transform .15s,box-shadow .15s,filter .15s;
+  box-shadow:0 4px 14px rgba(124,58,237,.35);
+}
+.sw-copy-btn:hover { transform:translateY(-1px);box-shadow:0 6px 20px rgba(124,58,237,.45);filter:brightness(1.1); }
+.sw-copy-btn:active { transform:translateY(0); }
+
+/* ── 예시 테이블 ── */
+.sw-example-table { width:100%;border-collapse:collapse;font-size:12.5px; }
+.sw-example-table th {
+  text-align:left;padding:8px 12px;
+  background:linear-gradient(135deg,var(--sw-dark),#3b0764);
+  color:rgba(255,255,255,.9);font-weight:700;font-size:11.5px;
+}
+.sw-example-table th:first-child { border-radius:8px 0 0 0; }
+.sw-example-table th:last-child { border-radius:0 8px 0 0; }
+.sw-example-table td { padding:8px 12px;border-bottom:1px solid rgba(124,58,237,.1);vertical-align:top;color:var(--text2); }
+.sw-example-table tr:last-child td { border-bottom:none; }
+.sw-example-table tr:hover td { background:rgba(124,58,237,.04); }
+.sw-example-table code {
+  background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.15);
+  border-radius:4px;padding:1px 5px;font-size:11px;
+  color:var(--sw-dark);font-family:'Courier New',monospace;
+}
+</style>
+</head>
+<body class="page-body">
+
+<header class="vcos-header">
+  <div id="nav-placeholder"></div>
+</header>
+
+<main class="page-main">
+  <div class="page-inner">
+
+    <!-- BANNER -->
+    <div class="phase-banner" style="background:linear-gradient(135deg,#4c1d95,#7c3aed,#6d28d9);box-shadow:0 4px 24px rgba(124,58,237,.3),inset 0 1px 0 rgba(255,255,255,.15)">
+      <div class="phase-banner-icon">🎞️</div>
+      <div class="phase-banner-body">
+        <div class="phase-banner-title">Slideshow Web</div>
+        <div class="phase-banner-desc">PPT 슬라이드쇼 웹페이지 자동 생성 · PPTX → PNG/HTML · GitHub Pages 공유</div>
+        <div class="phase-banner-tags">
+          <span class="phase-banner-tag">Mode A: PNG 원본 유지</span>
+          <span class="phase-banner-tag">Mode B: HTML 재코딩</span>
+          <span class="phase-banner-tag">키보드 네비게이션</span>
+          <span class="phase-banner-tag">GitHub 공유</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE HERO -->
+    <div class="page-hero">
+      <div class="page-hero-icon" style="background:linear-gradient(135deg,#a78bfa,#7c3aed);box-shadow:0 4px 14px rgba(124,58,237,.35);border:2px solid rgba(124,58,237,.3)">🎞️</div>
+      <div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="page-hero-badge" style="color:#7c3aed;background:rgba(124,58,237,.1);border:1.5px solid rgba(124,58,237,.25)">Phase 5</span>
+          <h1 class="page-hero-name">Slideshow Web</h1>
+        </div>
+        <p class="page-hero-desc">PPT 슬라이드쇼 웹페이지 생성 · <code class="page-hero-skill" style="background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);color:var(--sw-dark)">/slideshow-web-코어2</code></p>
+      </div>
+    </div>
+
+    <!-- STAT ROW -->
+    <div class="stat-row" style="margin-bottom:24px">
+      <div class="stat-box">
+        <div class="stat-num" style="color:var(--sw);font-size:20px">2</div>
+        <div class="stat-label">변환 모드</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" style="color:var(--sw);font-size:18px">📸</div>
+        <div class="stat-label">PNG 원본 유지</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" style="color:var(--sw);font-size:18px">⌨️</div>
+        <div class="stat-label">키보드 · 스와이프</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" style="color:var(--sw);font-size:18px">🔗</div>
+        <div class="stat-label">GitHub 공유</div>
+      </div>
+    </div>
+
+    <!-- 실행 명령어 생성기 -->
+    <div style="margin-bottom:24px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="height:2px;flex:1;background:linear-gradient(90deg,transparent,rgba(124,58,237,.4))"></div>
+        <span style="font-size:12px;font-weight:800;color:var(--sw);letter-spacing:.5px;text-transform:uppercase;padding:4px 14px;background:rgba(124,58,237,.08);border:1.5px solid rgba(124,58,237,.2);border-radius:9999px">실행 명령어 생성기</span>
+        <div style="height:2px;flex:1;background:linear-gradient(90deg,rgba(124,58,237,.4),transparent)"></div>
+      </div>
+
+      <div class="sw-launcher">
+        <div class="sw-launcher-title">
+          <span style="width:32px;height:32px;border-radius:10px;background:rgba(124,58,237,.25);border:1.5px solid rgba(124,58,237,.4);display:flex;align-items:center;justify-content:center;font-size:16px">🎞️</span>
+          /slideshow-web-코어2 스킬 실행기
+        </div>
+        <div class="sw-launcher-sub">프로젝트 폴더를 입력하면 cd 명령어 + 스킬 전문이 자동 생성됩니다</div>
+
+        <div class="sw-input-row">
+          <div class="sw-input-label">📁 프로젝트 폴더</div>
+          <input type="text" class="sw-folder-input" id="sw-folder-input"
+            placeholder="예: C:\MyProject\presentations"
+            oninput="renderSwCmd()" />
+        </div>
+
+        <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:10px;margin-top:-6px">
+          ⚡ 폴더 경로 입력 시 자동 생성 · 빈칸이면 스킬 내용만 표시
+        </div>
+
+        <div id="sw-cmd-box" class="sw-cmd-box">폴더를 입력하면 명령어가 생성됩니다...</div>
+
+        <button class="sw-copy-btn" onclick="copySwCmd(this)">
+          📋 전체 복사 (cd 명령어 + slideshow-web 스킬)
+        </button>
+      </div>
+    </div>
+
+    <!-- GRID 2COL: 실행 절차 + 모드 비교 -->
+    <div class="grid-2" style="margin-bottom:24px">
+
+      <!-- LEFT: 실행 절차 -->
+      <div>
+        <div class="card">
+          <div class="card-title" style="display:flex;align-items:center;gap:8px">
+            <span style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--sw-light),var(--sw-mid));border:1.5px solid var(--sw-border);display:flex;align-items:center;justify-content:center;font-size:14px">🔄</span>
+            실행 절차 (4 Phase)
+          </div>
+
+          <div class="sw-phase-card" style="border-color:rgba(124,58,237,.3)">
+            <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--sw),var(--sw-dark));border-radius:4px 0 0 4px"></div>
+            <div class="phase-icon">📥</div>
+            <div class="phase-body">
+              <div class="phase-badge" style="background:rgba(124,58,237,.1);color:var(--sw);border:1px solid rgba(124,58,237,.2)">Phase 1</div>
+              <div class="phase-title">콘텐츠 수집 + 모드 선택</div>
+              <div class="phase-desc">소스 파악 (PPTX/MD/직접지시/디렉토리) → Mode A(PNG) 또는 Mode B(HTML) 자동 선택. 기존 슬라이드쇼 감지 시 업데이트 모드 실행.</div>
+            </div>
+          </div>
+
+          <div class="sw-phase-card" style="border-color:rgba(99,102,241,.3)">
+            <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#6366f1,#4f46e5);border-radius:4px 0 0 4px"></div>
+            <div class="phase-icon" style="background:linear-gradient(135deg,#eef2ff,#e0e7ff);border-color:rgba(99,102,241,.3)">🖼️</div>
+            <div class="phase-body">
+              <div class="phase-badge" style="background:rgba(99,102,241,.1);color:#4f46e5;border:1px solid rgba(99,102,241,.2)">Phase 2-A / 2-B</div>
+              <div class="phase-title">슬라이드쇼 HTML 생성</div>
+              <div class="phase-desc">Mode A: PPTX→PDF→PNG 변환 후 이미지 뷰어 생성. Mode B: python-pptx로 텍스트·색상 추출 후 완전 HTML 코딩. 외부 의존성 0개.</div>
+            </div>
+          </div>
+
+          <div class="sw-phase-card" style="border-color:rgba(16,185,129,.3)">
+            <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#10b981,#059669);border-radius:4px 0 0 4px"></div>
+            <div class="phase-icon" style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-color:rgba(16,185,129,.3)">🚀</div>
+            <div class="phase-body">
+              <div class="phase-badge" style="background:rgba(16,185,129,.1);color:#059669;border:1px solid rgba(16,185,129,.2)">Phase 3</div>
+              <div class="phase-title">GitHub 푸시 + 공유 URL</div>
+              <div class="phase-desc">git add → commit → push. GitHub Pages URL 자동 생성. 결과 보고서 출력 (파일명/슬라이드수/용량/URL/조작법).</div>
+            </div>
+          </div>
+
+          <div class="sw-phase-card" style="border-color:rgba(249,115,22,.3)">
+            <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#f97316,#ea580c);border-radius:4px 0 0 4px"></div>
+            <div class="phase-icon" style="background:linear-gradient(135deg,#fff7ed,#ffedd5);border-color:rgba(249,115,22,.3)">✏️</div>
+            <div class="phase-body">
+              <div class="phase-badge" style="background:rgba(249,115,22,.1);color:#ea580c;border:1px solid rgba(249,115,22,.2)">Phase 4</div>
+              <div class="phase-title">피드백 반영 (선택)</div>
+              <div class="phase-desc">수정 요청 시 해당 슬라이드만 Edit tool로 수정 → 재푸시. PNG 업데이트 시 변경된 슬라이드만 재생성 (전체 재변환 없음).</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: 모드 비교 -->
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <!-- Mode A -->
+        <div class="sw-mode-card" style="border-color:rgba(124,58,237,.3)">
+          <div class="mode-header">
+            <div class="mode-icon">📸</div>
+            <div>
+              <div class="mode-title">Mode A — PNG 기반 (기본 권장)</div>
+              <div class="mode-sub">PPTX 원본 디자인 100% 유지</div>
+            </div>
+          </div>
+          <ul class="sw-mode-list">
+            <li>PowerPoint COM (pywin32) — 최고 품질, PPTX→PNG 직접</li>
+            <li>LibreOffice headless (PyMuPDF) — PPTX→PDF→PNG 2단계</li>
+            <li>둘 다 없으면 Mode B로 자동 폴백</li>
+            <li>slides/ 폴더에 slide1.png ~ slideN.png 저장</li>
+            <li>git push 시 slides/ 폴더도 함께 add</li>
+          </ul>
+        </div>
+
+        <!-- Mode B -->
+        <div class="sw-mode-card" style="border-color:rgba(99,102,241,.3)">
+          <div class="mode-header">
+            <div class="mode-icon" style="background:linear-gradient(135deg,#eef2ff,#e0e7ff);border-color:rgba(99,102,241,.3)">📝</div>
+            <div>
+              <div class="mode-title">Mode B — HTML 재코딩</div>
+              <div class="mode-sub">python-pptx 텍스트·색상 추출</div>
+            </div>
+          </div>
+          <ul class="sw-mode-list">
+            <li>python-pptx로 텍스트·표·제목·불릿 추출</li>
+            <li>원본 색상 (배경·텍스트·강조) 그대로 반영</li>
+            <li>이미지는 [이미지] 플레이스홀더로 표시</li>
+            <li>단일 HTML 파일로 완결 (slides/ 불필요)</li>
+            <li>텍스트 소스, 직접 지시, 디렉토리 스캔 지원</li>
+          </ul>
+        </div>
+
+        <!-- 업데이트 모드 -->
+        <div class="sw-mode-card" style="border-color:rgba(16,185,129,.3)">
+          <div class="mode-header">
+            <div class="mode-icon" style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-color:rgba(16,185,129,.3)">🔄</div>
+            <div>
+              <div class="mode-title">Mode U — 기존 업데이트</div>
+              <div class="mode-sub">변경된 슬라이드만 스마트 처리</div>
+            </div>
+          </div>
+          <ul class="sw-mode-list">
+            <li>케이스 A: 내용 수정 → 해당 슬라이드 1개만 재생성</li>
+            <li>케이스 B: 슬라이드 삽입 → PNG 번호 밀기</li>
+            <li>케이스 C: 슬라이드 삭제 → PNG 번호 당기기</li>
+            <li>케이스 D: 전체 재생성 (불가피한 경우에만)</li>
+            <li>index.html 슬라이드 수만 동기화, 디자인 유지</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 지원 기능 -->
+    <div class="card" style="margin-bottom:24px">
+      <div class="card-title" style="display:flex;align-items:center;gap:8px">
+        <span style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--sw-light),var(--sw-mid));border:1.5px solid var(--sw-border);display:flex;align-items:center;justify-content:center;font-size:14px">✨</span>
+        생성된 슬라이드쇼 지원 기능
+      </div>
+
+      <div class="grid-2" style="gap:14px;margin-bottom:16px">
+        <div>
+          <div style="font-size:12px;font-weight:800;color:var(--sw-dark);margin-bottom:8px">⌨️ 키보드 단축키</div>
+          <div style="overflow-x:auto;border-radius:8px;border:1.5px solid var(--sw-border)">
+            <table class="sw-example-table">
+              <thead><tr><th>키</th><th>동작</th></tr></thead>
+              <tbody>
+                <tr><td><code>← →</code></td><td>이전 / 다음 슬라이드</td></tr>
+                <tr><td><code>Space</code></td><td>다음 슬라이드</td></tr>
+                <tr><td><code>F</code></td><td>전체화면 토글</td></tr>
+                <tr><td><code>Home / End</code></td><td>첫 / 마지막 슬라이드</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:800;color:var(--sw-dark);margin-bottom:8px">🔧 내장 기능</div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text2)">
+              <span style="color:#10b981;font-weight:800">✅</span>상단 진행 바 (슬라이드 위치 표시)
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text2)">
+              <span style="color:#10b981;font-weight:800">✅</span>터치 스와이프 (모바일 지원)
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text2)">
+              <span style="color:#10b981;font-weight:800">✅</span>다크/라이트 테마 토글
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text2)">
+              <span style="color:#10b981;font-weight:800">✅</span>인쇄 CSS (슬라이드별 페이지 분리)
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text2)">
+              <span style="color:#10b981;font-weight:800">✅</span>외부 의존성 0개 (오프라인 동작)
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text2)">
+              <span style="color:#10b981;font-weight:800">✅</span>한글 최적화 (Pretendard/Apple SD/맑은 고딕)
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 입력 소스 예시 -->
+      <div>
+        <div style="font-size:12px;font-weight:800;color:var(--sw-dark);margin-bottom:10px">📂 지원 입력 소스</div>
+        <div style="overflow-x:auto;border-radius:10px;border:1.5px solid var(--sw-border)">
+          <table class="sw-example-table">
+            <thead><tr><th>소스 유형</th><th>예시</th><th>처리 방식</th></tr></thead>
+            <tbody>
+              <tr><td>PPTX 파일</td><td><code>presentation.pptx</code></td><td>Mode A 또는 B 선택</td></tr>
+              <tr><td>텍스트 파일</td><td><code>report.md</code>, <code>data.json</code></td><td>Read tool → Mode B</td></tr>
+              <tr><td>직접 지시</td><td><code>"프로젝트 현황 발표 10장"</code></td><td>구성안 작성 → Mode B</td></tr>
+              <tr><td>디렉토리</td><td><code>prototype/</code></td><td>주요 파일 스캔 → Mode B</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /page-inner -->
+</main>
+
+<div id="footer-placeholder"></div>
+
+<script src="../vcos.js"></script>
+<script>
+const SW_SKILL_CONTENT = "---\r\ndescription: \"PPT 슬라이드쇼 웹페이지 생성 + GitHub 공유\"\r\nuser-invocable: true\r\n---\r\n\r\n# /slideshow-web-코어2\r\n\r\n콘텐츠를 **슬라이드쇼 형태의 단일 HTML 웹페이지**로 만들고, GitHub에 푸시하여 **공유 가능한 URL**을 생성한다.\r\n\r\n## Usage\r\n/slideshow $ARGUMENTS\r\n\r\n## Parameters\r\n- $ARGUMENTS: 슬라이드 콘텐츠 소스. 아래 중 하나:\r\n  - 파일 경로: `thesis_report.md`, `proposal.html`, `data.json`\r\n  - **PPT 파일: `presentation.pptx`** (python-pptx로 슬라이드 내용 자동 추출)\r\n  - 직접 지시: `\"FX Pooling 시스템 소개 10장\"`, `\"프로젝트 현황 발표자료\"`\r\n  - 디렉토리: `prototype/` (코드베이스 기반 발표자료 자동 생성)\r\n\r\n## Description\r\n\r\nPPT 없이도 브라우저에서 바로 프레젠테이션 가능한 슬라이드쇼 웹페이지를 생성한다.\r\n키보드 좌우 화살표, 스와이프, 진행 바, 전체화면 모두 지원.\r\nGitHub Pages로 즉시 공유 가능.\r\n\r\n---\r\n\r\n## 실행 절차 (EXECUTE NOW — 설명만 출력 금지)\r\n\r\n> **이 스킬이 호출되면 아래 절차를 즉시 실행하라. 방법을 설명하거나 코드 예시만 출력하지 말 것.**\r\n\r\n### Phase 1: 콘텐츠 수집 + PPTX 모드 선택\r\n\r\n1. `$ARGUMENTS`에서 소스 파악\r\n2. **기존 슬라이드쇼 업데이트 여부 먼저 확인:**\r\n   - `slides/` 폴더 또는 `index.html`이 이미 존재하면 → **Mode U: Phase 1-U (기존 업데이트)** 실행\r\n   - 없으면 → 신규 생성 모드로 진행\r\n3. 소스가 `.pptx` 파일이면:\r\n   - 사용자가 \"HTML로\" 명시 요청했는가?\r\n     - **YES** → **Mode B: Phase 1-P (HTML 재코딩)** 실행 → Phase 2-B\r\n     - **NO** → **Mode A: Phase 1-A (PNG 기반, 기본 권장)** 실행 → Phase 2-A\r\n   - Mode A에서 LibreOffice 미설치 시 → 자동으로 Mode B 폴백\r\n4. 소스가 텍스트 파일(.md/.html/.json/.txt)이면 → Read tool로 읽기 → Phase 2-B\r\n5. 소스가 텍스트 지시면 → 슬라이드 구성안 작성 → Phase 2-B\r\n6. 소스가 디렉토리면 → 주요 파일 스캔 후 구성안 작성 → Phase 2-B\r\n\r\n---\r\n\r\n#### Phase 1-U: 기존 슬라이드쇼 업데이트 모드 (Mode U)\r\n\r\n`slides/` 폴더와 `index.html`이 이미 존재하는 경우. **기존 index.html을 덮어쓰지 않는다.**\r\n\r\n**Step 1 — 현재 상태 파악:**\r\n```bash\r\n# 기존 슬라이드 수 확인\r\nls slides/slide*.png 2>/dev/null | wc -l\r\n\r\n# index.html에서 TOTAL 값 확인 (var TOTAL 또는 slides.length 기반)\r\ngrep -E \"TOTAL|slides\\.length|/ [0-9]+\" index.html | head -5\r\n```\r\n\r\n**Step 2 — PPTX 내용 수정:**\r\n> **사용자가 PowerPoint에서 직접 수정했다면 이 Step을 건너뛰고 Step 3으로 바로 이동.**\r\n> (\"PT에서 수정했으니 변환만 해줘\" 같은 요청 시 Step 3(케이스 A/B/C/D)만 실행한다.)\r\n\r\n**(AI가 수정하는 경우에만):**\r\n```bash\r\npip install python-pptx 2>/dev/null || pip install python-pptx --user\r\n\r\npython -c \"\r\nfrom pptx import Presentation\r\n\r\nprs = Presentation(r'{PPTX_PATH}')\r\n\r\n# 사용자 지시에 따라 수정 — 예시:\r\n# 특정 슬라이드 텍스트 수정\r\nfor slide in prs.slides:\r\n    for shape in slide.shapes:\r\n        if shape.has_text_frame:\r\n            for para in shape.text_frame.paragraphs:\r\n                for run in para.runs:\r\n                    if '{찾을 텍스트}' in run.text:\r\n                        run.text = run.text.replace('{찾을 텍스트}', '{바꿀 텍스트}')\r\n\r\nprs.save(r'{PPTX_PATH}')  # 원본 덮어쓰기 또는 새 파일명\r\nprint('PPTX 수정 완료')\r\n\"\r\n```\r\n\r\n**Step 3 — PNG 스마트 업데이트 (변경된 슬라이드만 처리)**\r\n\r\n> **핵심 원칙: PNG 파일은 그냥 파일이다. 슬라이드 번호가 바뀌면 재생성 없이 이름만 바꾼다.**\r\n\r\n변경 유형에 따라 아래 중 하나를 선택 실행:\r\n\r\n---\r\n\r\n**[케이스 A] 내용만 수정 (슬라이드 수 변화 없음) — 해당 슬라이드 1개만 재생성**\r\n\r\n```bash\r\npip install PyMuPDF 2>/dev/null || pip install PyMuPDF --user\r\n\r\npython -c \"\r\nimport subprocess, os, sys, fitz, shutil\r\n\r\npptx_path = r'{PPTX_PATH}'\r\nslide_num = {수정된_슬라이드_번호}   # 1-based\r\nslides_dir = 'slides'\r\n\r\n# LibreOffice 경로 탐색\r\nlibre_candidates = [\r\n    r'C:\\Program Files\\LibreOffice\\program\\soffice.exe',\r\n    r'C:\\Program Files (x86)\\LibreOffice\\program\\soffice.exe',\r\n]\r\nlibre_path = next((p for p in libre_candidates if os.path.isfile(p)), None)\r\nif not libre_path:\r\n    libre_path = shutil.which('soffice') or shutil.which('libreoffice')\r\nif not libre_path:\r\n    print('ERROR: LibreOffice not found'); sys.exit(1)\r\n\r\n# PPTX → PDF (전체, LibreOffice는 페이지 범위 지원 안 함)\r\nout_dir = os.path.dirname(os.path.abspath(pptx_path))\r\nsubprocess.run([libre_path, '--headless', '--convert-to', 'pdf', '--outdir', out_dir, pptx_path],\r\n               capture_output=True, check=True)\r\npdf_path = os.path.splitext(pptx_path)[0] + '.pdf'\r\n\r\n# 해당 페이지 1개만 추출 (0-indexed)\r\ndoc = fitz.open(pdf_path)\r\npage = doc[slide_num - 1]\r\npix = page.get_pixmap(matrix=fitz.Matrix(2.0, 2.0))\r\npix.save(os.path.join(slides_dir, f'slide{slide_num}.png'))\r\ndoc.close()\r\nprint(f'✅ slide{slide_num}.png 교체 완료')\r\n\"\r\n```\r\n\r\n---\r\n\r\n**[케이스 B] 슬라이드 삽입 (예: N번 위치에 새 슬라이드 추가)**\r\n\r\n```bash\r\npython -c \"\r\nimport os, shutil\r\n\r\nslides_dir = 'slides'\r\ninsert_at = {삽입_위치}   # 새 슬라이드가 들어갈 번호 (1-based)\r\ntotal_before = {삽입_전_총수}\r\n\r\n# 기존 PNG를 뒤에서부터 1씩 밀기 (역순으로 이름 변경)\r\nfor n in range(total_before, insert_at - 1, -1):\r\n    src = os.path.join(slides_dir, f'slide{n}.png')\r\n    dst = os.path.join(slides_dir, f'slide{n+1}.png')\r\n    if os.path.exists(src):\r\n        os.rename(src, dst)\r\n        print(f'  slide{n}.png → slide{n+1}.png')\r\n\r\nprint(f'✅ slide{insert_at}.png 자리 비움 완료 — 이제 새 슬라이드만 생성')\r\n\"\r\n\r\n# 그 다음: 케이스 A 방식으로 insert_at 번 슬라이드만 PNG 생성\r\n```\r\n\r\n---\r\n\r\n**[케이스 C] 슬라이드 삭제 (예: N번 슬라이드 삭제)**\r\n\r\n```bash\r\npython -c \"\r\nimport os\r\n\r\nslides_dir = 'slides'\r\ndelete_num = {삭제할_슬라이드_번호}   # 1-based\r\ntotal_before = {삭제_전_총수}\r\n\r\n# 해당 PNG 삭제\r\ntarget = os.path.join(slides_dir, f'slide{delete_num}.png')\r\nif os.path.exists(target):\r\n    os.remove(target)\r\n    print(f'  slide{delete_num}.png 삭제')\r\n\r\n# 뒤 슬라이드들 번호 당기기\r\nfor n in range(delete_num + 1, total_before + 1):\r\n    src = os.path.join(slides_dir, f'slide{n}.png')\r\n    dst = os.path.join(slides_dir, f'slide{n-1}.png')\r\n    if os.path.exists(src):\r\n        os.rename(src, dst)\r\n        print(f'  slide{n}.png → slide{n-1}.png')\r\n\r\nprint(f'✅ 총 {total_before - 1}개 PNG — 새로 만든 파일 없음')\r\n\"\r\n```\r\n\r\n---\r\n\r\n**[케이스 D] 전체 재생성 (레이아웃 전면 변경 등 불가피한 경우에만)**\r\n\r\n```bash\r\npip install PyMuPDF 2>/dev/null || pip install PyMuPDF --user\r\n\r\npython -c \"\r\nimport subprocess, os, sys, fitz, shutil\r\n\r\npptx_path = r'{PPTX_PATH}'\r\nslides_dir = 'slides'\r\nos.makedirs(slides_dir, exist_ok=True)\r\n\r\nlibre_candidates = [\r\n    r'C:\\Program Files\\LibreOffice\\program\\soffice.exe',\r\n    r'C:\\Program Files (x86)\\LibreOffice\\program\\soffice.exe',\r\n]\r\nlibre_path = next((p for p in libre_candidates if os.path.isfile(p)), None)\r\nif not libre_path:\r\n    libre_path = shutil.which('soffice') or shutil.which('libreoffice')\r\nif not libre_path:\r\n    print('ERROR: LibreOffice not found'); sys.exit(1)\r\n\r\nout_dir = os.path.dirname(os.path.abspath(pptx_path))\r\nsubprocess.run([libre_path, '--headless', '--convert-to', 'pdf', '--outdir', out_dir, pptx_path],\r\n               capture_output=True, check=True)\r\npdf_path = os.path.splitext(pptx_path)[0] + '.pdf'\r\n\r\ndoc = fitz.open(pdf_path)\r\ntotal = len(doc)\r\nfor i, page in enumerate(doc):\r\n    pix = page.get_pixmap(matrix=fitz.Matrix(2.0, 2.0))\r\n    pix.save(os.path.join(slides_dir, f'slide{i+1}.png'))\r\n    print(f'  slide{i+1}.png ({pix.width}x{pix.height})')\r\ndoc.close()\r\nprint(f'총 {total}장 PNG 추출 완료')\r\nprint(f'TOTAL:{total}')\r\n\"\r\n```\r\n\r\n**Step 4 — index.html 슬라이드 수 동기화:**\r\n슬라이드 수가 변경된 경우에만 index.html의 TOTAL 값 업데이트.\r\n```bash\r\n# 이전 슬라이드 수와 비교\r\nOLD_TOTAL=$(grep -oP '(?<=TOTAL = )\\d+|(?<=/ )\\d+(?=\")' index.html | head -1)\r\nNEW_TOTAL=$(ls slides/slide*.png | wc -l)\r\n\r\nif [ \"$OLD_TOTAL\" != \"$NEW_TOTAL\" ]; then\r\n  echo \"슬라이드 수 변경: $OLD_TOTAL → $NEW_TOTAL, index.html 업데이트 필요\"\r\nfi\r\n```\r\n슬라이드 수가 바뀌었으면 Edit tool로 index.html의 TOTAL 숫자만 수정. 나머지 디자인/링크 패널 등은 **절대 건드리지 않는다.**\r\n\r\n**Step 5 — 결과 확인:**\r\n```bash\r\nls -la slides/slide*.png | wc -l\r\n```\r\n\r\n→ Phase 3 (git push)으로 진행\r\n\r\n#### Phase 1-A: PNG 기반 추출 (Mode A — 기본 권장)\r\n\r\nPPTX 원본 디자인을 100% 유지하는 PNG 이미지 방식.\r\n변환 엔진 우선순위: **PowerPoint COM → LibreOffice headless → Mode B 폴백**\r\n\r\n**Step 1 — 변환 엔진 탐색 (PowerPoint → LibreOffice 순):**\r\n```bash\r\npython -c \"\r\nimport sys, shutil\r\n\r\nengine = None\r\n\r\n# 1순위: PowerPoint COM (Windows + PowerPoint 설치 시)\r\nif sys.platform == 'win32':\r\n    try:\r\n        import win32com.client\r\n        ppt = win32com.client.Dispatch('PowerPoint.Application')\r\n        ppt.Quit()\r\n        engine = 'powerpoint'\r\n        print('ENGINE: powerpoint (COM automation)')\r\n    except Exception:\r\n        pass\r\n\r\n# 2순위: LibreOffice headless\r\nif not engine:\r\n    import os\r\n    for p in [\r\n        r'C:\\Program Files\\LibreOffice\\program\\soffice.exe',\r\n        r'C:\\Program Files (x86)\\LibreOffice\\program\\soffice.exe',\r\n    ]:\r\n        if os.path.isfile(p):\r\n            engine = 'libreoffice'\r\n            print(f'ENGINE: libreoffice ({p})')\r\n            break\r\n    if not engine and shutil.which('libreoffice'):\r\n        engine = 'libreoffice'\r\n        print('ENGINE: libreoffice (PATH)')\r\n    if not engine and shutil.which('soffice'):\r\n        engine = 'libreoffice'\r\n        print('ENGINE: libreoffice (soffice)')\r\n\r\nif not engine:\r\n    print('ENGINE: NOT_FOUND')\r\n\"\r\n```\r\n- `NOT_FOUND`이면 → **Mode B (Phase 1-P)로 폴백**하고 사용자에게 안내:\r\n  `\"PowerPoint/LibreOffice 모두 미설치 → HTML 재코딩 모드(Mode B)로 전환합니다.\"`\r\n\r\n**Step 2 — 필요 패키지 설치:**\r\n```bash\r\n# PowerPoint 엔진일 경우 pywin32 필요, LibreOffice 엔진일 경우 PyMuPDF 필요\r\npip install PyMuPDF python-pptx pywin32 2>/dev/null || pip install PyMuPDF python-pptx pywin32 --user\r\n```\r\n\r\n**Step 3-PPT — PowerPoint COM으로 PNG 직접 추출 (엔진=powerpoint일 때):**\r\n```bash\r\nmkdir -p slides\r\n\r\npython -c \"\r\nimport win32com.client, os\r\n\r\npptx_path = os.path.abspath(r'{PPTX_PATH}')\r\nout_dir = os.path.abspath('slides')\r\n\r\nppt = win32com.client.Dispatch('PowerPoint.Application')\r\nppt.Visible = False  # 백그라운드 실행\r\npresentation = ppt.Presentations.Open(pptx_path, WithWindow=False)\r\n\r\nfor i, slide in enumerate(presentation.Slides, 1):\r\n    png_path = os.path.join(out_dir, f'slide{i}.png')\r\n    slide.Export(png_path, 'PNG', 1920, 1080)\r\n    print(f'  slide{i}.png (1920x1080)')\r\n\r\ntotal = presentation.Slides.Count\r\npresentation.Close()\r\nppt.Quit()\r\nprint(f'총 {total} 슬라이드 PNG 추출 완료 (PowerPoint COM)')\r\n\"\r\n```\r\n\r\n**Step 3-LO — LibreOffice headless로 PNG 추출 (엔진=libreoffice일 때):**\r\n```bash\r\nmkdir -p slides\r\n\r\npython -c \"\r\nimport subprocess, os, sys, fitz\r\n\r\npptx_path = r'{PPTX_PATH}'\r\nslides_dir = 'slides'\r\nos.makedirs(slides_dir, exist_ok=True)\r\n\r\n# LibreOffice 경로 (Step 1에서 탐지된 값 사용)\r\nlibre_candidates = [\r\n    r'C:\\Program Files\\LibreOffice\\program\\soffice.exe',\r\n    r'C:\\Program Files (x86)\\LibreOffice\\program\\soffice.exe',\r\n]\r\nlibre_path = None\r\nfor p in libre_candidates:\r\n    if os.path.isfile(p):\r\n        libre_path = p\r\n        break\r\nif not libre_path:\r\n    import shutil\r\n    libre_path = shutil.which('soffice') or shutil.which('libreoffice')\r\nif not libre_path:\r\n    print('ERROR: LibreOffice not found')\r\n    sys.exit(1)\r\n\r\n# Step 3a: PPTX → PDF\r\nout_dir = os.path.dirname(os.path.abspath(pptx_path))\r\nresult = subprocess.run(\r\n    [libre_path, '--headless', '--convert-to', 'pdf', '--outdir', out_dir, pptx_path],\r\n    capture_output=True, text=True\r\n)\r\nprint(result.stdout)\r\nif result.returncode != 0:\r\n    print('STDERR:', result.stderr)\r\n    sys.exit(1)\r\n\r\n# Step 3b: PDF 경로 자동 결정 (PPTX명에서 확장자만 교체)\r\npdf_path = os.path.splitext(pptx_path)[0] + '.pdf'\r\nif not os.path.exists(pdf_path):\r\n    print(f'ERROR: PDF not found: {pdf_path}')\r\n    sys.exit(1)\r\n\r\n# Step 3c: PDF → PNG (PyMuPDF)\r\ndoc = fitz.open(pdf_path)\r\nfor i, page in enumerate(doc):\r\n    mat = fitz.Matrix(2.0, 2.0)\r\n    pix = page.get_pixmap(matrix=mat)\r\n    pix.save(os.path.join(slides_dir, f'slide{i+1}.png'))\r\n    print(f'  slide{i+1}.png ({pix.width}x{pix.height})')\r\ntotal = len(doc)\r\ndoc.close()\r\nprint(f'총 {total} 슬라이드 PNG 추출 완료 (LibreOffice)')\r\n\"\r\n```\r\n\r\n**Step 4 — (선택) python-pptx로 텍스트 수정 후 재추출:**\r\n사용자가 PPTX 내 텍스트 수정을 요청한 경우:\r\n```bash\r\npython -c \"\r\nfrom pptx import Presentation\r\nprs = Presentation(r'{PPTX_PATH}')\r\n# 사용자 지시에 따라 텍스트 수정\r\n# 예: prs.slides[0].shapes.title.text = '수정된 제목'\r\nprs.save(r'{PPTX_PATH_MODIFIED}')\r\n\"\r\n```\r\n수정된 PPTX로 Step 3을 재실행한다.\r\n\r\n**Step 5 — 추출 결과 확인:**\r\n- `slides/` 폴더에 `slide1.png` ~ `slideN.png` 존재 확인\r\n- 파일 개수 = 원본 슬라이드 수와 일치 확인\r\n- → **Phase 2-A**로 진행\r\n\r\n---\r\n\r\n#### Phase 1-P: PPTX 파일 추출 — Mode B: HTML 재코딩 (python-pptx)\r\n\r\n`.pptx` 파일이 입력된 경우 아래 순서로 슬라이드 내용과 **원본 색상**을 추출한다.\r\n**핵심 원칙: PPTX 원본의 색상을 최대한 그대로 유지한다.** 배경색, 텍스트 색상, 강조색을 추출하여 슬라이드쇼에 반영한다.\r\n\r\n**Step 1 — python-pptx 설치 확인:**\r\n```bash\r\npip install python-pptx 2>/dev/null || pip install python-pptx --user\r\n```\r\n\r\n**Step 2 — 추출 스크립트 실행 (색상 포함):**\r\nBash tool로 아래 Python 스크립트를 실행한다. `{PPTX_PATH}`를 실제 파일 경로로 치환할 것.\r\n\r\n```bash\r\npython -c \"\r\nimport json, sys\r\nfrom pptx import Presentation\r\nfrom pptx.util import Inches, Pt, Emu\r\nfrom pptx.enum.shapes import MSO_SHAPE_TYPE\r\nfrom pptx.dml.color import RGBColor\r\n\r\ndef rgb_to_hex(rgb):\r\n    if rgb is None: return None\r\n    return '#{:02x}{:02x}{:02x}'.format(rgb[0], rgb[1], rgb[2])\r\n\r\ndef get_font_color(run):\r\n    try:\r\n        if run.font.color and run.font.color.rgb:\r\n            return rgb_to_hex(run.font.color.rgb)\r\n    except Exception:\r\n        pass\r\n    return None\r\n\r\ndef get_bg_color(slide):\r\n    try:\r\n        bg = slide.background\r\n        if bg.fill and bg.fill.fore_color and bg.fill.fore_color.rgb:\r\n            return rgb_to_hex(bg.fill.fore_color.rgb)\r\n    except Exception:\r\n        pass\r\n    return None\r\n\r\ndef get_shape_fill(shape):\r\n    try:\r\n        if shape.fill and shape.fill.fore_color and shape.fill.fore_color.rgb:\r\n            return rgb_to_hex(shape.fill.fore_color.rgb)\r\n    except Exception:\r\n        pass\r\n    return None\r\n\r\nprs = Presentation(r'{PPTX_PATH}')\r\n\r\n# 테마 색상 추출 (슬라이드 마스터에서)\r\ntheme_colors = {}\r\ntry:\r\n    theme = prs.slide_masters[0].slide_layouts[0].slide_master\r\n    # 기본 색상 팔레트\r\nexcept: pass\r\n\r\nslides_data = []\r\nall_text_colors = []\r\nall_bg_colors = []\r\n\r\nfor i, slide in enumerate(prs.slides):\r\n    slide_info = {\r\n        'index': i+1, 'title': '', 'texts': [], 'tables': [], 'images': [],\r\n        'bg_color': get_bg_color(slide),\r\n        'text_colors': []\r\n    }\r\n\r\n    for shape in slide.shapes:\r\n        shape_fill = get_shape_fill(shape)\r\n\r\n        if shape.has_text_frame:\r\n            is_title = False\r\n            try:\r\n                is_title = slide.shapes.title and shape.shape_id == slide.shapes.title.shape_id\r\n            except Exception:\r\n        pass\r\n\r\n            if is_title:\r\n                title_text = shape.text_frame.text.strip()\r\n                slide_info['title'] = title_text\r\n                # 제목 색상\r\n                for para in shape.text_frame.paragraphs:\r\n                    for run in para.runs:\r\n                        c = get_font_color(run)\r\n                        if c:\r\n                            slide_info['text_colors'].append(c)\r\n                            all_text_colors.append(c)\r\n            else:\r\n                for para in shape.text_frame.paragraphs:\r\n                    text = para.text.strip()\r\n                    if text:\r\n                        level = para.level if para.level else 0\r\n                        bold = any(run.font.bold for run in para.runs if run.font.bold)\r\n                        # 각 run별 색상 수집\r\n                        colors = []\r\n                        for run in para.runs:\r\n                            c = get_font_color(run)\r\n                            if c:\r\n                                colors.append(c)\r\n                                all_text_colors.append(c)\r\n                        color = colors[0] if colors else None\r\n                        slide_info['texts'].append({\r\n                            'text': text, 'level': level, 'bold': bold,\r\n                            'color': color, 'shape_fill': shape_fill\r\n                        })\r\n\r\n        if shape.has_table:\r\n            table = shape.table\r\n            rows = []\r\n            for row in table.rows:\r\n                cells = [cell.text.strip() for cell in row.cells]\r\n                rows.append(cells)\r\n            slide_info['tables'].append(rows)\r\n\r\n        if shape.shape_type == MSO_SHAPE_TYPE.PICTURE:\r\n            slide_info['images'].append('image_placeholder')\r\n\r\n    if not slide_info['title'] and slide_info['texts']:\r\n        slide_info['title'] = slide_info['texts'].pop(0)['text']\r\n\r\n    if slide_info['bg_color']:\r\n        all_bg_colors.append(slide_info['bg_color'])\r\n\r\n    slides_data.append(slide_info)\r\n\r\n# 가장 많이 사용된 색상 → 테마 추천\r\nfrom collections import Counter\r\ndominant_text = Counter(all_text_colors).most_common(3)\r\ndominant_bg = Counter(all_bg_colors).most_common(1)\r\n\r\noutput = {\r\n    'slides': slides_data,\r\n    'color_palette': {\r\n        'dominant_text_colors': [c[0] for c in dominant_text],\r\n        'dominant_bg_color': dominant_bg[0][0] if dominant_bg else None,\r\n        'total_slides': len(slides_data)\r\n    }\r\n}\r\nprint(json.dumps(output, ensure_ascii=False, indent=2))\r\n\"\r\n```\r\n\r\n**Step 3 — 원본 색상을 슬라이드쇼 CSS 변수에 반영:**\r\n추출된 `color_palette`를 사용하여 `:root` CSS 변수를 원본 PPTX 색상으로 오버라이드한다.\r\n- `dominant_bg_color` → `--bg` (배경색)\r\n- `dominant_text_colors[0]` → `--text` (본문 색상)\r\n- `dominant_text_colors[1]` → `--accent` (강조 색상)\r\n- 각 슬라이드의 `bg_color`가 다르면 해당 `.slide`에 `style=\"background:...\"` 인라인 적용\r\n- 각 텍스트의 `color`가 있으면 `<span style=\"color:...\">` 감싸기\r\n- `shape_fill`이 있으면 해당 블록에 배경색 적용\r\n\r\n**색상 적용 우선순위:**\r\n1. 개별 텍스트 `color` (인라인 스타일로 직접 적용)\r\n2. 슬라이드별 `bg_color` (슬라이드 div에 인라인 배경)\r\n3. 전체 팔레트 `color_palette` (CSS 변수 오버라이드)\r\n4. 추출 실패 시 → 기본 다크 테마 유지\r\n\r\n**Step 4 — 추출 결과를 슬라이드 구성안으로 변환:**\r\n- 각 슬라이드의 `title` → `<h2>` 제목\r\n- `texts` 배열 → `<ul><li>` 불릿 리스트 (level에 따라 들여쓰기)\r\n- `tables` 배열 → `<table>` HTML 테이블\r\n- `images` → 이미지가 있었다는 표시 (바이너리 추출 불가하므로 `[이미지]` 플레이스홀더 삽입)\r\n- bold 텍스트 → `<strong>` 태그 감싸기\r\n- 첫 슬라이드가 타이틀 슬라이드인지 자동 판별 (텍스트가 적고 제목만 있으면 타이틀)\r\n- 마지막 슬라이드가 \"감사합니다\"/\"Q&A\"/\"Thank you\" 등이면 end-slide 클래스 적용\r\n\r\n**python-pptx 설치 실패 시 대응:**\r\n- pip가 없거나 설치 실패하면 PO에게 안내:\r\n  `\"python-pptx 설치가 필요합니다. pip install python-pptx 를 실행해주세요.\"`\r\n- 또는 .pptx를 Google Slides에서 열어 텍스트를 복사한 뒤 직접 지시 방식으로 전환\r\n\r\n**슬라이드 구성안 작성 시 원칙:**\r\n- 첫 슬라이드: 타이틀 + 부제 + 날짜\r\n- 중간 슬라이드: 핵심 내용 (슬라이드당 1가지 주제)\r\n- 마지막 슬라이드: 요약 / Q&A / 감사\r\n- 슬라이드 수: 별도 지시 없으면 8~15장\r\n- 각 슬라이드에 제목(h2) + 본문(bullet/표/코드/수식) 구성\r\n\r\n### Phase 2-A: PNG 뷰어 HTML 생성 (Mode A)\r\n\r\nPhase 1-A에서 추출한 PNG 이미지를 슬라이드쇼로 표시하는 단일 HTML 파일을 생성한다.\r\n`slides/` 폴더와 함께 배포하는 구조.\r\n\r\n**파일명 규칙:** `{주제}-slideshow.html` (kebab-case) + `slides/` 폴더\r\n\r\n**PNG 뷰어 HTML 템플릿:**\r\n\r\n```html\r\n<!DOCTYPE html>\r\n<html lang=\"ko\">\r\n<head>\r\n  <meta charset=\"UTF-8\">\r\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n  <title>{슬라이드 제목}</title>\r\n  <style>\r\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\r\n    html, body { height: 100%; overflow: hidden; font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; background: #0f172a; color: #f1f5f9; }\r\n\r\n    /* ── Progress Bar ── */\r\n    .progress { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, #38bdf8, #a78bfa); z-index: 100; transition: width 0.3s ease; }\r\n\r\n    /* ── Slide Container ── */\r\n    .slides { position: relative; width: 100%; height: 100vh; }\r\n    .slide {\r\n      position: absolute; inset: 0;\r\n      display: flex; justify-content: center; align-items: center;\r\n      padding: 10px 10px 60px;\r\n      opacity: 0; transform: translateX(60px);\r\n      transition: opacity 0.4s ease, transform 0.4s ease;\r\n      pointer-events: none;\r\n    }\r\n    .slide.active { opacity: 1; transform: translateX(0); pointer-events: auto; }\r\n    .slide.prev { opacity: 0; transform: translateX(-60px); }\r\n    .slide img {\r\n      max-width: 100%; max-height: calc(100vh - 80px);\r\n      object-fit: contain; border-radius: 4px;\r\n      box-shadow: 0 4px 24px rgba(0,0,0,0.4);\r\n    }\r\n\r\n    /* ── Side Arrows ── */\r\n    .arrow {\r\n      position: absolute; top: 50%; transform: translateY(-50%);\r\n      background: rgba(0,0,0,0.5); border: none; color: #38bdf8;\r\n      font-size: 38px; cursor: pointer; padding: 18px 10px; z-index: 10;\r\n      border-radius: 6px; transition: background 0.2s; line-height: 1;\r\n    }\r\n    .arrow:hover { background: rgba(56,189,248,0.35); }\r\n    .arrow-l { left: 0; }\r\n    .arrow-r { right: 0; }\r\n\r\n    /* ── Bottom Nav Bar ── */\r\n    .nav-bar {\r\n      position: fixed; bottom: 0; left: 0; right: 0;\r\n      background: #1e293b; border-top: 1px solid rgba(148,163,184,0.15);\r\n      padding: 10px 20px; display: flex; align-items: center; justify-content: center;\r\n      gap: 20px; z-index: 100;\r\n    }\r\n    .nav-btn {\r\n      background: none; border: 2px solid #38bdf8; color: #38bdf8;\r\n      padding: 6px 24px; border-radius: 20px; cursor: pointer;\r\n      font-size: 15px; font-weight: 700; transition: all 0.2s; font-family: inherit;\r\n    }\r\n    .nav-btn:hover { background: #38bdf8; color: #0f172a; }\r\n    .nav-btn:disabled { border-color: rgba(148,163,184,0.2); color: rgba(148,163,184,0.3); cursor: default; background: none; }\r\n    .counter { color: #94a3b8; font-size: 15px; min-width: 70px; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; }\r\n\r\n    /* ── Fullscreen Button ── */\r\n    .fs-toggle { position: fixed; top: 12px; right: 12px; z-index: 100; background: #1e293b; border: 1px solid rgba(148,163,184,0.2); color: #f1f5f9; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13px; }\r\n\r\n    /* ── Links Panel (선택) ── */\r\n    .links-panel {\r\n      position: fixed; bottom: 52px; right: 12px; z-index: 100;\r\n      background: #1e293b; border: 1px solid rgba(148,163,184,0.2);\r\n      border-radius: 8px; padding: 8px 12px; max-height: 200px; overflow-y: auto;\r\n      display: none; font-size: 13px;\r\n    }\r\n    .links-panel.open { display: block; }\r\n    .links-panel a { color: #38bdf8; text-decoration: none; display: block; padding: 4px 0; }\r\n    .links-panel a:hover { text-decoration: underline; }\r\n\r\n    /* ── Print ── */\r\n    @media print {\r\n      .nav-bar, .progress, .fs-toggle, .arrow { display: none !important; }\r\n      .slides { position: static; height: auto; }\r\n      .slide { position: static; opacity: 1 !important; transform: none !important; pointer-events: auto !important; page-break-after: always; height: 100vh; padding: 20px; }\r\n    }\r\n\r\n    /* ── Mobile ── */\r\n    @media (max-width: 640px) {\r\n      .slide { padding: 5px 5px 55px; }\r\n      .arrow { font-size: 28px; padding: 14px 8px; }\r\n    }\r\n  </style>\r\n</head>\r\n<body>\r\n\r\n<div class=\"progress\" id=\"progress\"></div>\r\n<button class=\"fs-toggle\" id=\"fsToggle\" title=\"전체화면 (F)\">⤢</button>\r\n\r\n<div class=\"slides\" id=\"slides\">\r\n  <button class=\"arrow arrow-l\" id=\"arrow-l\" onclick=\"prev()\" title=\"이전 (←)\">❮</button>\r\n  <button class=\"arrow arrow-r\" id=\"arrow-r\" onclick=\"next()\" title=\"다음 (→)\">❯</button>\r\n\r\n  <!-- ▼▼▼ 슬라이드 PNG 삽입 — slide1.png ~ slideN.png ▼▼▼ -->\r\n  <div class=\"slide active\"><img src=\"slides/slide1.png\" alt=\"Slide 1\"></div>\r\n  <div class=\"slide\"><img src=\"slides/slide2.png\" alt=\"Slide 2\"></div>\r\n  <!-- ... N개 반복 ... -->\r\n  <!-- ▲▲▲ 슬라이드 끝 ▲▲▲ -->\r\n</div>\r\n\r\n<nav class=\"nav-bar\">\r\n  <button class=\"nav-btn\" id=\"btn-p\" onclick=\"prev()\">◀ 이전</button>\r\n  <span class=\"counter\" id=\"counter\">1 / N</span>\r\n  <button class=\"nav-btn\" id=\"btn-n\" onclick=\"next()\">다음 ▶</button>\r\n</nav>\r\n\r\n<script>\r\nconst slides = document.querySelectorAll('.slide');\r\nconst btnP = document.getElementById('btn-p');\r\nconst btnN = document.getElementById('btn-n');\r\nconst arrowL = document.getElementById('arrow-l');\r\nconst arrowR = document.getElementById('arrow-r');\r\nconst counter = document.getElementById('counter');\r\nconst progress = document.getElementById('progress');\r\nlet cur = 0;\r\n\r\nfunction updateSlide(n) {\r\n  if (n < 0 || n >= slides.length) return;\r\n  slides.forEach(s => s.classList.remove('active', 'prev'));\r\n  if (n > cur) slides[cur].classList.add('prev');\r\n  cur = n;\r\n  slides[cur].classList.add('active');\r\n  counter.textContent = (cur + 1) + ' / ' + slides.length;\r\n  progress.style.width = ((cur + 1) / slides.length * 100) + '%';\r\n  btnP.disabled = (cur === 0);\r\n  btnN.disabled = (cur === slides.length - 1);\r\n  arrowL.style.display = (cur === 0) ? 'none' : '';\r\n  arrowR.style.display = (cur === slides.length - 1) ? 'none' : '';\r\n}\r\nfunction next() { updateSlide(cur + 1); }\r\nfunction prev() { updateSlide(cur - 1); }\r\nfunction toggleFS() { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); }\r\n\r\ndocument.addEventListener('keydown', e => {\r\n  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }\r\n  if (e.key === 'ArrowLeft') prev();\r\n  if (e.key === 'f' || e.key === 'F') toggleFS();\r\n  if (e.key === 'Home') updateSlide(0);\r\n  if (e.key === 'End') updateSlide(slides.length - 1);\r\n});\r\nlet tx = 0;\r\ndocument.addEventListener('touchstart', e => { tx = e.touches[0].clientX; });\r\ndocument.addEventListener('touchend', e => { const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 50) { dx < 0 ? next() : prev(); } });\r\ndocument.getElementById('fsToggle').addEventListener('click', toggleFS);\r\nupdateSlide(0);\r\n<\/script>\r\n</body>\r\n</html>\r\n```\r\n\r\n**PNG 뷰어 작성 원칙:**\r\n- `slides/slide1.png` ~ `slides/slideN.png` 각각에 대해 `<div class=\"slide\"><img src=\"slides/slideN.png\" alt=\"Slide N\"></div>` 생성\r\n- 실제 슬라이드 수에 맞춰 div 반복 (Phase 1-A Step 5에서 확인한 개수)\r\n- 테마 토글 불필요 (원본 디자인 그대로 표시)\r\n- 사용자가 링크 패널을 요청하면 `.links-panel` 활성화하여 슬라이드별 외부 링크 표시\r\n\r\n→ Phase 2-A 완료 후 **Phase 3**으로 진행 (slides/ 폴더도 함께 git add)\r\n\r\n---\r\n\r\n### Phase 2-B: HTML 코딩 슬라이드 생성 (Mode B — 기존)\r\n\r\nWrite tool로 단일 HTML 파일을 생성한다. 아래 템플릿 구조를 따른다.\r\n\r\n**파일명 규칙:** `{주제}-slideshow.html` (kebab-case)\r\n\r\n**필수 기능:**\r\n- 키보드 네비게이션 (← → 화살표, Space=다음, Escape=전체화면 해제)\r\n- 터치 스와이프 (모바일)\r\n- 진행 바 (상단)\r\n- 슬라이드 번호 표시 (우하단 \"3 / 12\")\r\n- 전체화면 버튼 (F키 또는 버튼 클릭)\r\n- 반응형 (모바일/태블릿/PC)\r\n- 인쇄 CSS (@media print → 슬라이드별 page-break)\r\n- 다크 테마 기본 (밝은 배경 옵션도 토글 가능)\r\n- 애니메이션 전환 효과 (slide-in)\r\n- 외부 의존성 0개 (CDN 없음, 완전 자립형 단일 HTML)\r\n\r\n**HTML 템플릿 구조:**\r\n\r\n```html\r\n<!DOCTYPE html>\r\n<html lang=\"ko\">\r\n<head>\r\n  <meta charset=\"UTF-8\">\r\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n  <title>{슬라이드 제목}</title>\r\n  <style>\r\n    /* ── Reset + Base ── */\r\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\r\n    html, body { height: 100%; overflow: hidden; font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }\r\n\r\n    /* ── Theme Variables ── */\r\n    :root {\r\n      --bg: #0f172a;\r\n      --surface: #1e293b;\r\n      --text: #f1f5f9;\r\n      --muted: #94a3b8;\r\n      --accent: #38bdf8;\r\n      --accent2: #a78bfa;\r\n      --code-bg: #1e293b;\r\n      --slide-max-w: 1100px;\r\n    }\r\n    :root.light {\r\n      --bg: #ffffff;\r\n      --surface: #f8fafc;\r\n      --text: #1e293b;\r\n      --muted: #64748b;\r\n      --accent: #2563eb;\r\n      --accent2: #7c3aed;\r\n      --code-bg: #f1f5f9;\r\n    }\r\n\r\n    body { background: var(--bg); color: var(--text); }\r\n\r\n    /* ── Progress Bar ── */\r\n    .progress { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent2)); z-index: 100; transition: width 0.3s ease; }\r\n\r\n    /* ── Slide Container ── */\r\n    .slides { position: relative; width: 100%; height: 100vh; }\r\n    .slide {\r\n      position: absolute; inset: 0;\r\n      display: flex; flex-direction: column; justify-content: center; align-items: center;\r\n      padding: 60px 48px 80px;\r\n      opacity: 0; transform: translateX(60px);\r\n      transition: opacity 0.45s ease, transform 0.45s ease;\r\n      pointer-events: none;\r\n    }\r\n    .slide.active { opacity: 1; transform: translateX(0); pointer-events: auto; }\r\n    .slide.prev { opacity: 0; transform: translateX(-60px); }\r\n    .slide-inner {\r\n      max-width: var(--slide-max-w); width: 100%;\r\n    }\r\n\r\n    /* ── Typography ── */\r\n    .slide h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; margin-bottom: 32px; line-height: 1.3; }\r\n    .slide h2 .accent { color: var(--accent); }\r\n    .slide h3 { font-size: 1.3rem; color: var(--accent); margin-bottom: 16px; font-weight: 700; }\r\n    .slide p { font-size: 1.15rem; line-height: 1.8; color: var(--muted); margin-bottom: 16px; }\r\n    .slide ul, .slide ol { font-size: 1.1rem; line-height: 2; padding-left: 24px; color: var(--text); }\r\n    .slide li { margin-bottom: 8px; }\r\n    .slide li::marker { color: var(--accent); }\r\n    .slide strong { color: var(--accent); font-weight: 700; }\r\n    .slide code { background: var(--code-bg); padding: 2px 8px; border-radius: 4px; font-size: 0.95em; }\r\n    .slide pre { background: var(--code-bg); border-radius: 12px; padding: 20px 24px; overflow-x: auto; margin: 16px 0; font-size: 0.9rem; line-height: 1.6; }\r\n    .slide table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 1rem; }\r\n    .slide th { background: var(--surface); padding: 10px 16px; text-align: left; font-weight: 700; border-bottom: 2px solid var(--accent); }\r\n    .slide td { padding: 10px 16px; border-bottom: 1px solid rgba(148,163,184,0.15); }\r\n    .slide tr:hover td { background: rgba(56,189,248,0.05); }\r\n\r\n    /* ── Title Slide ── */\r\n    .slide.title-slide { text-align: center; }\r\n    .slide.title-slide h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); font-weight: 900; line-height: 1.2; margin-bottom: 16px; }\r\n    .slide.title-slide .subtitle { font-size: 1.3rem; color: var(--muted); margin-bottom: 24px; }\r\n    .slide.title-slide .date { font-size: 1rem; color: var(--accent); }\r\n\r\n    /* ── End Slide ── */\r\n    .slide.end-slide { text-align: center; }\r\n\r\n    /* ── Stat Cards / Grid ── */\r\n    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 20px 0; }\r\n    .card { background: var(--surface); border-radius: 12px; padding: 20px 24px; border: 1px solid rgba(148,163,184,0.1); }\r\n    .card .label { font-size: 0.85rem; color: var(--muted); margin-bottom: 4px; }\r\n    .card .value { font-size: 1.8rem; font-weight: 800; color: var(--accent); }\r\n    .card .desc { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }\r\n\r\n    /* ── Two Column ── */\r\n    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }\r\n    @media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } }\r\n\r\n    /* ── Highlight Box ── */\r\n    .highlight { background: linear-gradient(135deg, rgba(56,189,248,0.1), rgba(167,139,250,0.1)); border-left: 4px solid var(--accent); padding: 16px 20px; border-radius: 0 12px 12px 0; margin: 16px 0; }\r\n\r\n    /* ── Side Arrows (좌우 큰 화살표) ── */\r\n    .arrow {\r\n      position: absolute; top: 50%; transform: translateY(-50%);\r\n      background: rgba(0,0,0,0.45); border: none; color: var(--accent);\r\n      font-size: 38px; cursor: pointer; padding: 18px 10px; z-index: 10;\r\n      border-radius: 6px; transition: background 0.2s; line-height: 1;\r\n    }\r\n    .arrow:hover { background: rgba(56,189,248,0.35); }\r\n    .arrow-l { left: 0; }\r\n    .arrow-r { right: 0; }\r\n\r\n    /* ── Bottom Nav Bar (하단 내비게이션) ── */\r\n    .nav-bar {\r\n      position: fixed; bottom: 0; left: 0; right: 0;\r\n      background: var(--surface); border-top: 1px solid rgba(148,163,184,0.15);\r\n      padding: 10px 20px; display: flex; align-items: center; justify-content: center;\r\n      gap: 20px; z-index: 100;\r\n    }\r\n    .nav-btn {\r\n      background: none; border: 2px solid var(--accent); color: var(--accent);\r\n      padding: 6px 24px; border-radius: 20px; cursor: pointer;\r\n      font-size: 15px; font-weight: 700; transition: all 0.2s; font-family: inherit;\r\n    }\r\n    .nav-btn:hover { background: var(--accent); color: var(--bg); }\r\n    .nav-btn:disabled { border-color: rgba(148,163,184,0.2); color: rgba(148,163,184,0.3); cursor: default; background: none; }\r\n    .counter { color: var(--muted); font-size: 15px; min-width: 70px; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; }\r\n\r\n    /* ── Theme Toggle ── */\r\n    .theme-toggle { position: fixed; top: 12px; right: 12px; z-index: 100; background: var(--surface); border: 1px solid rgba(148,163,184,0.2); color: var(--text); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13px; }\r\n    /* ── Fullscreen Button ── */\r\n    .fs-toggle { position: fixed; top: 12px; right: 80px; z-index: 100; background: var(--surface); border: 1px solid rgba(148,163,184,0.2); color: var(--text); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13px; }\r\n\r\n    /* ── Print ── */\r\n    @media print {\r\n      .nav-bar, .progress, .theme-toggle, .fs-toggle, .arrow { display: none !important; }\r\n      .slides { position: static; height: auto; }\r\n      .slide { position: static; opacity: 1 !important; transform: none !important; pointer-events: auto !important; page-break-after: always; height: 100vh; padding: 40px; }\r\n    }\r\n\r\n    /* ── Mobile ── */\r\n    @media (max-width: 640px) {\r\n      .slide { padding: 40px 20px 70px; }\r\n      .card-grid { grid-template-columns: 1fr; }\r\n      .arrow { font-size: 28px; padding: 14px 8px; }\r\n    }\r\n  </style>\r\n</head>\r\n<body>\r\n\r\n<div class=\"progress\" id=\"progress\"></div>\r\n<button class=\"fs-toggle\" id=\"fsToggle\" title=\"전체화면 (F)\">⤢</button>\r\n<button class=\"theme-toggle\" id=\"themeToggle\">Light</button>\r\n\r\n<div class=\"slides\" id=\"slides\">\r\n  <!-- 좌우 화살표 (슬라이드 컨테이너 안) -->\r\n  <button class=\"arrow arrow-l\" id=\"arrow-l\" onclick=\"prev()\" title=\"이전 (←)\">❮</button>\r\n  <button class=\"arrow arrow-r\" id=\"arrow-r\" onclick=\"next()\" title=\"다음 (→)\">❯</button>\r\n\r\n  <!-- ▼▼▼ 여기에 슬라이드 삽입 ▼▼▼ -->\r\n\r\n  <div class=\"slide title-slide active\">\r\n    <div class=\"slide-inner\">\r\n      <h1>{메인 타이틀}</h1>\r\n      <div class=\"subtitle\">{부제}</div>\r\n      <div class=\"date\">{날짜}</div>\r\n    </div>\r\n  </div>\r\n\r\n  <div class=\"slide\">\r\n    <div class=\"slide-inner\">\r\n      <h2>{슬라이드 제목}</h2>\r\n      <!-- 본문 내용: ul, p, table, .card-grid, .two-col, .highlight, pre 등 -->\r\n    </div>\r\n  </div>\r\n\r\n  <!-- ... 슬라이드 반복 ... -->\r\n\r\n  <div class=\"slide end-slide\">\r\n    <div class=\"slide-inner\">\r\n      <h2>감사합니다</h2>\r\n      <p style=\"font-size:1.2rem;margin-top:16px\">Q&A</p>\r\n    </div>\r\n  </div>\r\n\r\n  <!-- ▲▲▲ 슬라이드 끝 ▲▲▲ -->\r\n</div>\r\n\r\n<nav class=\"nav-bar\">\r\n  <button class=\"nav-btn\" id=\"btn-p\" onclick=\"prev()\">◀ 이전</button>\r\n  <span class=\"counter\" id=\"counter\">1 / N</span>\r\n  <button class=\"nav-btn\" id=\"btn-n\" onclick=\"next()\">다음 ▶</button>\r\n</nav>\r\n\r\n<script>\r\nconst slides = document.querySelectorAll('.slide');\r\nconst btnP = document.getElementById('btn-p');\r\nconst btnN = document.getElementById('btn-n');\r\nconst arrowL = document.getElementById('arrow-l');\r\nconst arrowR = document.getElementById('arrow-r');\r\nconst counter = document.getElementById('counter');\r\nconst progress = document.getElementById('progress');\r\nlet cur = 0;\r\n\r\nfunction updateSlide(n) {\r\n  if (n < 0 || n >= slides.length) return;\r\n  slides.forEach(s => s.classList.remove('active', 'prev'));\r\n  if (n > cur) slides[cur].classList.add('prev');\r\n  cur = n;\r\n  slides[cur].classList.add('active');\r\n  counter.textContent = (cur + 1) + ' / ' + slides.length;\r\n  progress.style.width = ((cur + 1) / slides.length * 100) + '%';\r\n  // 첫/마지막 슬라이드에서 버튼 비활성화\r\n  btnP.disabled = (cur === 0);\r\n  btnN.disabled = (cur === slides.length - 1);\r\n  arrowL.style.display = (cur === 0) ? 'none' : '';\r\n  arrowR.style.display = (cur === slides.length - 1) ? 'none' : '';\r\n}\r\nfunction next() { updateSlide(cur + 1); }\r\nfunction prev() { updateSlide(cur - 1); }\r\nfunction toggleFS() { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); }\r\n\r\ndocument.addEventListener('keydown', e => {\r\n  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }\r\n  if (e.key === 'ArrowLeft') prev();\r\n  if (e.key === 'f' || e.key === 'F') toggleFS();\r\n  if (e.key === 'Home') updateSlide(0);\r\n  if (e.key === 'End') updateSlide(slides.length - 1);\r\n});\r\nlet tx = 0;\r\ndocument.addEventListener('touchstart', e => { tx = e.touches[0].clientX; });\r\ndocument.addEventListener('touchend', e => { const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 50) { dx < 0 ? next() : prev(); } });\r\ndocument.getElementById('themeToggle').addEventListener('click', () => {\r\n  document.documentElement.classList.toggle('light');\r\n  document.getElementById('themeToggle').textContent = document.documentElement.classList.contains('light') ? 'Dark' : 'Light';\r\n});\r\ndocument.getElementById('fsToggle').addEventListener('click', toggleFS);\r\nupdateSlide(0);\r\n<\/script>\r\n</body>\r\n</html>\r\n```\r\n\r\n**슬라이드 작성 원칙:**\r\n- 슬라이드당 텍스트 최소화 (bullet 5개 이내, 문장 짧게)\r\n- 숫자/통계는 `.card-grid > .card` 사용\r\n- 비교/대조는 `.two-col` 사용\r\n- 핵심 인용/강조는 `.highlight` 사용\r\n- 코드는 `<pre><code>` 사용\r\n- `<strong>` 태그로 키워드 강조 (자동으로 accent 색상)\r\n- 각 `<h2>` 안에서 핵심 단어는 `<span class=\"accent\">` 감싸기\r\n\r\n### Phase 3: GitHub 푸시 + 공유 URL 생성\r\n\r\n1. **현재 Git 상태 확인:**\r\n   ```bash\r\n   git status\r\n   git remote -v\r\n   ```\r\n\r\n2. **GitHub Pages 대상 경로에 파일 배치:**\r\n   - 프로젝트 루트 또는 `docs/` 폴더에 HTML 파일 저장\r\n   - 이미 GitHub Pages가 설정된 경우 해당 경로에 저장\r\n\r\n3. **커밋 + 푸시:**\r\n   ```bash\r\n   git add {파일경로}\r\n   git commit -m \"docs: {제목} 슬라이드쇼 웹페이지 추가\"\r\n   git push\r\n   ```\r\n\r\n4. **공유 URL 안내:**\r\n   ```\r\n   GitHub Pages URL:\r\n   https://{username}.github.io/{repo}/{파일경로}\r\n\r\n   또는 GitHub raw/직접 접근:\r\n   파일을 브라우저에서 직접 열어도 동작 (단일 HTML, 외부 의존성 없음)\r\n   ```\r\n\r\n5. **결과 보고:**\r\n   ```\r\n   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\r\n     슬라이드쇼 생성 완료\r\n   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\r\n     파일:   {파일 경로}\r\n     슬라이드: {N}장\r\n     용량:   {N} KB\r\n     공유:   {GitHub Pages URL}\r\n   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\r\n\r\n   조작법:\r\n     ← → 화살표  이전/다음 슬라이드\r\n     Space       다음 슬라이드\r\n     F           전체화면 토글\r\n     Home / End  첫 / 마지막 슬라이드\r\n     좌우 화살표  좌우 큰 버튼 클릭\r\n     하단 바      이전 ◀ / ▶ 다음 버튼\r\n     스와이프     모바일 터치 좌우\r\n   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\r\n   ```\r\n\r\n### Phase 4: 사용자 피드백 반영 (선택)\r\n\r\nAskUserQuestion으로 확인:\r\n- \"슬라이드 내용을 수정하거나 추가할 부분이 있나요?\"\r\n- 수정 요청 시 Edit tool로 해당 슬라이드만 수정 → 재푸시\r\n\r\n---\r\n\r\n## 예시\r\n\r\n```\r\n/slideshow FX Pooling 시스템 소개 10장\r\n/slideshow thesis_report.md 기반 발표자료\r\n/slideshow presentation.pptx\r\n/slideshow \"발표자료.pptx\"  # 파일 경로 예: C:\\Documents\\발표자료.pptx\r\n/slideshow prototype/ 코드 아키텍처 발표\r\n/slideshow \"프로젝트 현황 보고 — SAL Grid 진행률 포함\"\r\n```\r\n\r\n## 주의사항\r\n\r\n1. **외부 의존성 0개** — CDN 없음, 폰트 로드 없음. 오프라인에서도 동작.\r\n2. **단일 HTML** — CSS/JS 모두 인라인. Mode A는 HTML + slides/ 폴더, Mode B는 파일 1개로 완결.\r\n3. **GitHub Pages 미설정 시** — 파일을 로컬에서 직접 열어도 100% 동작.\r\n4. **한글 최적화** — 시스템 폰트(Pretendard/Apple SD/맑은 고딕) 폴백 체인.\r\n5. **인쇄 지원** — Ctrl+P로 슬라이드별 페이지 분리 인쇄 가능.\r\n6. **PPTX 변환 모드 선택:**\r\n   - **Mode A (PNG, 기본)** — 원본 디자인 100% 유지. `slides/` 폴더에 PNG 저장.\r\n     - 1순위: PowerPoint COM (`pywin32`) — Windows + PowerPoint 설치 시. PPTX→PNG 직접 변환. 최고 품질.\r\n     - 2순위: LibreOffice headless (`PyMuPDF`) — PPTX→PDF→PNG 2단계 변환.\r\n     - 둘 다 없으면 → 자동으로 Mode B 폴백.\r\n   - **Mode B (HTML 재코딩)** — `python-pptx` 패키지 필요. 텍스트·표·제목·불릿 추출. 이미지는 `[이미지]` 플레이스홀더.\r\n7. **Mode A git push 시** — `slides/` 폴더도 함께 `git add`할 것. PNG 파일 용량 주의 (슬라이드당 ~200KB).\r\n";
+
+const SW_STORAGE_KEY = 'vcos_slideshow_folder';
+
+function renderSwCmd() {
+  const input  = document.getElementById('sw-folder-input');
+  const box    = document.getElementById('sw-cmd-box');
+  const folder = input.value.trim();
+  if (folder) localStorage.setItem(SW_STORAGE_KEY, folder);
+
+  const cdLine = folder ? 'cd "' + folder + '"\n\n' : '';
+  box.textContent = cdLine + SW_SKILL_CONTENT;
+}
+
+function copySwCmd(btn) {
+  const box = document.getElementById('sw-cmd-box');
+  copyText(box.textContent, btn);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('nav-placeholder').innerHTML = buildNav('SW', false);
+  document.getElementById('footer-placeholder').innerHTML = buildFooter(false);
+
+  const saved = localStorage.getItem(SW_STORAGE_KEY);
+  if (saved) {
+    document.getElementById('sw-folder-input').value = saved;
+  }
+  renderSwCmd();
+});
+</script>
+</body>
+</html>

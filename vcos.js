@@ -332,23 +332,62 @@ const NAV_ITEMS = [
 ];
 
 function buildNav(activeNum, isHome) {
-  const prefix    = isHome ? 'pages/' : '';
-  const homeHref  = isHome ? 'index.html' : '../index.html';
-  const refineHref = `${prefix}07-refinement.html`;
-  const isRefine   = String(activeNum) === 'R';
+  const prefix      = isHome ? 'pages/' : '';
+  const homeHref    = isHome ? 'index.html' : '../index.html';
+  const refineHref       = `${prefix}07-refinement.html`;
+  const salGridHref      = `${prefix}08-sal-grid.html`;
+  const debugLoopHref    = `${prefix}09-debug-loop.html`;
+  const slideshowHref    = `${prefix}10-slideshow.html`;
+  const youtubeHref      = `${prefix}11-youtube.html`;
+  const active           = String(activeNum);
+  const isRefine         = active === 'R';
+  const isSalGrid        = active === 'SG';
+  const isDebugLoop      = active === 'D4';
+  const isSlideshow      = active === 'SW';
+  const isYoutube        = active === 'YT';
 
-  const links = NAV_ITEMS.map(item => {
-    const active = item.num === String(activeNum);
-    return `<a href="${prefix}${item.file}" class="nav-link${active?' active':''}">
-      <span class="nav-num">${item.num}</span>${item.label}</a>`;
+  // 1번 메뉴: 인텐트 입력 (드롭다운 부모)
+  // 2~7번 메뉴: 서브 메뉴
+  const intent   = NAV_ITEMS[0]; // num:'1'
+  const subItems = NAV_ITEMS.slice(1); // num:'2'~'7'
+
+  // 부모가 활성인 조건: 현재 페이지가 1~7번 중 하나
+  const isPhase1Active = ['1','2','3','4','5','6','7'].includes(active);
+  const intentHref     = `${prefix}${intent.file}`;
+
+  const subLinks = subItems.map(item => {
+    const isSub = item.num === active;
+    return `<a href="${prefix}${item.file}" class="${isSub?'active':''}">
+        <span class="nav-num">${item.num}</span>${item.label}</a>`;
   }).join('');
 
   return `<div class="header-inner">
     <div><div class="logo-mark">V<span>C</span>OS</div><div class="logo-sub">Vibe Coding OS</div></div>
     <nav class="nav-links">
-      <a href="${homeHref}" class="home-link">🏠 홈</a>${links}
-      <a href="${refineHref}" class="nav-link${isRefine?' active':''}" style="margin-left:6px;background:rgba(234,88,12,.12);border:1px solid rgba(234,88,12,.35);color:rgba(255,255,255,.9)">
-        <span class="nav-num" style="background:rgba(234,88,12,.5);font-size:7px;width:18px">P2</span>고도화</a>
+      <a href="${homeHref}" class="home-link">🏠 홈</a>
+      <div class="nav-dropdown">
+        <div class="nav-dropdown-toggle${isPhase1Active?' active':''}">
+          <span class="nav-num" style="${isPhase1Active?'background:rgba(255,255,255,.35)':''}">P1</span>인텐트 입력
+          <span class="nav-dropdown-caret">▾</span>
+        </div>
+        <div class="nav-dropdown-menu">
+          <div class="nav-dropdown-menu-inner">
+            <a href="${intentHref}" class="${active==='1'?'active':''}">
+              <span class="nav-num">1</span>${intent.label}</a>
+            ${subLinks}
+          </div>
+        </div>
+      </div>
+      <a href="${refineHref}" class="nav-link${isRefine?' active':''}" style="margin-left:6px;${isRefine?'':'background:rgba(234,88,12,.12);border:1px solid rgba(234,88,12,.35);'}">
+        <span class="nav-num" style="${isRefine?'background:rgba(255,255,255,.35)':'background:rgba(234,88,12,.5)'};font-size:7px;width:18px">P2</span>고도화</a>
+      <a href="${salGridHref}" class="nav-link${isSalGrid?' active':''}" style="margin-left:4px;${isSalGrid?'':'background:rgba(67,56,202,.12);border:1px solid rgba(67,56,202,.35);'}">
+        <span class="nav-num" style="${isSalGrid?'background:rgba(255,255,255,.35)':'background:rgba(67,56,202,.5)'};font-size:7px;width:18px">P3</span>SAL-Grid</a>
+      <a href="${debugLoopHref}" class="nav-link${isDebugLoop?' active':''}" style="margin-left:4px;${isDebugLoop?'':'background:rgba(225,29,72,.12);border:1px solid rgba(225,29,72,.35);'}">
+        <span class="nav-num" style="${isDebugLoop?'background:rgba(255,255,255,.35)':'background:rgba(225,29,72,.5)'};font-size:7px;width:18px">P4</span>Debug Loop</a>
+      <a href="${slideshowHref}" class="nav-link${isSlideshow?' active':''}" style="margin-left:4px;${isSlideshow?'':'background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.35);'}">
+        <span class="nav-num" style="${isSlideshow?'background:rgba(255,255,255,.35)':'background:rgba(124,58,237,.5)'};font-size:7px;width:18px">P5</span>Slideshow</a>
+      <a href="${youtubeHref}" class="nav-link${isYoutube?' active':''}" style="margin-left:4px;${isYoutube?'':'background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.35);'}">
+        <span class="nav-num" style="${isYoutube?'background:rgba(255,255,255,.35)':'background:rgba(245,158,11,.5)'};font-size:7px;width:18px">P6</span>YouTube</a>
     </nav>
   </div>`;
 }
@@ -376,7 +415,11 @@ function buildFooter(isHome) {
     `<li><a href="${prefix}${item.file}"><span class="fn">${item.num}</span>${item.label}</a></li>`
   ).join('');
 
-  const refineHrefFooter = `${prefix}07-refinement.html`;
+  const refineHrefFooter      = `${prefix}07-refinement.html`;
+  const salGridHrefFooter     = `${prefix}08-sal-grid.html`;
+  const debugLoopHrefFooter   = `${prefix}09-debug-loop.html`;
+  const slideshowHrefFooter   = `${prefix}10-slideshow.html`;
+  const youtubeHrefFooter     = `${prefix}11-youtube.html`;
 
   return `<footer class="vcos-footer">
   <div class="footer-inner">
@@ -391,31 +434,32 @@ function buildFooter(isHome) {
         </div>
       </div>
 
-      <div style="display:flex;gap:36px;align-items:flex-start">
-        <div>
-          <div class="footer-col-title" style="color:rgba(255,255,255,.5);margin-bottom:6px">🚀 Phase 1 — 기획</div>
+      <div class="footer-nav">
+        <div class="footer-nav-col">
+          <div class="footer-col-title">🚀 Phase 1 — 기획</div>
           <ul class="footer-links">${phase1Links}</ul>
         </div>
-        <div>
-          <div class="footer-col-title" style="color:rgba(255,165,100,.7);margin-bottom:6px">🔥 Phase 2 — 고도화</div>
+        <div class="footer-nav-col">
+          <div class="footer-col-title" style="color:rgba(255,165,100,.75)">🔥 P2~P6</div>
           <ul class="footer-links">
-            <li><a href="${refineHrefFooter}" style="color:rgba(255,165,100,.85)"><span class="fn" style="background:rgba(234,88,12,.4);color:rgba(255,255,255,.9)">P2</span>결과물 고도화 엔진</a></li>
+            <li><a href="${refineHrefFooter}" style="color:rgba(255,165,100,.9)"><span class="fn" style="background:rgba(234,88,12,.45)">P2</span>고도화 엔진</a></li>
+            <li><a href="${salGridHrefFooter}" style="color:rgba(165,180,252,.9)"><span class="fn" style="background:rgba(67,56,202,.45)">P3</span>SAL-Grid</a></li>
+            <li><a href="${debugLoopHrefFooter}" style="color:rgba(253,164,175,.9)"><span class="fn" style="background:rgba(225,29,72,.45)">P4</span>Debug Loop</a></li>
+            <li><a href="${slideshowHrefFooter}" style="color:rgba(196,181,253,.9)"><span class="fn" style="background:rgba(124,58,237,.45)">P5</span>Slideshow</a></li>
+            <li><a href="${youtubeHrefFooter}" style="color:rgba(253,211,77,.9)"><span class="fn" style="background:rgba(245,158,11,.45)">P6</span>YouTube</a></li>
           </ul>
         </div>
       </div>
 
-      <div style="width:100%">
-        <div style="display:flex;flex-direction:row;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:7px">
-          <a href="${homeHref}" class="footer-btn footer-btn-primary">🏠 홈으로</a>
-          <a href="${prefix}01-intent.html" class="footer-btn footer-btn-ghost">✏️ 새 프로젝트</a>
-          <a href="${prefix}07-command.html" class="footer-btn footer-btn-ghost">⚡ 명령어 생성</a>
-          <a href="${refineHrefFooter}" class="footer-btn footer-btn-ghost" style="border-color:rgba(234,88,12,.4);color:rgba(255,165,100,.9)">🔥 고도화 엔진</a>
-          <a href="${isHome?'pages/sitemap.html':'../pages/sitemap.html'}" class="footer-btn footer-btn-ghost" style="border-color:rgba(8,145,178,.4);color:rgba(103,232,249,.9)">🗺 구조도</a>
-          <a href="${prefix}manual.html" class="footer-btn footer-btn-ghost" style="border-color:rgba(124,58,237,.4);color:rgba(167,139,250,.9)">📖 매뉴얼</a>
-        </div>
-        <div style="display:flex;flex-direction:row;flex-wrap:wrap;gap:7px;align-items:center">
-          <a href="${isHome?'pages/skills-map.html':'../pages/skills-map.html'}" class="footer-btn footer-btn-ghost" style="border-color:rgba(234,88,12,.5);color:rgba(255,200,100,.95);background:rgba(234,88,12,.08);font-weight:700">⚡ 25 스킬 구조도</a>
-        </div>
+      <div class="footer-actions">
+        <a href="${homeHref}" class="footer-btn footer-btn-primary">🏠 홈으로</a>
+        <a href="${prefix}01-intent.html" class="footer-btn footer-btn-ghost">✏️ 새 프로젝트</a>
+        <a href="${prefix}07-command.html" class="footer-btn footer-btn-ghost">⚡ 명령어 생성</a>
+        <a href="${refineHrefFooter}" class="footer-btn footer-btn-ghost" style="border-color:rgba(234,88,12,.4);color:rgba(255,165,100,.9)">🔥 고도화 엔진</a>
+        <a href="${isHome?'pages/sitemap.html':'../pages/sitemap.html'}" class="footer-btn footer-btn-ghost" style="border-color:rgba(8,145,178,.4);color:rgba(103,232,249,.9)">🗺 구조도</a>
+        <a href="${prefix}manual.html" class="footer-btn footer-btn-ghost" style="border-color:rgba(124,58,237,.4);color:rgba(167,139,250,.9)">📖 매뉴얼</a>
+        <a href="${isHome?'../03-04 AX덴탈그룹/skills/02 스킬 모음 claude-20260305T005001Z-1-001/skills_overview.svg':'../../03-04 AX덴탈그룹/skills/02 스킬 모음 claude-20260305T005001Z-1-001/skills_overview.svg'}" target="_blank" class="footer-btn footer-btn-ghost" style="border-color:rgba(124,58,237,.5);color:rgba(196,181,253,.95);background:rgba(124,58,237,.08);font-weight:700">🗂️ SAL 22 스킬</a>
+        <a href="${isHome?'pages/skills-map.html':'../pages/skills-map.html'}" class="footer-btn footer-btn-ghost" style="border-color:rgba(234,88,12,.5);color:rgba(255,200,100,.95);background:rgba(234,88,12,.08);font-weight:700">⚡ 25 스킬 구조도</a>
       </div>
 
     </div>

@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VCOS — YouTube 올인원</title>
+<link rel="stylesheet" href="../vcos.css">
+<style>
+:root {
+  --yt:#f59e0b;
+  --yt2:#fbbf24;
+  --yt3:#fcd34d;
+  --yt-dark:#92400e;
+  --yt-light:#fffbeb;
+  --yt-mid:#fef3c7;
+  --yt-border:rgba(245,158,11,.28);
+  --yt-border-strong:rgba(245,158,11,.5);
+  --yt-glow:0 0 0 3px rgba(245,158,11,.15);
+  --yt-shadow:0 4px 20px rgba(245,158,11,.18);
+  --yt-shadow-lg:0 8px 32px rgba(245,158,11,.25);
+}
+
+.page-body { background:linear-gradient(180deg,rgba(255,251,235,.35) 0%,transparent 300px); }
+
+.card {
+  border:1.5px solid var(--yt-border) !important;
+  background:linear-gradient(155deg,#ffffff,#fffdf5) !important;
+  box-shadow:0 2px 12px rgba(245,158,11,.08) !important;
+}
+.card::before { background:linear-gradient(90deg,var(--yt),var(--yt3)) !important;opacity:.6 }
+.card:hover::before { opacity:1 }
+.card-title { color:var(--yt-dark);border-bottom:1.5px solid var(--yt-border);padding-bottom:10px;margin-bottom:12px; }
+.stat-box {
+  background:linear-gradient(145deg,#fff,var(--yt-light)) !important;
+  border:1.5px solid var(--yt-border) !important;
+  border-top:3px solid var(--yt) !important;
+  box-shadow:0 2px 8px rgba(245,158,11,.1) !important;
+}
+.stat-box .stat-val { color:var(--yt-dark) }
+
+/* ── Step 카드 ── */
+.yt-step-card {
+  border-radius:var(--r-lg);padding:16px 18px;border:2px solid;margin-bottom:10px;
+  background:linear-gradient(135deg,#fff,#fffdf5);
+  box-shadow:0 2px 12px rgba(245,158,11,.08);
+  position:relative;overflow:hidden;
+  transition:transform var(--med),box-shadow var(--med);
+  display:flex;align-items:flex-start;gap:14px;
+}
+.yt-step-card:hover { transform:translateY(-2px);box-shadow:var(--yt-shadow); }
+.yt-step-card .step-icon {
+  width:44px;height:44px;border-radius:12px;display:flex;align-items:center;
+  justify-content:center;font-size:20px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--yt-light),var(--yt-mid));
+  border:1.5px solid var(--yt-border);
+}
+.yt-step-card .step-body { flex:1; }
+.yt-step-card .step-badge {
+  font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
+  padding:2px 8px;border-radius:9999px;display:inline-block;margin-bottom:5px;
+}
+.yt-step-card .step-title { font-size:15px;font-weight:700;color:var(--text1);margin-bottom:5px; }
+.yt-step-card .step-desc { font-size:12.5px;color:var(--text2);line-height:1.55; }
+
+/* ── 코드 박스 ── */
+.yt-code {
+  background:linear-gradient(135deg,#0f172a,#1c1507);
+  border:1.5px solid rgba(245,158,11,.2);
+  border-radius:8px;padding:10px 12px;
+  font-family:'Courier New',monospace;font-size:11.5px;
+  color:#fef3c7;line-height:1.6;
+  white-space:pre-wrap;word-break:break-all;
+  margin-top:8px;
+}
+
+/* ── 출력물 테이블 ── */
+.yt-output-table { width:100%;border-collapse:collapse;font-size:12.5px; }
+.yt-output-table th {
+  text-align:left;padding:8px 12px;
+  background:linear-gradient(135deg,var(--yt-dark),#78350f);
+  color:rgba(255,255,255,.9);font-weight:700;font-size:11.5px;
+}
+.yt-output-table th:first-child { border-radius:8px 0 0 0; }
+.yt-output-table th:last-child { border-radius:0 8px 0 0; }
+.yt-output-table td { padding:8px 12px;border-bottom:1px solid rgba(245,158,11,.1);vertical-align:top;color:var(--text2); }
+.yt-output-table tr:last-child td { border-bottom:none; }
+.yt-output-table tr:hover td { background:rgba(245,158,11,.04); }
+.yt-output-table code {
+  background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);
+  border-radius:4px;padding:1px 5px;font-size:11px;
+  color:var(--yt-dark);font-family:'Courier New',monospace;
+}
+.yt-auto { color:#10b981;font-weight:800; }
+.yt-manual { color:#f97316;font-weight:800; }
+.yt-optional { color:#94a3b8;font-weight:600; }
+
+/* ── 배너 ── */
+.yt-banner {
+  background:linear-gradient(135deg,#78350f,#d97706,#b45309);
+  border-radius:var(--r-xl);padding:20px 28px;margin-bottom:20px;
+  display:flex;align-items:center;gap:18px;
+  border:1.5px solid rgba(255,255,255,.12);
+  box-shadow:0 4px 24px rgba(245,158,11,.3),inset 0 1px 0 rgba(255,255,255,.15);
+  position:relative;overflow:hidden;
+}
+.yt-banner::after { content:'';position:absolute;right:-20px;top:-20px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.05); }
+.yt-banner-icon { font-size:36px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.3));position:relative;z-index:1; }
+.yt-banner-body { position:relative;z-index:1; }
+.yt-banner-title { font-size:20px;font-weight:900;color:#fff;letter-spacing:-.3px;text-shadow:0 2px 8px rgba(0,0,0,.3); }
+.yt-banner-desc { font-size:13px;color:rgba(255,255,255,.8);margin-top:3px; }
+.yt-banner-tags { display:flex;gap:7px;flex-wrap:wrap;margin-top:8px; }
+.yt-banner-tag { padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.2); }
+
+/* ── 론처 ── */
+.yt-launcher {
+  background:linear-gradient(145deg,#0f0f1a,#1a1005,#0f172a);
+  border:2px solid rgba(245,158,11,.35);
+  border-radius:var(--r-xl);padding:28px;
+  box-shadow:0 8px 32px rgba(245,158,11,.15),inset 0 1px 0 rgba(245,158,11,.1);
+}
+.yt-launcher-title { font-size:17px;font-weight:800;color:#fff;margin-bottom:4px;text-shadow:0 0 20px rgba(245,158,11,.4);display:flex;align-items:center;gap:10px; }
+.yt-launcher-sub { font-size:12px;color:rgba(255,255,255,.5);margin-bottom:20px; }
+.yt-input-row { display:flex;align-items:center;gap:10px;margin-bottom:14px; }
+.yt-input-label { font-size:12px;font-weight:700;color:rgba(255,255,255,.7);white-space:nowrap;min-width:80px; }
+.yt-folder-input {
+  flex:1;background:rgba(255,255,255,.07);border:1.5px solid rgba(245,158,11,.3);
+  border-radius:8px;padding:9px 14px;color:#fff;font-size:13px;outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+.yt-folder-input::placeholder { color:rgba(255,255,255,.3); }
+.yt-folder-input:focus { border-color:rgba(245,158,11,.65);box-shadow:var(--yt-glow);background:rgba(255,255,255,.1); }
+.yt-cmd-box {
+  background:rgba(0,0,0,.4);border:1.5px solid rgba(245,158,11,.25);
+  border-radius:10px;padding:14px 16px;
+  font-family:'Courier New',monospace;font-size:12px;
+  color:#fef3c7;line-height:1.7;min-height:90px;
+  white-space:pre-wrap;word-break:break-all;
+  max-height:340px;overflow-y:auto;
+}
+.yt-copy-btn {
+  display:block;width:100%;margin-top:12px;padding:11px;
+  background:linear-gradient(135deg,var(--yt),var(--yt-dark));
+  border:none;border-radius:9px;color:#fff;font-size:14px;
+  font-weight:800;cursor:pointer;letter-spacing:.3px;
+  transition:transform .15s,box-shadow .15s,filter .15s;
+  box-shadow:0 4px 14px rgba(245,158,11,.35);
+}
+.yt-copy-btn:hover { transform:translateY(-1px);box-shadow:0 6px 20px rgba(245,158,11,.45);filter:brightness(1.1); }
+.yt-copy-btn:active { transform:translateY(0); }
+</style>
+</head>
+<body class="page-body">
+
+<header class="vcos-header">
+  <div id="nav-placeholder"></div>
+</header>
+
+<main class="page-main">
+  <div class="page-inner">
+
+    <!-- BANNER -->
+    <div class="phase-banner" style="background:linear-gradient(135deg,#78350f,#d97706,#b45309);box-shadow:0 4px 24px rgba(245,158,11,.3),inset 0 1px 0 rgba(255,255,255,.15)">
+      <div class="phase-banner-icon">🎬</div>
+      <div class="phase-banner-body">
+        <div class="phase-banner-title">YouTube 올인원 자동화</div>
+        <div class="phase-banner-desc">소재 파일 하나로 유튜브 제작 전체 재료 자동 생성 · ElevenLabs · Gemini · Vrew</div>
+        <div class="phase-banner-tags">
+          <span class="phase-banner-tag">Step 0: 경쟁 영상 리서치</span>
+          <span class="phase-banner-tag">Step 1: 제목·썸네일·대본</span>
+          <span class="phase-banner-tag">Step 2: 재료 일괄 생성</span>
+          <span class="phase-banner-tag">Step 5: 블로그 글</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE HERO -->
+    <div class="page-hero">
+      <div class="page-hero-icon" style="background:linear-gradient(135deg,#fbbf24,#d97706);box-shadow:0 4px 14px rgba(245,158,11,.35);border:2px solid rgba(245,158,11,.3)">🎬</div>
+      <div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="page-hero-badge" style="color:#d97706;background:rgba(245,158,11,.1);border:1.5px solid rgba(245,158,11,.25)">Phase 6</span>
+          <h1 class="page-hero-name">YouTube 올인원</h1>
+        </div>
+        <p class="page-hero-desc">유튜브 영상 올인원 자동화 · <code class="page-hero-skill" style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);color:var(--yt-dark)">/youtube-generate-코어4</code></p>
+      </div>
+    </div>
+
+    <!-- STAT ROW -->
+    <div class="stat-row" style="margin-bottom:24px">
+      <div class="stat-box">
+        <div class="stat-num" style="color:var(--yt);font-size:20px">6</div>
+        <div class="stat-label">자동화 Steps</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" style="color:var(--yt);font-size:18px">🎙️</div>
+        <div class="stat-label">ElevenLabs 음성</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" style="color:var(--yt);font-size:18px">🔍</div>
+        <div class="stat-label">Gemini 리서치</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" style="color:var(--yt);font-size:18px">📝</div>
+        <div class="stat-label">블로그 자동 생성</div>
+      </div>
+    </div>
+
+    <!-- 실행 명령어 생성기 -->
+    <div style="margin-bottom:24px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="height:2px;flex:1;background:linear-gradient(90deg,transparent,rgba(245,158,11,.4))"></div>
+        <span style="font-size:12px;font-weight:800;color:var(--yt);letter-spacing:.5px;text-transform:uppercase;padding:4px 14px;background:rgba(245,158,11,.08);border:1.5px solid rgba(245,158,11,.2);border-radius:9999px">실행 명령어 생성기</span>
+        <div style="height:2px;flex:1;background:linear-gradient(90deg,rgba(245,158,11,.4),transparent)"></div>
+      </div>
+      <div class="yt-launcher">
+        <div class="yt-launcher-title">
+          <span style="width:32px;height:32px;border-radius:10px;background:rgba(245,158,11,.25);border:1.5px solid rgba(245,158,11,.4);display:flex;align-items:center;justify-content:center;font-size:16px">🎬</span>
+          /youtube-generate-코어4 스킬 실행기
+        </div>
+        <div class="yt-launcher-sub">프로젝트 폴더를 입력하면 cd 명령어 + 스킬 전문이 자동 생성됩니다</div>
+        <div class="yt-input-row">
+          <div class="yt-input-label">📁 프로젝트 폴더</div>
+          <input type="text" class="yt-folder-input" id="yt-folder-input"
+            placeholder="예: C:\YouTube"
+            oninput="renderYtCmd()" />
+        </div>
+        <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:10px;margin-top:-6px">
+          ⚡ 폴더 경로 입력 시 자동 생성 · 빈칸이면 스킬 내용만 표시
+        </div>
+        <div id="yt-cmd-box" class="yt-cmd-box">폴더를 입력하면 명령어가 생성됩니다...</div>
+        <button class="yt-copy-btn" onclick="copyYtCmd(this)">
+          📋 전체 복사 (cd 명령어 + youtube-generate 스킬)
+        </button>
+      </div>
+    </div>
+
+    <!-- GRID 2COL: 워크플로우 + 자동화 항목 -->
+    <div class="grid-2" style="margin-bottom:24px">
+
+      <!-- LEFT: 전체 워크플로우 -->
+      <div>
+        <div class="card">
+          <div class="card-title" style="display:flex;align-items:center;gap:8px">
+            <span style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--yt-light),var(--yt-mid));border:1.5px solid var(--yt-border);display:flex;align-items:center;justify-content:center;font-size:14px">🔄</span>
+            전체 워크플로우
+          </div>
+
+          <div class="yt-step-card" style="border-color:rgba(99,102,241,.3)">
+            <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#6366f1,#4f46e5);border-radius:4px 0 0 4px"></div>
+            <div class="step-icon" style="background:linear-gradient(135deg,#eef2ff,#e0e7ff);border-color:rgba(99,102,241,.3)">🔍</div>
+            <div class="step-body">
+              <div class="step-badge" style="background:rgba(99,102,241,.1);color:#4f46e5;border:1px solid rgba(99,102,241,.2)">Step 0 — 선택</div>
+              <div class="step-title">경쟁 영상 리서치</div>
+              <div class="step-desc">Gemini로 유사 인기 영상 자동 검색·분석 (--research) 또는 특정 URL 분석 (--analyze). 결과는 output/research/ 저장.</div>
+            </div>
+          </div>
+
+          <div class="yt-step-card" style="border-color:rgba(245,158,11,.3)">
+            <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--yt),var(--yt-dark));border-radius:4px 0 0 4px"></div>
+            <div class="step-icon">✍️</div>
+            <div class="step-body">
+              <div class="step-badge" style="background:rgba(245,158,11,.1);color:var(--yt-dark);border:1px solid rgba(245,158,11,.2)">Step 1</div>
+              <div class="step-title">제목 + 썸네일 + 대본 생성</div>
+              <div class="step-desc">소재 파일 + 리서치 결과로 제목·썸네일 문구·대본을 한 번에 생성. 확인 후 수정 가능. OK 시 Step 2로.</div>
+            </div>
+          </div>
+
+          <div class="yt-step-card" style="border-color:rgba(16,185,129,.3)">
+            <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#10b981,#059669);border-radius:4px 0 0 4px"></div>
+            <div class="step-icon" style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-color:rgba(16,185,129,.3)">⚙️</div>
+            <div class="step-body">
+              <div class="step-badge" style="background:rgba(16,185,129,.1);color:#059669;border:1px solid rgba(16,185,129,.2)">Step 2</div>
+              <div class="step-title">영상 재료 일괄 생성</div>
+              <div class="step-desc">롱폼/숏폼 선택 후 자동 생성: 음성(ElevenLabs) · 이미지 프롬프트 · Vrew 편집 가이드 · 메타데이터. 첫 프롬프트 클립보드 자동 복사.</div>
+            </div>
+          </div>
+
+          <div class="yt-step-card" style="border-color:rgba(148,163,184,.25)">
+            <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#94a3b8,#64748b);border-radius:4px 0 0 4px"></div>
+            <div class="step-icon" style="background:linear-gradient(135deg,#f8fafc,#f1f5f9);border-color:rgba(148,163,184,.3)">🖼️</div>
+            <div class="step-body">
+              <div class="step-badge" style="background:rgba(148,163,184,.1);color:#475569;border:1px solid rgba(148,163,184,.2)">Step 3~4 — 수동</div>
+              <div class="step-title">이미지 생성 + Vrew 편집 + 업로드</div>
+              <div class="step-desc">Whisk/나노바나나로 이미지 생성 → Vrew 편집 가이드에 따라 편집 → YouTube 업로드. 업로드 후 URL 보관.</div>
+            </div>
+          </div>
+
+          <div class="yt-step-card" style="border-color:rgba(245,158,11,.3)">
+            <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--yt),var(--yt-dark));border-radius:4px 0 0 4px"></div>
+            <div class="step-icon">📰</div>
+            <div class="step-body">
+              <div class="step-badge" style="background:rgba(245,158,11,.1);color:var(--yt-dark);border:1px solid rgba(245,158,11,.2)">Step 5 — 선택</div>
+              <div class="step-title">블로그 글 자동 생성</div>
+              <div class="step-desc">YouTube URL + Step 2 출력 폴더로 블로그 글 자동 생성. output/[타임스탬프]/06_blog/blog_post.txt 저장.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: 자동화 항목 + API 설정 -->
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <!-- 자동화 항목 -->
+        <div class="card">
+          <div class="card-title" style="display:flex;align-items:center;gap:8px">
+            <span style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--yt-light),var(--yt-mid));border:1.5px solid var(--yt-border);display:flex;align-items:center;justify-content:center;font-size:14px">⚡</span>
+            Step 2 자동화 항목
+          </div>
+          <div style="overflow-x:auto;border-radius:8px;border:1.5px solid var(--yt-border)">
+            <table class="yt-output-table">
+              <thead><tr><th>항목</th><th>도구</th><th>수준</th></tr></thead>
+              <tbody>
+                <tr><td>스크립트 분석 + 키워드</td><td>Claude</td><td><span class="yt-auto">✅ 완전 자동</span></td></tr>
+                <tr><td>이미지 프롬프트 생성</td><td>Claude</td><td><span class="yt-auto">✅ 완전 자동</span></td></tr>
+                <tr><td>프롬프트 클립보드 복사</td><td>pyperclip</td><td><span class="yt-auto">✅ 완전 자동</span></td></tr>
+                <tr><td>음성 파일 생성</td><td>ElevenLabs</td><td><span class="yt-auto">✅ 완전 자동</span></td></tr>
+                <tr><td>Vrew 편집 가이드</td><td>Claude</td><td><span class="yt-auto">✅ 완전 자동</span></td></tr>
+                <tr><td>메타데이터 (제목·설명·태그)</td><td>Claude</td><td><span class="yt-auto">✅ 완전 자동</span></td></tr>
+                <tr><td>이미지 생성</td><td>Whisk / 나노바나나</td><td><span class="yt-manual">⚠️ 프롬프트만</span></td></tr>
+                <tr><td>영상 편집</td><td>Vrew</td><td><span class="yt-optional">❌ 가이드만</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- API 설정 -->
+        <div class="card">
+          <div class="card-title" style="display:flex;align-items:center;gap:8px">
+            <span style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--yt-light),var(--yt-mid));border:1.5px solid var(--yt-border);display:flex;align-items:center;justify-content:center;font-size:14px">🔑</span>
+            API 설정
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="border-radius:8px;border:1.5px solid rgba(225,29,72,.2);background:rgba(225,29,72,.04);padding:10px 12px">
+              <div style="font-size:12px;font-weight:800;color:#be123c;margin-bottom:3px">필수 · Gemini API</div>
+              <div style="font-size:11.5px;color:var(--text2)">경쟁 영상 리서치 + 분석. 미설정 시 Step 0 실행 불가.</div>
+              <div class="yt-code" style="font-size:11px;margin-top:6px">config/settings.yaml → api_keys.gemini.api_key</div>
+            </div>
+            <div style="border-radius:8px;border:1.5px solid rgba(245,158,11,.2);background:rgba(245,158,11,.04);padding:10px 12px">
+              <div style="font-size:12px;font-weight:800;color:var(--yt-dark);margin-bottom:3px">선택 · ElevenLabs API</div>
+              <div style="font-size:11.5px;color:var(--text2)">음성 자동 생성. 미설정 시 음성 건너뜀, 나머지 정상.</div>
+              <div class="yt-code" style="font-size:11px;margin-top:6px">config/settings.yaml → api_keys.elevenlabs.api_key</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 출력 폴더 구조 -->
+        <div class="card">
+          <div class="card-title" style="display:flex;align-items:center;gap:8px">
+            <span style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--yt-light),var(--yt-mid));border:1.5px solid var(--yt-border);display:flex;align-items:center;justify-content:center;font-size:14px">📁</span>
+            출력 폴더 구조
+          </div>
+          <div class="yt-code" style="font-size:11px">output/[YYYYMMDD_HHMMSS]/
+├── 00_script/
+│   ├── title.txt        # 영상 제목
+│   ├── thumbnail.txt    # 썸네일 문구
+│   └── script.txt       # 최종 대본
+├── 01_voice/
+│   └── narration.mp3    # ElevenLabs 음성
+├── 02_images/           # 이미지 저장 (수동)
+├── 03_prompts/
+│   └── image_prompts.txt
+├── 04_guide/
+│   ├── vrew_guide.md    # Vrew 편집 가이드
+│   └── timeline.md      # 타임라인
+├── 05_metadata/
+│   ├── title.txt
+│   ├── description.txt
+│   └── tags.txt
+└── 06_blog/             # 블로그 글 (선택)
+    └── blog_post.txt</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 관련 모듈 -->
+    <div class="card" style="margin-bottom:24px">
+      <div class="card-title" style="display:flex;align-items:center;gap:8px">
+        <span style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--yt-light),var(--yt-mid));border:1.5px solid var(--yt-border);display:flex;align-items:center;justify-content:center;font-size:14px">🧩</span>
+        관련 모듈
+      </div>
+      <div style="overflow-x:auto;border-radius:10px;border:1.5px solid var(--yt-border)">
+        <table class="yt-output-table">
+          <thead><tr><th>모듈</th><th>역할</th></tr></thead>
+          <tbody>
+            <tr><td><code>orchestrator.py</code></td><td>메인 파이프라인 조율</td></tr>
+            <tr><td><code>modules/competitor_analyzer.py</code></td><td>경쟁 영상 검색 + 분석 (Gemini)</td></tr>
+            <tr><td><code>modules/script_writer.py</code></td><td>제목 + 썸네일 + 대본 생성</td></tr>
+            <tr><td><code>modules/voice_generator.py</code></td><td>ElevenLabs 음성 생성</td></tr>
+            <tr><td><code>modules/prompt_generator.py</code></td><td>이미지 프롬프트 생성</td></tr>
+            <tr><td><code>modules/guide_generator.py</code></td><td>Vrew 편집 가이드 생성</td></tr>
+            <tr><td><code>modules/metadata_generator.py</code></td><td>제목 + 설명 + 태그 생성</td></tr>
+            <tr><td><code>modules/blog_generator.py</code></td><td>블로그 글 생성</td></tr>
+            <tr><td><code>config/settings.yaml</code></td><td>API 키 + 모델 + 스타일 설정</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /page-inner -->
+</main>
+
+<div id="footer-placeholder"></div>
+
+<script src="../vcos.js"></script>
+<script>
+const YT_SKILL_CONTENT = "---\r\nname: youtube-generate-코어4\r\ndescription: 유튜브 영상 올인원 자동화 — 소재 파일 → 리서치 → 대본 → 재료 생성 → 블로그\r\nargument-hint: \"<소재파일경로>\"\r\nallowed-tools: \"Bash(python *), Read, Write, Edit\"\r\n---\r\n\r\n# YouTube 영상 올인원 자동화\r\n\r\n소재 파일 하나로 유튜브 영상 제작에 필요한 모든 재료를 자동 생성합니다.\r\n\r\n## 시스템 경로\r\n\r\n```\r\n프로젝트 루트: $YOUTUBE_ROOT  (기본값 예시: C:\\YouTube\\ 또는 ~/YouTube/)\r\n오케스트레이터: $YOUTUBE_ROOT/orchestrator.py\r\n설정 파일: $YOUTUBE_ROOT/config/settings.yaml\r\n소재 입력: $YOUTUBE_ROOT/input/\r\n결과 출력: $YOUTUBE_ROOT/output/[타임스탬프]/\r\n```\r\n\r\n> 모든 python 명령어는 프로젝트 루트 디렉토리에서 실행한다.\r\n> Windows 기본 경로: `C:\\YouTube\\` / macOS·Linux 기본 경로: `~/YouTube/`\r\n\r\n---\r\n\r\n## 전체 워크플로우\r\n\r\n```\r\n[선택] Step 0-A: 경쟁 영상 자동 검색 + 분석 (--research)\r\n[선택] Step 0-B: 특정 URL 경쟁 영상 분석 (--analyze)\r\n         ↓\r\nStep 1: 제목 + 썸네일 + 대본 생성 (--write)\r\n         ↓\r\nStep 2: 영상 재료 일괄 생성 (롱폼 or 숏폼)\r\n         - 이미지 프롬프트 생성\r\n         - 음성 생성 (ElevenLabs)\r\n         - Vrew 편집 가이드 생성\r\n         - 메타데이터 생성\r\n         ↓\r\n[수동] Step 3: 이미지 생성 (Whisk / 나노바나나)\r\n[수동] Step 4: Vrew 편집 + YouTube 업로드\r\n         ↓\r\n[선택] Step 5: 블로그 글 생성 (--blog)\r\n```\r\n\r\n---\r\n\r\n## Step 0-A: 경쟁 영상 자동 검색 (선택)\r\n\r\n소재와 유사한 인기 유튜브 영상을 자동 검색하고 대본·구조를 분석합니다.\r\n\r\n```bash\r\ncd \"$YOUTUBE_ROOT\"  # 또는 cd C:/YouTube (Windows 기본)\r\npython orchestrator.py --research $ARGUMENTS\r\n```\r\n\r\n완료 후 보고:\r\n- 검색된 영상 수와 제목\r\n- 분석 결과 요약\r\n- 출력 경로: `output/research/[타임스탬프]/`\r\n\r\n사용자에게 확인: \"리서치 결과를 확인하셨나요? 대본 작성으로 넘어갈까요?\"\r\n\r\n---\r\n\r\n## Step 0-B: 특정 경쟁 영상 분석 (선택)\r\n\r\n분석할 유튜브 URL을 지정하여 해당 영상의 대본·구조를 분석합니다.\r\n\r\n```bash\r\ncd \"$YOUTUBE_ROOT\"  # 또는 cd C:/YouTube (Windows 기본)\r\npython orchestrator.py --analyze <유튜브URL>\r\n```\r\n\r\n완료 후 출력 경로: `output/research/[타임스탬프]/`\r\n\r\n---\r\n\r\n## Step 1: 제목 + 썸네일 + 대본 생성\r\n\r\n소재 파일 + 리서치 결과(선택)를 바탕으로 제목, 썸네일 문구, 대본을 한 번에 생성합니다.\r\n\r\n```bash\r\ncd \"$YOUTUBE_ROOT\"  # 또는 cd C:/YouTube (Windows 기본)\r\n\r\n# 리서치 결과 없이 소재만으로 생성\r\npython orchestrator.py --write $ARGUMENTS\r\n\r\n# 리서치 결과를 참고하여 생성\r\npython orchestrator.py --write $ARGUMENTS --ref output/research/[타임스탬프]\r\n```\r\n\r\n완료 후:\r\n1. `title.txt` 내용을 사용자에게 표시\r\n2. `thumbnail.txt` 내용을 사용자에게 표시\r\n3. `script.txt` 내용을 사용자에게 표시\r\n4. **반드시** 확인: \"대본 내용이 괜찮으신가요? 수정할 부분이 있으면 말씀해주세요.\"\r\n\r\n사용자가 수정 요청하면 `00_script/script.txt`를 수정합니다.\r\n사용자가 OK하면 Step 2로.\r\n\r\n---\r\n\r\n## Step 2: 영상 재료 일괄 생성\r\n\r\n확정된 대본으로 음성, 이미지 프롬프트, Vrew 편집 가이드, 메타데이터를 자동 생성합니다.\r\n\r\n먼저 사용자에게 확인: **\"롱폼과 숏폼 중 어떤 형식으로 만드실 건가요?\"**\r\n\r\n```bash\r\ncd \"$YOUTUBE_ROOT\"  # 또는 cd C:/YouTube (Windows 기본)\r\n\r\n# 롱폼 (기본)\r\npython orchestrator.py output/[타임스탬프]/00_script/script.txt --source $ARGUMENTS\r\n\r\n# 숏폼\r\npython orchestrator.py output/[타임스탬프]/00_script/script.txt --source $ARGUMENTS --short\r\n```\r\n\r\n### 자동 생성 항목\r\n\r\n| 항목 | 도구 | 자동화 수준 |\r\n|------|------|------------|\r\n| 스크립트 분석 + 키워드 추출 | Claude | ✅ 완전 자동 |\r\n| 이미지 프롬프트 생성 | Claude | ✅ 완전 자동 |\r\n| 프롬프트 클립보드 자동 복사 | pyperclip | ✅ 완전 자동 |\r\n| 음성 파일 생성 | ElevenLabs API | ✅ 완전 자동 |\r\n| Vrew 편집 가이드 생성 | Claude | ✅ 완전 자동 |\r\n| 메타데이터 생성 (제목·설명·태그) | Claude | ✅ 완전 자동 |\r\n| 이미지 생성 | Whisk / 나노바나나 | ⚠️ 프롬프트 준비만 |\r\n| 영상 편집 | Vrew | ❌ 가이드 제공만 |\r\n\r\n완료 후 사용자에게 보고:\r\n```\r\n생성된 파일 목록:\r\n- 00_script/script.txt    ← 최종 대본\r\n- 01_voice/narration.mp3  ← ElevenLabs 음성\r\n- 02_images/              ← 이미지 저장 위치 (수동)\r\n- 03_prompts/image_prompts.txt  ← 이미지 생성 프롬프트\r\n- 04_guide/vrew_guide.md  ← Vrew 편집 가이드\r\n- 04_guide/timeline.md    ← 타임라인\r\n- 05_metadata/title.txt   ← 업로드 제목\r\n- 05_metadata/description.txt ← 업로드 설명\r\n- 05_metadata/tags.txt    ← 태그\r\n\r\n출력 폴더: C:\\YouTube\\output\\[타임스탬프]\\\r\n\r\n다음 단계:\r\n1. 첫 번째 이미지 프롬프트가 클립보드에 복사됨 → Whisk/나노바나나에 붙여넣기\r\n2. 이미지 생성 후 02_images/ 폴더에 저장\r\n3. Vrew 실행 → vrew_guide.md 가이드에 따라 편집\r\n4. YouTube 업로드 후 블로그 글이 필요하면 URL을 알려주세요.\r\n```\r\n\r\n---\r\n\r\n## Step 3 (수동): 이미지 생성\r\n\r\n이미지 프롬프트를 순차적으로 Whisk 또는 나노바나나에 입력하여 이미지를 생성합니다.\r\n\r\n**사용자가 \"다음 프롬프트\"라고 하면:**\r\n\r\n`03_prompts/image_prompts.txt`에서 다음 프롬프트를 읽어 사용자에게 제공합니다.\r\n\r\n```bash\r\ncd \"$YOUTUBE_ROOT\"  # 또는 cd C:/YouTube (Windows 기본)\r\npython -c \"\r\nwith open('output/latest/03_prompts/image_prompts.txt', 'r', encoding='utf-8') as f:\r\n    prompts = [p.strip() for p in f.read().split('---') if p.strip()]\r\nprint(prompts[0] if prompts else '프롬프트 없음')\r\n\"\r\n```\r\n\r\n---\r\n\r\n\r\n## Step 4 (수동): Vrew 편집 + YouTube 업로드\r\n\r\nStep 2에서 생성된 재료를 사용하여 영상을 편집하고 업로드합니다.\r\n\r\n### 4-1. Vrew 편집\r\n\r\n1. Vrew 실행 후 `01_voice/narration.mp3` 불러오기\r\n2. `04_guide/vrew_guide.md` 가이드에 따라 편집:\r\n   - 자막 자동 생성 확인 및 수정\r\n   - `02_images/` 폴더의 이미지를 타임라인에 배치 (`04_guide/timeline.md` 참고)\r\n   - 배경음악 추가 (선택)\r\n   - 인트로/아웃트로 추가 (선택)\r\n3. 최종 영상 내보내기 (MP4, 1080p 권장)\r\n\r\n### 4-2. YouTube 업로드\r\n\r\n`05_metadata/` 폴더의 파일을 참고하여 업로드합니다:\r\n\r\n| 항목 | 파일 | 내용 |\r\n|------|------|------|\r\n| 제목 | `05_metadata/title.txt` | 업로드용 최종 제목 |\r\n| 설명 | `05_metadata/description.txt` | 영상 설명 (타임스탬프 포함) |\r\n| 태그 | `05_metadata/tags.txt` | 검색 태그 목록 |\r\n| 썸네일 | `00_script/thumbnail.txt` | 썸네일 문구 → 이미지 제작 후 업로드 |\r\n\r\n업로드 완료 후 YouTube URL을 복사해두세요 → Step 5 블로그 글 생성에 사용됩니다.\r\n\r\n---\r\n\r\n## Step 5: 블로그 글 생성 (선택)\r\n\r\nYouTube 업로드 후 사용자가 URL을 제공하면 블로그 글을 자동 생성합니다.\r\n\r\n```bash\r\ncd \"$YOUTUBE_ROOT\"  # 또는 cd C:/YouTube (Windows 기본)\r\npython orchestrator.py --blog <유튜브URL> output/[Step2 타임스탬프 폴더]\r\n```\r\n\r\n완료 후:\r\n- 생성된 블로그 글 전체 내용을 사용자에게 표시\r\n- 파일 경로: `output/[타임스탬프]/06_blog/blog_post.txt`\r\n\r\n---\r\n\r\n## 출력 폴더 구조\r\n\r\n```\r\nC:\\YouTube\\output\\[YYYYMMDD_HHMMSS]\\\r\n├── 00_script/\r\n│   ├── source.txt          # 원본 소재 파일\r\n│   ├── title.txt           # 영상 제목 (초안)\r\n│   ├── thumbnail.txt       # 썸네일 문구\r\n│   └── script.txt          # 최종 대본\r\n├── 01_voice/\r\n│   └── narration.mp3       # ElevenLabs 생성 음성\r\n├── 02_images/              # 이미지 저장 위치 (수동으로 저장)\r\n│   ├── 01_intro.png\r\n│   ├── 02_main1.png\r\n│   └── ...\r\n├── 03_prompts/\r\n│   └── image_prompts.txt   # Whisk/나노바나나 복붙용 프롬프트\r\n├── 04_guide/\r\n│   ├── vrew_guide.md       # Vrew 편집 단계별 가이드\r\n│   └── timeline.md         # 이미지 배치 타임라인\r\n├── 05_metadata/\r\n│   ├── title.txt           # 업로드용 제목\r\n│   ├── description.txt     # 업로드용 설명\r\n│   └── tags.txt            # 태그\r\n└── 06_blog/                # 블로그 글 (선택)\r\n    └── blog_post.txt\r\n```\r\n\r\n---\r\n\r\n## API 설정 확인\r\n\r\n스킬 실행 전 설정이 되어 있는지 확인합니다.\r\n\r\n```bash\r\ncd \"$YOUTUBE_ROOT\"  # 또는 cd C:/YouTube (Windows 기본)\r\ncat config/settings.yaml\r\n```\r\n\r\n### 필수 API\r\n| API | 용도 | 설정 위치 |\r\n|-----|------|----------|\r\n| Gemini API | 경쟁 영상 리서치 + 분석 | `config/settings.yaml` → `api_keys.gemini.api_key` |\r\n\r\n### 선택 API\r\n| API | 용도 | 설정 위치 |\r\n|-----|------|----------|\r\n| ElevenLabs | 음성 자동 생성 | `config/settings.yaml` → `api_keys.elevenlabs.api_key` |\r\n\r\nAPI 키 미설정 시:\r\n- Gemini: 리서치 단계 실행 불가\r\n- ElevenLabs: 음성 생성 건너뜀 (나머지는 정상 실행)\r\n\r\n---\r\n\r\n## 사용 예시\r\n\r\n```\r\n/youtube-generate C:/YouTube/input/topic.txt\r\n/youtube-generate input/건강정보_소재.txt\r\n```\r\n\r\n---\r\n\r\n## 관련 모듈\r\n\r\n| 모듈 | 역할 |\r\n|------|------|\r\n| `orchestrator.py` | 메인 파이프라인 조율 |\r\n| `modules/competitor_analyzer.py` | 경쟁 영상 검색 + 분석 (Gemini) |\r\n| `modules/script_writer.py` | 제목 + 썸네일 + 대본 생성 |\r\n| `modules/script_analyzer.py` | 대본 섹션 분할 + 키워드 추출 |\r\n| `modules/prompt_generator.py` | 이미지 프롬프트 생성 |\r\n| `modules/voice_generator.py` | ElevenLabs 음성 생성 |\r\n| `modules/guide_generator.py` | Vrew 편집 가이드 생성 |\r\n| `modules/metadata_generator.py` | 제목 + 설명 + 태그 생성 |\r\n| `modules/clipboard_helper.py` | 프롬프트 클립보드 자동 복사 |\r\n| `modules/blog_generator.py` | 블로그 글 생성 |\r\n| `config/settings.yaml` | API 키 + 모델 + 스타일 설정 |\r\n";
+
+const YT_STORAGE_KEY = 'vcos_youtube_folder';
+
+function renderYtCmd() {
+  const input  = document.getElementById('yt-folder-input');
+  const box    = document.getElementById('yt-cmd-box');
+  const folder = input.value.trim();
+  if (folder) localStorage.setItem(YT_STORAGE_KEY, folder);
+  const cdLine = folder ? 'cd "' + folder + '"\n\n' : '';
+  box.textContent = cdLine + YT_SKILL_CONTENT;
+}
+
+function copyYtCmd(btn) {
+  const box = document.getElementById('yt-cmd-box');
+  copyText(box.textContent, btn);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('nav-placeholder').innerHTML = buildNav('YT', false);
+  document.getElementById('footer-placeholder').innerHTML = buildFooter(false);
+  const saved = localStorage.getItem(YT_STORAGE_KEY);
+  if (saved) document.getElementById('yt-folder-input').value = saved;
+  renderYtCmd();
+});
+</script>
+</body>
+</html>

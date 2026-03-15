@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VCOS — SAL-Grid Dev Suite</title>
+<link rel="stylesheet" href="../vcos.css">
+<style>
+/* ══════════════════════════════════════════════════
+   SAL-Grid 전용 디자인 시스템
+   ══════════════════════════════════════════════════ */
+:root {
+  --sg:#4338ca;
+  --sg2:#6366f1;
+  --sg3:#818cf8;
+  --sg-dark:#312e81;
+  --sg-light:#eef2ff;
+  --sg-mid:#e0e7ff;
+  --sg-border:rgba(67,56,202,.28);
+  --sg-border-strong:rgba(67,56,202,.5);
+  --sg-glow:0 0 0 3px rgba(67,56,202,.15);
+  --sg-shadow:0 4px 20px rgba(67,56,202,.18);
+  --sg-shadow-lg:0 8px 32px rgba(67,56,202,.25);
+}
+
+/* 페이지 배경 */
+.page-body { background:linear-gradient(180deg,rgba(238,242,255,.35) 0%,transparent 300px); }
+
+/* ── 카드 공통 오버라이드 ── */
+.card {
+  border:1.5px solid var(--sg-border) !important;
+  background:linear-gradient(155deg,#ffffff,#fafbff) !important;
+  box-shadow:0 2px 12px rgba(67,56,202,.08) !important;
+}
+.card::before { background:linear-gradient(90deg,var(--sg),var(--sg3)) !important;opacity:.6 }
+.card:hover::before { opacity:1 }
+.card-title {
+  color:var(--sg-dark);
+  border-bottom:1.5px solid var(--sg-border);
+  padding-bottom:10px;margin-bottom:12px;
+}
+
+/* ── stat-row 오버라이드 ── */
+.stat-box {
+  background:linear-gradient(145deg,#fff,var(--sg-light)) !important;
+  border:1.5px solid var(--sg-border) !important;
+  border-top:3px solid var(--sg) !important;
+  box-shadow:0 2px 8px rgba(67,56,202,.1) !important;
+}
+.stat-box .stat-val { color:var(--sg) }
+
+/* ── 버전 카드 ── */
+.sg-version-card {
+  border-radius:var(--r-lg);padding:16px 18px;border:2px solid;margin-bottom:10px;
+  background:linear-gradient(135deg,#fff,#fafbff);
+  box-shadow:0 2px 12px rgba(67,56,202,.08);
+  position:relative;overflow:hidden;
+  transition:transform var(--med),box-shadow var(--med);
+  display:flex;align-items:flex-start;gap:14px;
+}
+.sg-version-card:hover {
+  transform:translateY(-2px);
+  box-shadow:var(--sg-shadow);
+  background:linear-gradient(135deg,#fafbff,var(--sg-light));
+}
+.sg-version-card::before {
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,transparent 60%,currentColor);
+  opacity:.03;pointer-events:none;
+}
+.sg-version-card::after {
+  content:'';position:absolute;top:0;right:0;width:90px;height:90px;
+  background:currentColor;opacity:.06;border-radius:50%;
+  transform:translate(30px,-30px);pointer-events:none;
+}
+.sg-ver-badge { min-width:54px;text-align:center; }
+.sg-ver-tag   { font-size:11px;font-weight:800;letter-spacing:.5px;margin-bottom:2px }
+.sg-ver-date  { font-size:10.5px;color:var(--text3);font-weight:600;margin-top:2px }
+.sg-ver-title { font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:4px }
+.sg-ver-desc  { font-size:12.5px;color:var(--text2);line-height:1.6 }
+.sg-ver-tags  { display:flex;flex-wrap:wrap;gap:4px;margin-top:8px }
+.sg-ver-tag-item {
+  font-size:11px;padding:2px 8px;border-radius:var(--r-full);font-weight:600;
+  background:var(--sg-light);color:var(--sg);border:1px solid var(--sg-border);
+}
+
+/* ── PART 행 ── */
+.part-row {
+  display:flex;gap:10px;margin-bottom:8px;align-items:flex-start;
+  padding:10px 13px;
+  background:linear-gradient(135deg,#fff,var(--sg-light));
+  border:1px solid var(--sg-border);
+  border-left:3px solid rgba(99,102,241,.4);
+  border-radius:var(--r-md);
+  transition:all var(--fast);
+}
+.part-row:hover {
+  background:linear-gradient(135deg,var(--sg-light),var(--sg-mid));
+  border-color:var(--sg-border-strong);
+  border-left-color:var(--sg2);
+  box-shadow:0 2px 10px rgba(67,56,202,.12);
+  transform:translateX(2px);
+}
+.part-badge {
+  min-width:38px;height:22px;border-radius:var(--r-full);
+  background:linear-gradient(135deg,var(--sg2),var(--sg));
+  color:#fff;font-size:10px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;
+  box-shadow:0 2px 6px rgba(67,56,202,.3);
+}
+.part-badge.loop {
+  background:linear-gradient(135deg,#7c3aed,#4338ca);
+  box-shadow:0 2px 6px rgba(124,58,237,.35);
+}
+.part-title { font-size:13px;font-weight:700;color:var(--sg-dark);margin-bottom:2px }
+.part-desc  { font-size:12px;color:var(--text2);line-height:1.5 }
+
+/* ── 명령어 행 ── */
+.cmd-row {
+  display:flex;align-items:flex-start;gap:10px;margin-bottom:7px;
+  padding:11px 14px;
+  background:linear-gradient(135deg,#fff,#fafbff);
+  border:1px solid var(--sg-border);
+  border-left:3px solid var(--sg3);
+  border-radius:var(--r-md);
+  transition:all var(--fast);
+}
+.cmd-row:hover {
+  background:linear-gradient(135deg,var(--sg-light),#fff);
+  border-color:var(--sg-border-strong);
+  border-left-color:var(--sg);
+  box-shadow:0 3px 12px rgba(67,56,202,.14);
+  transform:translateX(2px);
+}
+.cmd-name  {
+  font-family:'JetBrains Mono','Fira Code',monospace;font-size:13px;
+  font-weight:700;color:var(--sg2);min-width:165px;flex-shrink:0;
+}
+.cmd-desc  { font-size:12.5px;color:var(--text2);line-height:1.5 }
+.cmd-badge {
+  font-size:10px;padding:2px 8px;border-radius:var(--r-full);
+  background:rgba(67,56,202,.1);color:var(--sg);
+  border:1px solid var(--sg-border);font-weight:700;flex-shrink:0;
+}
+
+/* ── 4D 좌표계 박스 ── */
+.coord-box {
+  background:linear-gradient(135deg,#1e1b4b,#312e81,#3730a3);
+  border:2px solid rgba(99,102,241,.5);border-radius:var(--r-lg);
+  padding:24px;text-align:center;margin-bottom:14px;
+  box-shadow:var(--sg-shadow-lg);
+  position:relative;overflow:hidden;
+}
+.coord-box::before {
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 30% 50%,rgba(129,140,248,.15),transparent 60%);
+  pointer-events:none;
+}
+.coord-formula {
+  font-family:'JetBrains Mono','Fira Code',monospace;
+  font-size:20px;font-weight:900;color:#c7d2fe;
+  letter-spacing:1px;margin:8px 0 14px;text-shadow:0 0 20px rgba(129,140,248,.5);
+}
+.coord-dims { display:flex;justify-content:center;gap:8px;flex-wrap:wrap; }
+.coord-dim {
+  padding:6px 16px;border-radius:var(--r-full);font-size:12px;font-weight:700;
+  border:1.5px solid rgba(129,140,248,.4);
+  background:rgba(99,102,241,.15);color:#c7d2fe;
+  backdrop-filter:blur(4px);
+}
+
+/* ── 루프 박스 ── */
+.loop-box {
+  background:linear-gradient(135deg,#faf5ff,#f3e8ff,#ede9fe);
+  border:1.5px solid rgba(124,58,237,.3);
+  border-top:3px solid rgba(124,58,237,.6);
+  border-radius:var(--r-lg);padding:18px;margin-bottom:10px;
+  box-shadow:0 3px 14px rgba(124,58,237,.1);
+  transition:transform var(--fast),box-shadow var(--fast);
+}
+.loop-box:hover {
+  transform:translateY(-2px);
+  box-shadow:0 6px 22px rgba(124,58,237,.18);
+}
+.loop-box-title {
+  font-size:13.5px;font-weight:800;color:#5b21b6;margin-bottom:12px;
+  display:flex;align-items:center;gap:7px;
+  padding-bottom:8px;border-bottom:1px solid rgba(124,58,237,.18);
+}
+.loop-step { display:flex;gap:10px;margin-bottom:8px;align-items:flex-start }
+.loop-num {
+  width:24px;height:24px;border-radius:50%;
+  background:linear-gradient(135deg,var(--sg2),var(--sg));
+  color:#fff;font-size:11px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;
+  box-shadow:0 2px 8px rgba(67,56,202,.3);
+}
+.loop-content { flex:1;font-size:12.5px;color:var(--text2);line-height:1.5 }
+
+/* ── 실행 명령어 생성기 (YouTube 스타일) ── */
+.sg-launcher {
+  background:linear-gradient(145deg,#0f0f1a,#0d0d20,#1e1b4b);
+  border:2px solid rgba(67,56,202,.35);
+  border-radius:var(--r-xl);padding:28px;
+  box-shadow:0 8px 32px rgba(67,56,202,.15),inset 0 1px 0 rgba(67,56,202,.1);
+}
+.sg-launcher-title {
+  font-size:17px;font-weight:800;color:#fff;margin-bottom:4px;
+  text-shadow:0 0 20px rgba(99,102,241,.4);
+  display:flex;align-items:center;gap:10px;
+}
+.sg-launcher-sub { font-size:12px;color:rgba(255,255,255,.5);margin-bottom:20px; }
+.sg-input-row { display:flex;align-items:center;gap:10px;margin-bottom:14px; }
+.sg-input-label { font-size:12px;font-weight:700;color:rgba(255,255,255,.7);white-space:nowrap;min-width:80px; }
+.sg-folder-input {
+  flex:1;background:rgba(255,255,255,.07);border:1.5px solid rgba(67,56,202,.3);
+  border-radius:8px;padding:9px 14px;color:#fff;font-size:13px;outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+.sg-folder-input::placeholder { color:rgba(255,255,255,.3); }
+.sg-folder-input:focus { border-color:rgba(67,56,202,.65);box-shadow:var(--sg-glow);background:rgba(255,255,255,.1); }
+.sg-cmd-box {
+  background:rgba(0,0,0,.4);border:1.5px solid rgba(67,56,202,.25);
+  border-radius:10px;padding:14px 16px;
+  font-family:'Courier New',monospace;font-size:12px;
+  color:#c7d2fe;line-height:1.7;min-height:90px;
+  white-space:pre-wrap;word-break:break-all;
+  max-height:340px;overflow-y:auto;
+}
+.sg-copy-btn {
+  display:block;width:100%;margin-top:12px;padding:11px;
+  background:linear-gradient(135deg,var(--sg2),var(--sg));
+  border:none;border-radius:9px;color:#fff;font-size:14px;
+  font-weight:800;cursor:pointer;letter-spacing:.3px;
+  transition:transform .15s,box-shadow .15s,filter .15s;
+  box-shadow:0 4px 14px rgba(67,56,202,.35);
+}
+.sg-copy-btn:hover { transform:translateY(-1px);box-shadow:0 6px 20px rgba(67,56,202,.45);filter:brightness(1.1); }
+.sg-copy-btn:active { transform:translateY(0); }
+</style>
+</head>
+<body>
+<div class="vcos-header"><div id="navArea"></div></div>
+<div class="container"><div class="page-body">
+
+<div class="phase-banner" style="background:linear-gradient(135deg,#1e1b4b,#4338ca,#3730a3);box-shadow:0 4px 24px rgba(67,56,202,.3),inset 0 1px 0 rgba(255,255,255,.15)">
+  <div class="phase-banner-icon">🗂️</div>
+  <div class="phase-banner-body">
+    <div class="phase-banner-title">SAL-Grid Dev Suite</div>
+    <div class="phase-banner-desc">3D 좌표계 기반 AI 주도 개발방법론 · Stage · Area · Level + Variant</div>
+    <div class="phase-banner-tags">
+      <span class="phase-banner-tag">9 PART 구조</span>
+      <span class="phase-banner-tag">4D 좌표계</span>
+      <span class="phase-banner-tag">Template 기반</span>
+      <span class="phase-banner-tag">Stage 단위 순환</span>
+      <span class="phase-banner-tag">V3.2</span>
+    </div>
+  </div>
+</div>
+
+<div class="page-hero">
+  <div class="page-hero-icon" style="background:linear-gradient(135deg,#818cf8,#4338ca);box-shadow:0 4px 14px rgba(67,56,202,.35);border:2px solid rgba(67,56,202,.3)">🗂️</div>
+  <div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span class="page-hero-badge" style="color:#4338ca;background:rgba(67,56,202,.1);border:1.5px solid rgba(67,56,202,.25)">Phase 3</span>
+      <h1 class="page-hero-name">SAL-Grid Dev Suite</h1>
+    </div>
+    <p class="page-hero-desc">Stage-Area-Level+Variant 4D 좌표계 · <code class="page-hero-skill" style="background:rgba(67,56,202,.08);border:1px solid rgba(67,56,202,.2);color:#312e81">/sal-grid-dev</code></p>
+  </div>
+</div>
+
+<!-- 스탯 -->
+<div class="stat-row">
+  <div class="stat-box"><div class="stat-val" style="color:#4338ca">9</div><div class="stat-lbl">PART</div></div>
+  <div class="stat-box"><div class="stat-val" style="color:#6366f1">4D</div><div class="stat-lbl">좌표계</div></div>
+  <div class="stat-box"><div class="stat-val" style="color:#7c3aed">6</div><div class="stat-lbl">명령어</div></div>
+  <div class="stat-box"><div class="stat-val" style="color:#3fb950">V3.2</div><div class="stat-lbl">최신 버전</div></div>
+  <div class="stat-box"><div class="stat-val" style="color:#e3b341">N</div><div class="stat-lbl">동적 Stage</div></div>
+</div>
+
+<!-- 실행 명령어 생성기 -->
+<div style="margin-bottom:24px">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+    <div style="height:2px;flex:1;background:linear-gradient(90deg,transparent,rgba(67,56,202,.4))"></div>
+    <span style="font-size:12px;font-weight:800;color:var(--sg);letter-spacing:.5px;text-transform:uppercase;padding:4px 14px;background:rgba(67,56,202,.08);border:1.5px solid rgba(67,56,202,.2);border-radius:9999px">실행 명령어 생성기</span>
+    <div style="height:2px;flex:1;background:linear-gradient(90deg,rgba(67,56,202,.4),transparent)"></div>
+  </div>
+  <div class="sg-launcher">
+    <div class="sg-launcher-title">
+      <span style="width:32px;height:32px;border-radius:10px;background:rgba(67,56,202,.25);border:1.5px solid rgba(67,56,202,.4);display:flex;align-items:center;justify-content:center;font-size:16px">🗂️</span>
+      /sal-grid-dev 스킬 실행기
+    </div>
+    <div class="sg-launcher-sub">프로젝트 폴더를 입력하면 cd 명령어 + 스킬 전문이 자동 생성됩니다</div>
+    <div class="sg-input-row">
+      <div class="sg-input-label">📁 프로젝트 폴더</div>
+      <input type="text" class="sg-folder-input" id="folderInput"
+        placeholder="예: C:\01 Claude-Code\MyProject"
+        autocomplete="off"
+        onkeydown="if(event.key==='Enter') updateFolder()"
+        oninput="updateFolder()" />
+    </div>
+    <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:10px;margin-top:-6px">
+      ⚡ 폴더 경로 입력 시 자동 생성 · 빈칸이면 스킬 내용만 표시
+    </div>
+    <div class="sg-cmd-box" id="salGridCmd">폴더를 입력하면 명령어가 생성됩니다...</div>
+    <button class="sg-copy-btn" onclick="copyCmd(this)">
+      📋 전체 복사 (cd 명령어 + sal-grid-dev 스킬)
+    </button>
+  </div>
+</div>
+
+<div class="grid-2">
+  <!-- 왼쪽: 4D 좌표계 + 버전 진화 -->
+  <div>
+    <div class="coord-box">
+      <div style="font-size:12px;font-weight:700;color:#5b21b6;margin-bottom:4px">SAL Grid 4차원 좌표계</div>
+      <div class="coord-formula">Stage · Area · Level + Variant</div>
+      <div class="coord-dims" id="coordDims"></div>
+    </div>
+
+    <div class="divider-label" style="margin-top:0"><span>버전 진화 타임라인</span></div>
+    <div id="versionCards"></div>
+  </div>
+
+  <!-- 오른쪽: 명령어 레퍼런스 + 9 PART -->
+  <div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title">/sal-grid-dev 명령어</div>
+      <div id="cmdList"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">9 PART 실행 흐름</div>
+      <div id="partList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Stage 단위 순환 루프 -->
+<div class="divider-label"><span>Stage 단위 순환 루프</span></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:32px" id="loopCards"></div>
+
+<!-- 하단 네비 -->
+<div class="page-nav">
+  <a href="../index.html" class="btn btn-secondary">🏠 홈으로 돌아가기</a>
+  <div class="page-nav-center" style="color:#4338ca;font-weight:700">SAL-Grid Dev Suite V3.2</div>
+  <a href="07-refinement.html" class="btn btn-secondary" style="border-color:rgba(234,88,12,.3);color:#ea580c">🔥 고도화 엔진 →</a>
+</div>
+
+</div></div>
+<div id="footerArea"></div>
+
+<script src="../vcos.js"></script>
+<script>
+document.getElementById('navArea').innerHTML    = buildNav('SG', false);
+document.getElementById('footerArea').innerHTML = buildFooter(false);
+
+// ── 좌표계 차원 ──────────────────────────────────────────
+const dims = [
+  { label:'Stage',    desc:'개발 단계',    color:'#4338ca', bg:'#eef2ff' },
+  { label:'Area',     desc:'기능 영역',    color:'#7c3aed', bg:'#f5f3ff' },
+  { label:'Level',    desc:'세부 작업',    color:'#2563eb', bg:'#eff6ff' },
+  { label:'+Variant', desc:'변형 식별자',  color:'#0891b2', bg:'#ecfeff' }
+];
+document.getElementById('coordDims').innerHTML = dims.map(d =>
+  `<div class="coord-dim" style="color:${d.color};background:${d.bg};border-color:${d.color}40">
+    <span style="font-weight:800">${d.label}</span>
+    <span style="font-size:10px;font-weight:500;margin-left:5px;opacity:.75">${d.desc}</span>
+  </div>`
+).join('');
+
+// ── 버전 진화 ────────────────────────────────────────────
+const versions = [
+  { tag:'V1',   date:'260305', color:'#94a3b8',
+    title:'초기 버전',
+    desc:'Stage 고정 5개(S0~S4). 5×11 매트릭스. 기본 SAL Grid 구조.',
+    tags:['Stage 고정','5×11 매트릭스','기본 CRUD'] },
+  { tag:'V2',   date:'260305', color:'#f59e0b',
+    title:'동적 Stage + 소급 도입',
+    desc:'Stage 수 동적 결정(N개). 소급 도입 지원 — 진행 중인 프로젝트에 SAL Grid 적용 가능.',
+    tags:['Stage 동적 N개','소급 도입','N×11 매트릭스'] },
+  { tag:'V3.0', date:'260307', color:'#10b981',
+    title:'Template 기반 구조',
+    desc:'SAL_Grid_Dev_Suite_Template 폴더에서 통째 복사. PART 1에 Template 경로 탐지 추가. Stage 단위 순환 루프 명시.',
+    tags:['Template 복사','순환 루프','소급 도입 유지'] },
+  { tag:'V3.2', date:'260315', color:'#4338ca',
+    title:'4D 좌표계 + CRUD 완성',
+    desc:'+Variant 추가로 4차원 완성. 9 PART 명확히 재편. modify/delete 명령 추가. 동기화 7~8개 위치. project_status.json 종료 선언.',
+    tags:['+Variant 4D','9 PART 재편','modify/delete','DAG 재검증','종료 선언'] }
+];
+document.getElementById('versionCards').innerHTML = versions.map((v, i) => `
+  <div class="sg-version-card" style="border-color:${v.color}50;color:${v.color}">
+    <div class="sg-ver-badge">
+      <div class="sg-ver-tag" style="color:${v.color}">${v.tag}</div>
+      <div class="sg-ver-date">${v.date}</div>
+      ${i === versions.length-1 ? `<div style="margin-top:5px;font-size:9px;padding:2px 5px;background:${v.color}15;border:1px solid ${v.color}40;border-radius:9999px;color:${v.color};font-weight:700">최신</div>` : ''}
+    </div>
+    <div style="flex:1">
+      <div class="sg-ver-title">${v.title}</div>
+      <div class="sg-ver-desc">${v.desc}</div>
+      <div class="sg-ver-tags">${v.tags.map(t=>`<span class="sg-ver-tag-item">${t}</span>`).join('')}</div>
+      <div class="meter" style="margin-top:8px;height:3px">
+        <div class="meter-fill" style="width:${[25,50,75,100][i]}%;background:${v.color}"></div>
+      </div>
+    </div>
+  </div>`).join('');
+
+// ── 명령어 목록 ──────────────────────────────────────────
+const commands = [
+  { cmd:'/sal-grid-dev',         desc:'전체 실행 — 사전 조건 → PART 1~9',                    badge:'전체' },
+  { cmd:'/sal-grid-dev add',     desc:'기존 Grid에 Task 추가 (7개 위치 동시 업데이트)',        badge:'CRUD' },
+  { cmd:'/sal-grid-dev modify',  desc:'기존 Task 수정 (SAL ID 변경 포함, 8단계 동기화)',       badge:'CRUD' },
+  { cmd:'/sal-grid-dev delete',  desc:'기존 Task 삭제 (의존성 역참조 검사, 8개 위치)',          badge:'CRUD' },
+  { cmd:'/sal-grid-dev status',  desc:'현재 Grid 상태 확인 (Stage별 진행률)',                  badge:'조회' },
+  { cmd:'/sal-grid-dev rebuild', desc:'백업 후 Grid 전체 재생성',                              badge:'관리' }
+];
+document.getElementById('cmdList').innerHTML = commands.map(c => `
+  <div class="cmd-row">
+    <div class="cmd-name">${c.cmd}</div>
+    <div class="cmd-desc" style="flex:1">${c.desc}</div>
+    <div class="cmd-badge">${c.badge}</div>
+  </div>`).join('');
+
+// ── 9 PART 흐름 ──────────────────────────────────────────
+const parts = [
+  { n:'사전', title:'사전 조건 확인',               desc:'브레인스토밍 완료? 프로토타입 존재? (차단 아님, 권장)',  loop:false },
+  { n:'P1',  title:'Template 통째 복사',            desc:'SAL_Grid_Dev_Suite_Template → DEV_ROOT/ 전체 복사 + 플레이스홀더 치환', loop:false },
+  { n:'P2',  title:'P1 사업계획 + P2 프로젝트 기획', desc:'AI + 인간 협업. P2 완성 필수.',                        loop:false },
+  { n:'P3',  title:'TASK_PLAN 생성',               desc:'P2 분석 → N×11 매트릭스 → Task 후보 → SAL ID → 의존성 → PO 승인', loop:false },
+  { n:'P4',  title:'Instruction 파일 생성',         desc:'각 Task별 Task Instruction + Verification Instruction 생성', loop:false },
+  { n:'P5',  title:'Project SAL Grid 완성',         desc:'index.json + grid_records/*.json + stage_gate_records/*.json + Viewer', loop:false },
+  { n:'P6',  title:'Stage별 Task 실행',             desc:'배치 구성 → Task Agent 투입 → 3방향 동기화(JSON + Stage폴더 + Root)', loop:true },
+  { n:'P7',  title:'Task별 Verification',           desc:'Verification Agent 투입 → Needs Fix 루프 (Task Agent ≠ Verification Agent)', loop:true },
+  { n:'P8',  title:'Stage Gate + PO 승인',          desc:'5항목 체크 → PO 테스트 → 승인/거부. 통과 시 다음 Stage P6으로', loop:true },
+  { n:'P9',  title:'완료 + 배포 + 종료 선언',        desc:'전체 Stage Gate 확인 → GitHub Pages 배포 → project_status.json 기록 → 스킬 종료 선언', loop:false }
+];
+document.getElementById('partList').innerHTML = parts.map(p => `
+  <div class="part-row">
+    <div class="part-badge ${p.loop?'loop':''}">${p.n}</div>
+    <div style="flex:1">
+      <div class="part-title">${p.title}${p.loop?' <span style="font-size:10px;color:#7c3aed;font-weight:600">↻ 순환</span>':''}</div>
+      <div class="part-desc">${p.desc}</div>
+    </div>
+  </div>`).join('');
+
+// ── Stage 순환 루프 카드 ─────────────────────────────────
+const loopCards = [
+  { icon:'⚙️', title:'PART 6 — Task 실행',
+    items:['배치 구성으로 Task Agent 투입','JSON + Stage폴더 + Root 3방향 동기화','실행 중 Task CRUD 가능 (PO 승인 필수)'] },
+  { icon:'🔍', title:'PART 7 — Verification',
+    items:['Task Agent와 별개의 Verification Agent 투입','Needs Fix 감지 시 Fix 루프 재진입','검증 완료 시 verification_status: Verified'] },
+  { icon:'🚦', title:'PART 8 — Stage Gate',
+    items:['5항목 체크리스트 자동 검증','PO 수동 테스트 및 승인/거부','통과 → 다음 Stage P6, 전체 완료 → P9'] },
+  { icon:'🔄', title:'Task CRUD (실행 중)',
+    items:['add: 7개 위치 동시 업데이트','modify: 8단계 동기화 (SAL ID 변경 포함)','delete: 의존성 역참조 검사 후 8개 위치 정리'] }
+];
+document.getElementById('loopCards').innerHTML = loopCards.map(c => `
+  <div class="loop-box">
+    <div class="loop-box-title"><span>${c.icon}</span>${c.title}</div>
+    ${c.items.map((item, i) => `
+      <div class="loop-step">
+        <div class="loop-num">${i+1}</div>
+        <div class="loop-content">${item}</div>
+      </div>`).join('')}
+  </div>`).join('');
+
+// ── 실행 명령어 생성기 ────────────────────────────────────
+var SKILL_CONTENT = "---\r\ndescription: \"SAL Grid 3D 좌표계 개발방법론 V3 - Template 기반, 동적 Stage, 소급 도입 지원 (Stage-Area-Level)\"\r\nuser-invocable: true\r\nversion: \"3.0-260307\"\r\n---\r\n\r\n# /sal-grid-dev — SAL Grid Dev Suite (V3-260307)\r\n\r\n> **\"포크레인이 나왔는데 여전히 삽질하는 방법을 이야기합니까?\"**\r\n> **과거 개발 방법은 버리세요. AI 시대에 맞는 방법론을 사용하세요.**\r\n\r\n3차원 좌표계(Stage-Area-Level) 기반 개발방법론 **Project SAL Grid**의 **Single Source of Truth**.\r\n이 Dev Suite는 **Template 기반** 구조로 동작합니다. `SAL_Grid_Dev_Suite_Template`에서 모든 파일을 복사하여 `.claude/` 인프라, 폴더 구조, 데이터, 실행, 검증까지 **전부 자동 생성**됩니다.\r\n\r\n---\r\n\r\n## 프로젝트 전체 생명주기\r\n\r\n```\r\n[Dev Suite 실행 전]\r\n─────────────────────────────────────\r\n  프로토타입 제작 + 브레인스토밍        ← AI + 인간 협업 (자료가 이미 존재)\r\n\r\n[/sal-grid-dev Dev Suite 실행]\r\n─────────────────────────────────────\r\n  (디렉토리 구조 즉시 설치)             ← Dev Suite 자동 (단계 아님)\r\n  P1  사업계획                         ← AI + 인간 협업\r\n  P2  프로젝트 기획                    ← AI + 인간 협업 (Vanilla↔React 결정)\r\n  S0  Project SAL Grid 생성            ← AI-driven (산출물 맥락 계승)\r\n  S1~ SN  개발 Stage (N개)             ← AI-driven (프로젝트 규모에 따라 유동)\r\n```\r\n\r\n> **V2 변경사항**: Stage 수는 고정 5개(S0~S4)가 아니라, 프로젝트 규모에 따라 **N개로 동적 결정**된다.\r\n> 기본 Stage 구성(S0~S4)은 참고 템플릿이며, 프로젝트 기획 시 PO와 협의하여 Stage를 추가/이름변경할 수 있다.\r\n\r\n프로토타입/브레인스토밍 자료가 있는 상태에서 Dev Suite를 실행하면:\r\n1. 디렉토리 구조와 `.claude/` 인프라를 즉시 설치\r\n2. P1~P2는 AI + 인간이 함께 사업계획과 프로젝트를 기획\r\n3. S0~SN은 AI가 주도하여 개발, PO(Product Owner)는 승인만\r\n\r\n### 소급 도입 (Retroactive Application) ⭐ V2 신규\r\n\r\n이미 개발이 진행 중인 프로젝트에 SAL Grid를 도입하는 경우:\r\n\r\n```\r\n[소급 도입 시나리오]\r\n─────────────────────────────────────\r\n기존 프로젝트 (이미 코드/파일 존재)\r\n     ↓\r\n/sal-grid-dev 실행\r\n     ↓\r\nPre-flight에서 기존 파일 스캔 → 완료된 작업 파악\r\n     ↓\r\n완료된 작업 → task_status: \"Completed\", verification_status: \"Verified\"로 등록\r\n     ↓\r\n미완료 작업 → task_status: \"Pending\"으로 등록\r\n     ↓\r\n기존 파일 → Stage 폴더로 소급 복사 (원본 유지)\r\n     ↓\r\n이후 정상 SAL Grid 프로세스 진행\r\n```\r\n\r\n**소급 도입 규칙:**\r\n1. 이미 완료된 작업의 Task Instruction/Verification Instruction은 **간소화 허용** (실행 이력 요약 수준)\r\n2. 소급 등록 Task의 `modification_history`에 `\"소급 등록: {날짜}\"` 기록\r\n3. 소급 등록 시에도 **의존성 검증**은 반드시 수행\r\n4. 기존 파일의 Stage 폴더 소급 복사 시 **원본 파일은 삭제하지 않음** (중복 허용)\r\n5. Stage 이름은 프로젝트 현황에 맞게 **자유롭게 명명** 가능 (예: \"1차 배포 검증\", \"관리자 기능\")\r\n\r\n---\r\n\r\n## Usage\r\n\r\n```\r\n/sal-grid-dev                    # 전체 실행 — Pre-flight → S0 Grid 생성 → S1~SN 실행\r\n/sal-grid-dev add                # 기존 Grid에 Task 추가 (5개 위치 동시 업데이트)\r\n/sal-grid-dev status             # 현재 Grid 상태 확인 (Stage별 진행률)\r\n/sal-grid-dev rebuild            # 백업 후 Grid 전체 재생성\r\n```\r\n\r\n- `$ARGUMENTS` (optional): 프로젝트 설명, 기획서 경로, 또는 특수 명령\r\n\r\n---\r\n\r\n## Dev Suite 실행 흐름\r\n\r\n```\r\nPART 1 Pre-flight\r\n  → 프로젝트 진단 → Template 경로 탐지 → 사용자 입력 수집 → N×11 매트릭스 분석\r\n     ↓\r\nPART 2 .claude/ 인프라 생성 ★\r\n  → CLAUDE.md + 7개 rules + methods + compliance + CAUTION + work_logs\r\n     ↓\r\nPART 3 폴더 구조 생성\r\n  → Process/ (P1~P2~S0~SN) + 프로덕션 폴더 (Vanilla/React)\r\n     ↓\r\nPART 4 SAL Grid 데이터 생성 (= Project SAL Grid 생성)\r\n  → TASK_PLAN.md + task-instructions + verification-instructions\r\n  → index.json + grid_records/*.json + stage_gate_records/*.json\r\n     ↓\r\nPART 5 Pre-commit Hook + 자동화 스크립트 설정\r\n     ↓\r\n  ┌─────────────────────────────────────────────────┐\r\n  │  ★ Stage 단위 순환 루프 (각 Stage마다 반복)     │\r\n  │                                                 │\r\n  │  PART 6 Task 실행 프로세스                      │\r\n  │    → Stage별 배치 실행 → Task Agent 투입        │\r\n  │       ↓                                         │\r\n  │  PART 7 Task 검증 프로세스                      │\r\n  │    → Verification Agent 투입 → Needs Fix 루프   │\r\n  │       ↓                                         │\r\n  │  PART 8 Stage Verification + PO 승인            │\r\n  │    → Stage Gate 체크리스트 → PO 테스트 → 승인   │\r\n  │       ↓                                         │\r\n  │  Stage Gate 통과 → 다음 Stage의 PART 6으로 순환 │\r\n  │  (모든 Stage 완료 시 PART 9로 진행)             │\r\n  │                                                 │\r\n  │  ※ Task CRUD: 실행 중 Task 추가/수정 가능      │\r\n  │    5개 위치 동시 동기화 (rules/07_task-crud.md)  │\r\n  └─────────────────────────────────────────────────┘\r\n     ↓ (전체 Stage 완료)\r\nPART 9 프로젝트 완료 + 배포\r\n  → 전체 Stage Gate 확인 → GitHub Pages + Vercel 배포 → 최종 완료 보고\r\n```\r\n\r\n---\r\n\r\n## 지원 방법론\r\n\r\n| 방법론 | 감지 조건 | 적용 범위 |\r\n|--------|-----------|-----------|\r\n| **Vanilla** (HTML/CSS/JavaScript) | next.config.js 없음 | 정적 파일, pages/, api/ |\r\n| **React/Next.js** | next.config.js 또는 \"next\" 의존성 감지 | app/, components/, lib/ |\r\n\r\n---\r\n\r\n# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\r\n# PART 1: Pre-flight Analysis (사전 진단 및 분석)\r\n# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\r\n\r\n## 1.0 DEV_ROOT 탐지 (최우선 — 폴더 중복 생성 방지)\r\n\r\nDev Suite 실행 시 가장 먼저 **개발 관리 폴더(DEV_ROOT)**의 존재 여부와 이름을 확인한다.\r\n이 문서에서 `{DEV_ROOT}`는 아래 탐지 절차로 확정된 폴더명을 의미한다.\r\n\r\n### 탐지 절차\r\n\r\n```\r\nStep 1: 프로젝트 루트에서 SAL Grid 관리 폴더 탐색\r\n  → 하위 디렉토리 중 Process/ 폴더가 있고, 그 안에 S*_ 패턴 폴더가 있는 디렉토리를 찾는다.\r\n  → 예: SAL_Grid_Dev_Suite/Process/S1_개발_준비/ 가 있으면 → {DEV_ROOT} = SAL_Grid_Dev_Suite\r\n\r\nStep 2: 탐지 결과 처리\r\n  → 발견됨: 해당 폴더명을 {DEV_ROOT}로 설정. 새 폴더 생성하지 않음.\r\n  → 미발견: PO에게 AskUserQuestion으로 폴더명을 확인 후 생성.\r\n    기본 제안: \"SAL_Grid_Dev_Suite\" 또는 \"{DEV_ROOT}\"\r\n```\r\n\r\n### 탐지 코드 (Bash tool)\r\n\r\n```bash\r\nfor dir in */; do\r\n  if [ -d \"${dir}Process\" ] && ls \"${dir}Process/\" 2>/dev/null | grep -q \"^S[0-9]\"; then\r\n    echo \"DEV_ROOT=${dir%/}\"\r\n    break\r\n  fi\r\ndone\r\n```\r\n\r\n**절대 금지**: 기존 관리 폴더가 이미 있는데 다른 이름으로 또 생성하는 행위.\r\n탐지 없이 폴더를 무조건 생성하면 중복 폴더가 만들어진다.\r\n\r\n> **중요**: 이 문서의 모든 `{DEV_ROOT}` 경로는 `{DEV_ROOT}`로 읽는다.\r\n> 예: `{DEV_ROOT}/.claude/` → `{DEV_ROOT}/.claude/`\r\n\r\n---\r\n\r\n## 1.0.5 Template 경로 탐지\r\n\r\nSKILL.md의 모든 파일 생성은 **SAL_Grid_Dev_Suite_Template**에서 복사하는 방식이다.\r\nTemplate은 모든 `.claude/` 파일, 스크립트, 뷰어 등의 **Single Source of Truth**이다.\r\n\r\n### 탐지 절차\r\n\r\n```\r\nStep 1: PO 로컬 G드라이브 경로 확인\r\n  → G:/내 드라이브/SAL_Grid_Dev_Suite_Template 존재 여부 확인\r\n  → 존재하면 → TEMPLATE_PATH = G:/내 드라이브/SAL_Grid_Dev_Suite_Template\r\n\r\nStep 2: 프로젝트 루트에 Template 폴더 확인\r\n  → {PROJECT_ROOT}/SAL_Grid_Dev_Suite_Template/ 존재 여부 확인\r\n  → 존재하면 → TEMPLATE_PATH = 해당 경로\r\n\r\nStep 3: 둘 다 없으면 다운로드 안내\r\n  → AskUserQuestion으로 안내:\r\n    \"SAL Grid Dev Suite Template이 필요합니다.\r\n     아래 링크에서 다운로드 후 프로젝트 루트에 배치하세요.\r\n     다운로드 링크: https://drive.google.com/drive/folders/1kxLn_YOnw-kIM9gjdGFNzfiUVMnnYrEn?usp=sharing\"\r\n  → 다운로드 완료 확인 후 TEMPLATE_PATH 설정\r\n```\r\n\r\n### 탐지 코드 (Bash tool)\r\n\r\n```bash\r\n# 1순위: PO 로컬 G드라이브\r\nif [ -d \"G:/내 드라이브/SAL_Grid_Dev_Suite_Template\" ]; then\r\n  TEMPLATE_PATH=\"G:/내 드라이브/SAL_Grid_Dev_Suite_Template\"\r\n# 2순위: 프로젝트 루트\r\nelif [ -d \"SAL_Grid_Dev_Suite_Template\" ]; then\r\n  TEMPLATE_PATH=\"$(pwd)/SAL_Grid_Dev_Suite_Template\"\r\nelse\r\n  echo \"TEMPLATE_NOT_FOUND\"\r\nfi\r\n```\r\n\r\n**TEMPLATE_PATH가 확정되어야 PART 2 이후 진행 가능.**\r\n\r\n> **중요**: 이 문서의 모든 `{TEMPLATE_PATH}` 경로는 위 탐지 절차로 확정된 경로를 의미한다.\r\n\r\n---\r\n\r\n## 1.1 프로젝트 진단\r\n\r\nDev Suite 실행 시 다음 경로를 스캔하여 프로젝트 현재 상태를 파악한다.\r\n\r\n### 스캔 대상\r\n\r\n| 경로 | 내용 | 처리 방식 |\r\n|------|------|-----------|\r\n| `Brainstorming/` | 브레인스토밍 자료 (아이디어, 경쟁사 분석, 기능 목록) | .md/.txt 전체 읽기 (.docx는 직접 지원 불가 — 텍스트 변환 후 읽기) |\r\n| 프로토타입 관련 폴더/파일 | 초기 HTML, 이미지, 코드 | 기술 스택 판별에 활용 |\r\n| `package.json`, `vercel.json`, `next.config.js` | 기술 스택 메타 정보 | Vanilla vs React 자동 감지 |\r\n| `{DEV_ROOT}/Process/S0_Project-SAL-Grid_생성/` | 기존 SAL Grid | index.json 존재 시 상태 출력 |\r\n| `{DEV_ROOT}/.claude/work_logs/current.md` | 이전 세션 작업 기록 | 세션 재개 시 확인 |\r\n\r\n### 진단 절차\r\n\r\n1. **Brainstorming/ 분석**: `.md` / `.txt` 파일 읽기 → 프로젝트 핵심 가치, 기능 후보, 경쟁사 분석 결과 추출 (`.docx` 파일은 Read 도구로 직접 읽기 불가 — 사용자에게 텍스트 변환을 안내)\r\n2. **기술 스택 감지**: `package.json` / `vercel.json` / `next.config.js` 확인 → Vanilla vs React 자동 결정\r\n3. **기존 SAL Grid 확인**: `index.json` 존재 시 현재 진행 상태 출력 후 이어하기/재생성 안내\r\n4. **맥락 계승**: Brainstorming 내용 + 기존 코드 → PART 1.3 매트릭스 분석에 반영\r\n\r\n### 기존 SAL Grid 존재 시 출력\r\n\r\n```\r\n이 프로젝트에는 이미 SAL Grid가 적용되어 있습니다.\r\n\r\n현재 상태:\r\n- 총 Task: XX개\r\n- Completed: XX개 (XX%)\r\n- In Progress: XX개\r\n- Pending: XX개\r\n- 마지막 수정: YYYY-MM-DD\r\n\r\n선택:\r\n  추가 Task → /sal-grid-dev add\r\n  Grid 재생성 → /sal-grid-dev rebuild\r\n  상태 확인 → /sal-grid-dev status\r\n  세션 재개 → (계속 진행)\r\n```\r\n\r\n---\r\n\r\n## 1.2 사용자 입력 수집 (AskUserQuestion)\r\n\r\n다음 3가지 정보를 AskUserQuestion으로 수집한다.\r\nBrainstorming 스캔으로 추론 가능한 항목은 기본값을 제안한다.\r\n\r\n**질문 1 — 프로젝트명**\r\n- 옵션: Brainstorming 파일에서 감지된 후보 이름 + \"직접 입력\"\r\n- 예: \"MyChatbot World\", \"직접 입력\"\r\n\r\n**질문 2 — 개발 방법론**\r\n- 옵션: \"Vanilla (HTML/CSS/JavaScript)\", \"React/Next.js\"\r\n- next.config.js 감지 시 → React를 기본 추천\r\n\r\n**질문 3 — 기획 문서 위치**\r\n- 옵션: \"{DEV_ROOT}/Process/P2_프로젝트_기획/ (자동 스캔)\", \"직접 설명\"\r\n- P2 폴더 미존재 시 → \"브레인스토밍 자료로 진행\" 옵션 제공\r\n\r\n---\r\n\r\n## 1.3 N×11 매트릭스 분석\r\n\r\nP2 기획서 내용과 Brainstorming 자료를 종합하여 Stage×Area 매트릭스를 분석한다.\r\n\r\n### N개 Stage × 11개 Area 매핑\r\n\r\n| Stage | DC | DS | FE | BI | BA | DB | SC | TS | DV | EX | CS | 합계 |\r\n|-------|---|---|---|----|----|---|---|---|---|---|---|------|\r\n| S0 | | | | | | | | | | | | ? |\r\n| S1 | | | | | | | | | | | | ? |\r\n| S2 | | | | | | | | | | | | ? |\r\n| S3 | | | | | | | | | | | | ? |\r\n| S4 | | | | | | | | | | | | ? |\r\n\r\n각 Cell에 Task 개수를 채워 전체 Task 후보 수를 도출한다.\r\n\r\n### 분석 출력 형식\r\n\r\n```\r\n[N×11 매트릭스 분석 결과]\r\n- 핵심 기능: N개 기능 파악\r\n- 예상 Task 수: ~N개\r\n- 주요 Area: FE ({N}개), BA ({N}개), DB ({N}개), SC ({N}개)\r\n- 권장 Stage 배분:\r\n    S0 {N}개 (SAL Grid 생성)\r\n    S1 {N}개 (개발 준비: 환경설정, DB, 인증)\r\n    S2 {N}개 (개발 1차: 핵심 기능)\r\n    S3 {N}개 (개발 2차: 부가 기능, 통합)\r\n    S4 {N}개 (개발 마무리: 테스트, 배포, 문서)\r\n\r\n사용자 승인 후 TASK_PLAN.md 초안 생성 → SAL ID Provisional 부여 시작\r\n```\r\n\r\n---\r\n\r\n## 1.4 세션 재개 시 확인\r\n\r\n`/sal-grid-dev`를 기존 진행 중인 프로젝트에서 호출하면:\r\n\r\n1. `{DEV_ROOT}/.claude/work_logs/current.md` 읽기 → 마지막 작업 내용 파악\r\n2. `index.json` 읽어 진행 상태 파악 (Stage별 완료율)\r\n3. 다음 실행할 Task 특정 후 사용자에게 확인\r\n\r\n**재개 출력 형식:**\r\n```\r\n[세션 재개]\r\n마지막 작업: {TaskID} — {Task Name} ({날짜} 완료)\r\n다음 Task: {TaskID} — {Task Name}\r\n\r\n→ 계속 진행하겠습니다.\r\n```\r\n\r\n---\r\n\r\n# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\r\n# PART 2: .claude/ 인프라 자동 생성 (★ 핵심)\r\n# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\r\n\r\n## 개요\r\n\r\n이 파트는 Dev Suite 실행 시 **SAL_Grid_Dev_Suite_Template**에서 `.claude/` 인프라를 복사하여 생성하는 절차를 정의한다.\r\n**Template이 모든 파일의 Single Source of Truth**이다. 인라인 내용 없음 — 모든 파일은 Template에서 가져온다.\r\n\r\n실행 원칙:\r\n- Template에서 복사 후, 플레이스홀더를 실제 값으로 치환한다.\r\n- 이미 존재하는 파일은 **스킵**한다 (덮어쓰지 않음).\r\n- 플레이스홀더 목록:\r\n  - `{PROJECT_NAME}` → 수집한 프로젝트명 (예: `mychatbot-world`)\r\n  - `{METHOD_TYPE}` → `Vanilla` 또는 `React`\r\n  - `{TODAY}` → 실행 당일 날짜 (예: `2026-02-17`)\r\n  - `{PROJECT_ROOT}` → 프로젝트 루트 절대 경로\r\n  - `{DEV_ROOT}` → 개발 관리 폴더 경로\r\n\r\n---\r\n\r\n## 2.1 .claude/ 폴더 일괄 복사\r\n\r\n### Step 1: Template에서 .claude/ 전체 복사\r\n\r\n```bash\r\ncp -r \"{TEMPLATE_PATH}/.claude/\" \"{DEV_ROOT}/.claude/\"\r\n```\r\n\r\n이 명령으로 아래 파일/폴더가 한번에 복사된다:\r\n\r\n| 구분 | 파일/폴더 | 설명 |\r\n|------|----------|------|\r\n| 메인 설정 | `CLAUDE.md` | 프로젝트 컨텍스트 + 운영 원칙 |\r\n| | `CAUTION.md` | AI 주의사항 + 금지 행동 |\r\n| | `pre-commit-hooks.md` | Pre-commit Hook 규칙 |\r\n| | `mcp_servers.json` | MCP 서버 설정 |\r\n| 규칙 (7개) | `rules/01_file-naming.md` ~ `rules/07_task-crud.md` | 7대 작업 규칙 |\r\n| 메소드 (2개) | `methods/00_initial-setup.md`, `methods/01_json-crud.md` | 실행 가이드 |\r\n| 준수사항 | `compliance/AI_12_COMPLIANCE.md` | AI 12대 원칙 |\r\n| 작업 로그 | `work_logs/current.md` | 세션 작업 기록 |\r\n| 에이전트 | `agents/` (16~18개 .md 파일) | 서브에이전트 정의 |\r\n| 커맨드 | `commands/` (2개 .md 파일) | 슬래시 커맨드 |\r\n| 스킬 | `skills/` (21개 폴더) | 스킬 정의 (sal-grid-dev 자신 제외) |\r\n\r\n### Step 2: 플레이스홀더 치환\r\n\r\n복사 후 아래 파일에서 플레이스홀더를 실제 값으로 치환한다:\r\n\r\n| 파일 | 치환 대상 |\r\n|------|----------|\r\n| `CLAUDE.md` | `{PROJECT_NAME}`, `{METHOD_TYPE}`, `{TODAY}` |\r\n| `CAUTION.md` | `{PROJECT_NAME}`, `{TODAY}` |\r\n| `compliance/AI_12_COMPLIANCE.md` | `{TODAY}` |\r\n| `work_logs/current.md` | `{TODAY}`, Task 수 (PART 4 완료 후 업데이트) |\r\n\r\n치환 방법: 각 파일을 Read tool로 읽은 뒤, Edit tool로 플레이스홀더를 실제 값으로 교체.\r\n\r\n### Step 3: 방법론 분기 처리\r\n\r\n일부 파일에 `[IF:VANILLA]` / `[IF:REACT]` 조건 블록이 있다.\r\n선택한 방법론에 맞는 블록만 남기고 나머지를 삭제한다.\r\n\r\n해당 파일:\r\n- `rules/01_file-naming.md` — Area별 파일명 예시\r\n- `rules/02_save-location.md` — Stage→Root 매핑 표\r\n- `CLAUDE.md` — 프로덕션 폴더 구조\r\n\r\n처리 방법:\r\n1. Read tool로 파일 읽기\r\n2. 선택한 방법론에 해당하지 않는 `[IF:...]` ~ `[/IF:...]` 블록을 Edit tool로 삭제\r\n3. 선택한 방법론의 `[IF:...]` / `[/IF:...]` 태그만 제거 (내용은 유지)\r\n\r\n### Step 4: sal-grid-dev 스킬 자기참조 제거\r\n\r\n`skills/` 폴더에서 sal-grid-dev 관련 폴더를 삭제한다 (순환 참조 방지):\r\n\r\n```bash\r\nrm -rf \"{DEV_ROOT}/.claude/skills/sal-grid-dev-\"*\r\n```\r\n\r\n---\r\n\r\n## 2.2 추가 파일 복사\r\n\r\n### scripts/ 복사\r\n\r\n```bash\r\ncp -r \"{TEMPLATE_PATH}/scripts/\" \"{PROJECT_ROOT}/scripts/\"\r\n```\r\n\r\n복사되는 파일:\r\n- `scripts/sync-to-root.js` — Stage→Root 동기화 스크립트\r\n- `scripts/setup-hooks.js` — Pre-commit Hook 자동 설치 스크립트\r\n\r\n복사 후 PART 5에서 프로젝트 Stage 구성에 맞게 스크립트 내 Stage 매핑 부분을 수정한다.\r\n\r\n### Human_ClaudeCode_Bridge/ 복사\r\n\r\n```bash\r\ncp -r \"{TEMPLATE_PATH}/Human_ClaudeCode_Bridge/\" \"{DEV_ROOT}/Human_ClaudeCode_Bridge/\"\r\n```\r\n\r\n### .gitignore 복사\r\n\r\n```bash\r\ncp \"{TEMPLATE_PATH}/.gitignore\" \"{PROJECT_ROOT}/.gitignore\"\r\n```\r\n\r\n기존 .gitignore가 있으면 내용을 병합한다 (Template 내용을 기존 파일 끝에 추가).\r\n\r\n---\r\n\r\n## 2.3 Pre-commit Hook 설정\r\n\r\n### Vanilla 방법론\r\n\r\n```bash\r\ncp \"{TEMPLATE_PATH}/.git/hooks/pre-commit\" \"{PROJECT_ROOT}/.git/hooks/pre-commit\"\r\nchmod +x \"{PROJECT_ROOT}/.git/hooks/pre-commit\"\r\n```\r\n\r\nTemplate에 `.git/hooks/pre-commit` 파일이 없는 경우:\r\n- `{DEV_ROOT}/.claude/pre-commit-hooks.md`를 참조하여 수동 생성\r\n\r\n### React 방법론\r\n\r\nReact용 pre-commit hook은 TypeScript 타입 체크 + ESLint를 실행한다.\r\n`{DEV_ROOT}/.claude/pre-commit-hooks.md`를 참조하여 생성한다.\r\n\r\n---\r\n\r\n## 실행 체크리스트 (PART 2 완료 확인)\r\n\r\nPART 2 실행 후 AI는 아래 파일/폴더가 모두 생성되었는지 확인하라:\r\n\r\n```\r\n[ ] {DEV_ROOT}/.claude/CLAUDE.md\r\n[ ] {DEV_ROOT}/.claude/rules/ (7개 파일)\r\n[ ] {DEV_ROOT}/.claude/methods/ (2개 파일)\r\n[ ] {DEV_ROOT}/.claude/compliance/AI_12_COMPLIANCE.md\r\n[ ] {DEV_ROOT}/.claude/CAUTION.md\r\n[ ] {DEV_ROOT}/.claude/work_logs/current.md\r\n[ ] {DEV_ROOT}/.claude/pre-commit-hooks.md\r\n[ ] {DEV_ROOT}/.claude/agents/ (16개+ 서브에이전트 정의 파일)\r\n[ ] {DEV_ROOT}/.claude/commands/ (2개 커맨드 파일)\r\n[ ] {DEV_ROOT}/.claude/skills/ (21개 스킬 폴더, sal-grid-dev 제외)\r\n[ ] {PROJECT_ROOT}/scripts/ (sync-to-root.js, setup-hooks.js)\r\n[ ] {DEV_ROOT}/Human_ClaudeCode_Bridge/ (10개 파일)\r\n[ ] {PROJECT_ROOT}/.gitignore\r\n```\r\n\r\n모두 확인되면 PART 3으로 진행한다.\r\n미생성 파일이 있으면 Template 경로를 재확인하고 복사를 재시도한다.\r\n\r\n# SAL Grid Dev Suite — PART 3 + PART 4 + PART 5\r\n\r\n---\r\n\r\n# PART 3: 폴더 구조 자동 생성\r\n\r\n## 3.1 Template에서 Process/ 폴더 복사 + 프로젝트 맞춤 변경\r\n\r\nTemplate에는 기본 Stage 폴더(S0~S4)가 포함되어 있다.\r\n이를 프로젝트에 복사한 뒤, 프로젝트 상황에 맞게 변경한다.\r\n\r\n### Step 1: Template Process/ 복사\r\n\r\n```bash\r\ncp -r \"{TEMPLATE_PATH}/Process/\" \"{PROJECT_ROOT}/{DEV_ROOT}/Process/\"\r\n```\r\n\r\nTemplate 기본 구조 (S0~S4):\r\n```\r\nProcess/\r\n├── S0_Project-SAL-Grid_생성/   ← 공통 고정 (SAL Grid 핵심)\r\n│   ├── sal-grid/\r\n│   ├── method/json/data/\r\n│   ├── manual/\r\n│   └── viewer/\r\n├── S1_개발_준비/               ← 기본 4개 Stage (11 Area 하위)\r\n├── S2_개발_1차/\r\n├── S3_개발_2차/\r\n└── S4_개발_마무리/\r\n```\r\n\r\n### Step 2: 프로젝트에 맞게 Stage 변경\r\n\r\n프로젝트 기획(PART 1) 결과에 따라 Stage를 조정한다:\r\n\r\n- **Stage 수 변경**: 기본 4개(S1~S4)에서 더 늘리거나 줄일 수 있다\r\n- **Stage 이름 변경**: 프로젝트에 맞게 `mv` 명령으로 폴더명 변경\r\n- **Stage 추가**: 필요 시 `mkdir -p`로 새 Stage 폴더 + 11 Area 하위 폴더 생성\r\n\r\n```bash\r\n# 예시: Stage 이름 변경\r\nmv \"{DEV_ROOT}/Process/S1_개발_준비\" \"{DEV_ROOT}/Process/S1_프로젝트명_개발_준비\"\r\n\r\n# 예시: Stage 추가 (S5 이상)\r\nfor AREA in Documentation Design Frontend Backend_Infra Backend_APIs Database Security Testing DevOps External Content_System; do\r\n  mkdir -p \"{DEV_ROOT}/Process/S5_추가Stage명/${AREA}\"\r\ndone\r\n```\r\n\r\n### Step 3: P1~P2 단계 폴더 (선택)\r\n\r\n사용자가 P1/P2 단계를 포함하는 경우에만 생성. `AskUserQuestion`으로 확인.\r\n\r\n```bash\r\nmkdir -p \"{DEV_ROOT}/Process/P1_사업계획/{Business_Model,BusinessPlan,Market_Analysis,Patent,Vision_Mission}\"\r\nmkdir -p \"{DEV_ROOT}/Process/P2_프로젝트_기획/{Features,Personas,Requirements,Sitemap,Wireframes}\"\r\n```\r\n\r\n### Area 코드 → 폴더명 매핑 (참조)\r\n\r\n| Area 코드 | 폴더명 | 설명 |\r\n|-----------|--------|------|\r\n| DC | Documentation/ | 문서화 |\r\n| DS | Design/ | 디자인 |\r\n| FE | Frontend/ | 프론트엔드 |\r\n| BI | Backend_Infra/ | 백엔드 인프라 |\r\n| BA | Backend_APIs/ | 백엔드 API |\r\n| DB | Database/ | 데이터베이스 |\r\n| SC | Security/ | 보안 |\r\n| TS | Testing/ | 테스팅 |\r\n| DV | DevOps/ | 데브옵스 |\r\n| EX | External/ | 외부 연동 |\r\n| CS | Content_System/ | 콘텐츠 시스템 |\r\n\r\n### 지원 폴더 (PART 2에서 이미 복사됨)\r\n\r\n```\r\n{DEV_ROOT}/\r\n├── Human_ClaudeCode_Bridge/   ← PART 2에서 Template에서 복사 완료\r\n│   ├── OrderSheet/\r\n│   └── Reports/\r\n└── scripts/                   ← PART 2에서 복사, PART 5에서 맞춤 수정\r\n```\r\n\r\n## 3.2 프로덕션 폴더 생성\r\n\r\n방법론(Vanilla / React)에 따라 분기 생성.\r\n\r\n### Vanilla 프로덕션 구조\r\n\r\n```\r\n{PROJECT_ROOT}/\r\n├── pages/\r\n│   ├── auth/\r\n│   ├── dashboard/\r\n│   └── mypage/\r\n├── api/\r\n│   ├── Backend_APIs/\r\n│   ├── Security/\r\n│   ├── Backend_Infra/\r\n│   └── External/\r\n├── assets/\r\n│   ├── css/\r\n│   ├── js/\r\n│   ├── images/\r\n│   └── fonts/\r\n├── scripts/\r\n├── index.html\r\n└── 404.html\r\n```\r\n\r\nindex.html, 404.html은 빈 파일로 생성 (이미 존재하면 스킵).\r\n\r\n### React/Next.js 프로덕션 구조\r\n\r\n```\r\n{PROJECT_ROOT}/\r\n├── app/\r\n│   ├── api/\r\n│   ├── (pages)/\r\n│   └── layout.tsx\r\n├── components/\r\n│   ├── ui/\r\n│   └── common/\r\n├── lib/\r\n│   ├── utils/\r\n│   └── hooks/\r\n├── public/\r\n│   └── assets/\r\n├── styles/\r\n├── types/\r\n├── .env.local          ← 생성하되 .gitignore에 포함 안내\r\n├── next.config.js\r\n├── tailwind.config.js  ← Tailwind 사용 시\r\n├── tsconfig.json\r\n└── package.json        ← 이미 존재하면 스킵\r\n```\r\n\r\nReact의 경우 `npx create-next-app@latest` 실행 여부를 사용자에게 확인.\r\n\r\n## 3.3 .claude/ 구조\r\n\r\n```\r\n{DEV_ROOT}/.claude/\r\n├── CLAUDE.md                    ← 프로젝트 전체 컨텍스트 + 운영 원칙\r\n├── CAUTION.md                   ← AI 주의 사항 및 금지 행동\r\n├── pre-commit-hooks.md          ← Pre-commit Hook 규칙 설명\r\n├── agents/                      ← 16개 서브에이전트 정의 파일\r\n│   ├── frontend-developer-core.md\r\n│   ├── backend-developer-core.md\r\n│   ├── database-developer-core.md\r\n│   ├── security-specialist-core.md\r\n│   ├── api-developer-core.md\r\n│   ├── code-reviewer-core.md\r\n│   ├── test-runner-core.md\r\n│   ├── debugger-core.md\r\n│   ├── devops-troubleshooter-core.md\r\n│   ├── documentation-writer-core.md\r\n│   ├── ux-ui-designer-core.md\r\n│   ├── content-specialist.md\r\n│   ├── copywriter.md\r\n│   ├── performance-optimizer.md\r\n│   ├── qa-specialist.md\r\n│   └── refactoring-specialist.md\r\n├── rules/\r\n│   ├── 01_file-naming.md        ← 파일명 kebab-case 규칙\r\n│   ├── 02_save-location.md      ← Stage 폴더 우선 저장 규칙\r\n│   ├── 03_area-stage.md         ← 11 Area × N Stage 정의 (동적 확장)\r\n│   ├── 04_grid-writing-json.md  ← JSON 데이터 작성 규칙\r\n│   ├── 05_execution-process.md  ← Task 실행 순서 및 프로세스\r\n│   ├── 06_verification.md       ← 검증 절차 및 기준\r\n│   └── 07_task-crud.md          ← Task 생성/수정/삭제 규칙\r\n├── methods/\r\n│   ├── 00_initial-setup.md      ← 초기 설정 가이드\r\n│   └── 01_json-crud.md          ← JSON CRUD 조작 가이드\r\n├── compliance/\r\n│   └── AI_12_COMPLIANCE.md      ← AI 12대 준수 사항\r\n└── work_logs/\r\n    └── current.md               ← 현재 작업 로그\r\n```\r\n\r\n.claude/ 파일들은 SAL Grid Dev Suite 스킬 내 템플릿에서 복사 생성.\r\n\r\n## 3.4 폴더 생성 실행 지시\r\n\r\n### 실행 원칙\r\n\r\n- PART 2의 `cp -r`로 Template 복사 시 대부분의 폴더가 이미 생성됨\r\n- 아래는 Template에 포함되지 않은 **프로덕션 폴더만** `mkdir -p`로 추가 생성\r\n- 이미 존재하면 에러 없이 스킵 (mkdir -p의 기본 동작)\r\n- 생성 완료 후 트리 구조 출력으로 확인\r\n\r\n### Bash 명령 예시 (Vanilla 기준)\r\n\r\n```bash\r\n# Vanilla 프로덕션 폴더 (Template에 미포함 — 프로젝트별 생성 필요)\r\nmkdir -p \"{PROJECT_ROOT}/pages/auth\"\r\nmkdir -p \"{PROJECT_ROOT}/pages/dashboard\"\r\nmkdir -p \"{PROJECT_ROOT}/pages/mypage\"\r\nmkdir -p \"{PROJECT_ROOT}/api/Backend_APIs\"\r\nmkdir -p \"{PROJECT_ROOT}/api/Security\"\r\nmkdir -p \"{PROJECT_ROOT}/api/Backend_Infra\"\r\nmkdir -p \"{PROJECT_ROOT}/api/External\"\r\nmkdir -p \"{PROJECT_ROOT}/assets/css\"\r\nmkdir -p \"{PROJECT_ROOT}/assets/js\"\r\nmkdir -p \"{PROJECT_ROOT}/assets/images\"\r\nmkdir -p \"{PROJECT_ROOT}/assets/fonts\"\r\nmkdir -p \"{PROJECT_ROOT}/scripts\"\r\n```\r\n\r\n> **참고**: S0 하위 폴더, S1~SN Area 폴더, Human_ClaudeCode_Bridge/, .claude/ 하위 폴더는\r\n> PART 2의 Template 복사(`cp -r`)와 PART 3.1의 Process 생성 시 이미 생성됩니다.\r\n> 중복 mkdir-p는 불필요하므로 생략합니다.\r\n\r\n### 생성 완료 확인\r\n\r\n```bash\r\n# 폴더 트리 출력 (Windows)\r\ntree \"{PROJECT_ROOT}/{DEV_ROOT}/Process\" /F /A\r\n\r\n# 또는 Linux/Mac\r\nfind \"{PROJECT_ROOT}/{DEV_ROOT}/Process\" -type d | sort\r\n```\r\n\r\n---\r\n\r\n# PART 4: SAL Grid 데이터 생성\r\n\r\n## 4.1 Task 선정 프로세스 (Provisional ID 부여)\r\n\r\n### 단계별 프로세스\r\n\r\n**Step 1 — P2 기획서 분석**\r\n- P2_프로젝트_기획/Features/ 또는 Requirements/ 폴더의 문서를 읽는다\r\n- 기능 목록, 사용자 스토리, 요구사항 추출\r\n- 없으면 사용자에게 프로젝트 개요 입력 요청\r\n\r\n**Step 2 — N×11 매트릭스 매핑**\r\n- 각 기능을 Stage(S0~SN) × Area(11개) 교점에 배치\r\n- 배치 기준:\r\n  - S0: SAL Grid 자체 생성 관련 Task\r\n  - S1: 환경 설정, 아키텍처 설계, 공통 모듈\r\n  - S2: 핵심 기능 1차 구현 (로그인, 기본 CRUD)\r\n  - S3: 부가 기능 2차 구현 (고급 기능, 연동)\r\n  - S4: 최적화, 배포, 문서화 마무리\r\n\r\n**Step 3 — Task 후보 목록 작성 + Provisional ID 부여**\r\n- SAL ID 형식: `S{Stage}{AreaCode}{순번}` (예: S1FE1, S2BA3)\r\n- Area 코드: DC/DS/FE/BI/BA/DB/SC/TS/DV/EX/CS\r\n- 순번: Area 내 동일 Stage에서 1부터 순차 부여\r\n\r\n**Step 4 — 의존성 설정**\r\n- 각 Task의 선행 Task(Dependencies) 명시\r\n- 의존성 규칙:\r\n  - 선행 Task Stage ≤ 후행 Task Stage\r\n  - 순환 의존성 없음\r\n  - 존재하지 않는 Task ID 참조 없음\r\n  - Task ID 중복 없음\r\n\r\n**Step 5 — 사용자 승인**\r\n- TASK_PLAN.md 초안을 출력하여 확인 요청\r\n- `AskUserQuestion` 사용: \"Task 목록이 적절한가요? 추가/수정/삭제할 Task가 있으면 알려주세요.\"\r\n- 승인 후 다음 단계 진행\r\n\r\n**Step 6 — SAL ID Finalization**\r\n- 의존성 검증 재확인\r\n- Task ID 확정 및 모든 데이터 파일 생성\r\n\r\n### 의존성 검증 규칙 (상세)\r\n\r\n```\r\nRule 1: Stage 순서 준수\r\n  - dependencies에 명시된 모든 Task의 Stage ≤ 현재 Task의 Stage\r\n  - S2FE1이 S3BA1에 의존 → 불가 (S3 > S2)\r\n\r\nRule 2: 순환 의존성 금지\r\n  - A→B→C→A 형태의 순환 의존 불가\r\n  - DAG(Directed Acyclic Graph) 구조 유지\r\n\r\nRule 3: 참조 무결성\r\n  - Dependencies에 명시된 모든 Task ID가 task_ids 목록에 존재해야 함\r\n\r\nRule 4: ID 유일성\r\n  - 동일 Task ID가 두 번 이상 등장하면 오류\r\n```\r\n\r\n## 4.2 TASK_PLAN.md 생성\r\n\r\n### 파일 경로\r\n\r\n```\r\n{PROJECT_ROOT}/{DEV_ROOT}/Process/S0_Project-SAL-Grid_생성/sal-grid/TASK_PLAN.md\r\n```\r\n\r\n### 생성 절차\r\n\r\n1. Read tool: `{TEMPLATE_PATH}/Process/S0_Project-SAL-Grid_생성/sal-grid/TASK_PLAN.md`\r\n   → 템플릿 구조 확인\r\n2. PART 4.1에서 확정된 Task 목록으로 내용 채우기:\r\n   - Stage별 Task 테이블 생성\r\n   - Area별 분포 매트릭스 생성\r\n   - 의존성 다이어그램 작성\r\n3. Write tool: 위 경로에 완성된 TASK_PLAN.md 저장\r\n\r\n> Template의 TASK_PLAN.md는 **구조 참조용**이다. 실제 내용은 프로젝트별로 동적 생성한다.\r\n\r\n---\r\n\r\n## 4.3 Task Instruction 파일 생성\r\n\r\n### 파일 경로\r\n\r\n```\r\n{DEV_ROOT}/Process/S0_Project-SAL-Grid_생성/sal-grid/task-instructions/{TaskID}_instruction.md\r\n```\r\n\r\n### 생성 절차\r\n\r\n1. Read tool: `{TEMPLATE_PATH}/Process/S0_Project-SAL-Grid_생성/sal-grid/task-instructions/` 내 샘플 파일\r\n   → 지시서 구조/형식 확인\r\n2. 각 Task에 대해 아래 정보로 지시서 작성:\r\n   - Task 정보 (ID, 이름, Stage, Area, Dependencies, 실행 방식, 담당 Agent)\r\n   - 배경 및 목적 (기획서에서 추출)\r\n   - 생성/수정 대상 파일 경로\r\n   - 세부 작업 지시 (구체적 단계)\r\n   - 완료 기준 (체크리스트)\r\n   - 참조 규칙 파일\r\n3. Write tool: 각 `{TaskID}_instruction.md` 파일 생성\r\n\r\n총 파일 수 = 총 Task 수\r\n\r\n---\r\n\r\n## 4.4 Verification Instruction 파일 생성\r\n\r\n### 파일 경로\r\n\r\n```\r\n{DEV_ROOT}/Process/S0_Project-SAL-Grid_생성/sal-grid/verification-instructions/{TaskID}_verification.md\r\n```\r\n\r\n### 생성 절차\r\n\r\n1. Read tool: `{TEMPLATE_PATH}/Process/S0_Project-SAL-Grid_생성/sal-grid/verification-instructions/` 내 샘플 파일\r\n   → 검증 지시서 구조/형식 확인\r\n2. 각 Task에 대해 아래 항목으로 검증 지시서 작성:\r\n   - 검증 정보 (Task ID, 이름, Verification Agent, 모델)\r\n   - 파일 존재 확인 체크리스트\r\n   - 코드 품질 검증 항목\r\n   - 기능 검증 항목\r\n   - 통합 검증 항목\r\n   - 보안 검증 항목 (해당 시)\r\n   - 검증 결과 기록 형식 (JSON)\r\n3. Write tool: 각 `{TaskID}_verification.md` 파일 생성\r\n\r\n총 파일 수 = 총 Task 수\r\n\r\n---\r\n\r\n## 4.5 JSON 데이터 파일 생성\r\n\r\n### 4.5.1 index.json\r\n\r\n파일 경로: `{DEV_ROOT}/Process/S0_Project-SAL-Grid_생성/method/json/data/index.json`\r\n\r\n1. Read tool: `{TEMPLATE_PATH}/Process/S0_Project-SAL-Grid_생성/method/json/data/index.json`\r\n   → JSON 구조 확인\r\n2. 프로젝트 정보로 채우기:\r\n   - `project_id`, `project_name`, `method_type`\r\n   - `task_ids` 배열 (확정된 전체 Task ID)\r\n   - `stages` 객체 (각 Stage별 task_count)\r\n3. Write tool: index.json 저장\r\n\r\n### 4.5.2 grid_records/{TaskID}.json\r\n\r\n파일 경로: `{DEV_ROOT}/Process/S0_Project-SAL-Grid_생성/method/json/data/grid_records/{TaskID}.json`\r\n\r\n1. Read tool: `{TEMPLATE_PATH}/Process/S0_Project-SAL-Grid_생성/method/json/data/grid_records/` 내 `_TEMPLATE.json` 또는 샘플 파일\r\n   → 22속성 JSON 구조 확인\r\n2. 각 Task에 대해 22속성 초기값으로 JSON 생성\r\n3. Write tool: 각 `{TaskID}.json` 파일 생성\r\n\r\n총 파일 수 = 총 Task 수\r\n\r\n### 4.5.3 stage_gate_records/S{N}_gate.json\r\n\r\n파일 경로: `{DEV_ROOT}/Process/S0_Project-SAL-Grid_생성/method/json/data/stage_gate_records/S{N}_gate.json`\r\n\r\n1. Read tool: `{TEMPLATE_PATH}/Process/S0_Project-SAL-Grid_생성/method/json/data/stage_gate_records/` 내 샘플 파일\r\n   → Stage Gate JSON 구조 확인\r\n2. 각 Stage에 대해 gate.json 생성\r\n3. Write tool: 각 `S{N}_gate.json` 파일 생성\r\n\r\n총 파일 수 = Stage 수\r\n\r\n## 4.6 Viewer HTML 설정\r\n\r\n### viewer_json.html\r\n\r\n파일 경로: `viewer/viewer_json.html`\r\n\r\n- 기존 파일이 있으면 스킵\r\n- 없으면 Template에서 복사:\r\n  ```bash\r\n  cp \"{TEMPLATE_PATH}/Process/S0_Project-SAL-Grid_생성/viewer/viewer_json.html\" \"{DEV_ROOT}/Process/S0_Project-SAL-Grid_생성/viewer/\"\r\n  ```\r\n\r\n## 4.7 SAL Grid 생성 완료 보고\r\n\r\n모든 파일 생성 완료 후 아래 형식으로 보고:\r\n\r\n```\r\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\r\n  PROJECT SAL GRID 생성 완료\r\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\r\n\r\n  프로젝트: {PROJECT_NAME}\r\n  방법론:   {Vanilla / React}\r\n  총 Task:  {N}개\r\n  생성일:   {TODAY}\r\n\r\n  Stage별 Task 수\r\n━━━━━━━━━━━━━━━━━━━━\r\n  S0 Project SAL Grid 생성 ... {N}개\r\n  S1 개발 준비 .............. {N}개\r\n  S2 개발 1차 ............... {N}개\r\n  S3 개발 2차 ............... {N}개\r\n  S4 개발 마무리 ............ {N}개\r\n\r\n  생성된 파일 목록\r\n━━━━━━━━━━━━━━━━━━━━\r\n  TASK_PLAN.md                          1개\r\n  task-instructions/*.md               {N}개\r\n  verification-instructions/*.md       {N}개\r\n  index.json                            1개\r\n  grid_records/*.json                  {N}개\r\n  stage_gate_records/*_gate.json      {N+1}개 (Stage 수만큼)\r\n  .claude/ 파일                        13개\r\n  viewer HTML                           1개\r\n\r\n  다음 단계: S0 Task 실행 시작\r\n  명령: /sal-grid-dev 또는 S0DC1 Task 직접 실행\r\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\r\n```\r\n\r\n---\r\n\r\n# PART 5: Pre-commit Hook + 자동화 스크립트 설정\r\n\r\n## 5.1 스크립트 파일 확인 및 프로젝트 맞춤 수정\r\n\r\nPART 2에서 Template으로부터 이미 복사된 파일을 확인한다:\r\n\r\n```\r\n[ ] {PROJECT_ROOT}/scripts/sync-to-root.js  — Stage→Root 동기화\r\n[ ] {PROJECT_ROOT}/scripts/setup-hooks.js   — Pre-commit Hook 자동 설치\r\n```\r\n\r\n파일이 없으면 Template에서 재복사:\r\n```bash\r\ncp \"{TEMPLATE_PATH}/scripts/sync-to-root.js\" \"{PROJECT_ROOT}/scripts/\"\r\ncp \"{TEMPLATE_PATH}/scripts/setup-hooks.js\" \"{PROJECT_ROOT}/scripts/\"\r\n```\r\n\r\n### 프로젝트 맞춤 수정\r\n\r\n복사된 스크립트는 Template 기본값(S1~S4)으로 되어 있다.\r\n프로젝트 Stage 구성에 맞게 수정한다:\r\n\r\n- `sync-to-root.js`: Stage 폴더명 매핑 배열을 프로젝트 실제 Stage 폴더명으로 변경\r\n- `setup-hooks.js`: 방법론(Vanilla/React)에 맞는 Hook 내용으로 변경\r\n\r\n---\r\n\r\n## 5.2 Pre-commit Hook 설정\r\n\r\n`setup-hooks.js`를 실행하여 Git Hook을 자동 설치한다:\r\n\r\n```bash\r\nnode \"{PROJECT_ROOT}/scripts/setup-hooks.js\"\r\n```\r\n\r\n또는 수동으로 설정:\r\n\r\n```bash\r\nls -la \"{PROJECT_ROOT}/.git/hooks/pre-commit\"\r\n```\r\n\r\n없으면 `{DEV_ROOT}/.claude/pre-commit-hooks.md`를 참조하여 생성.\r\n\r\n### Vanilla 방법론\r\n- `sync-to-root.js` 실행 → Stage 파일을 Root로 동기화\r\n- 동기화된 파일 자동 스테이징\r\n\r\n### React / Next.js 방법론\r\n- TypeScript 타입 체크 (`npx tsc --noEmit`)\r\n- ESLint 검사 (`npx eslint . --ext .ts,.tsx --quiet`)\r\n\r\n```bash\r\nchmod +x \"{PROJECT_ROOT}/.git/hooks/pre-commit\"\r\n```\r\n\r\n---\r\n\r\n## 5.3 Hook 설정 완료 확인\r\n\r\n```bash\r\nls -la .git/hooks/pre-commit\r\nbash .git/hooks/pre-commit   # dry-run 테스트\r\n```\r\n\r\n### 완료 보고\r\n\r\n```\r\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\r\n  PRE-COMMIT HOOK 설정 완료\r\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\r\n\r\n  방법론:   {Vanilla / React}\r\n  Hook 경로: .git/hooks/pre-commit\r\n\r\n  다음 단계: S1 Task 실행 시작\r\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\r\n```\r\n\r\n# SAL Grid Dev Suite — PART 6~9 + APPENDIX + Special Commands\r\n\r\n---\r\n\r\n# PART 6: Task 실행 프로세스 ★★★ 핵심 확장\r\n\r\n## 6.1 6단계 실행 루프 (상세)\r\n\r\n각 Task에 대해 아래 순서를 정확히 따릅니다.\r\n순서를 건너뛰거나 바꾸지 마세요. 반드시 이 순서대로 실행합니다.\r\n\r\n```\r\n① Task Instruction 읽기\r\n   Read tool → sal-grid/task-instructions/{TaskID}_instruction.md\r\n\r\n② 규칙 파일 확인\r\n   Read tool → .claude/rules/01_file-naming.md   (파일명 규칙)\r\n   Read tool → .claude/rules/02_save-location.md (저장 위치 규칙)\r\n   Read tool → .claude/rules/03_area-stage.md    (Area 정의 확인)\r\n\r\n③ JSON 상태 업데이트 (In Progress)\r\n   Read tool → sal-grid/grid_records/{TaskID}.json\r\n   Edit tool → task_status: \"In Progress\"\r\n   Edit tool → task_progress: 0\r\n\r\n④ Task Agent 서브에이전트 투입 (Task tool)\r\n   → PART 6.2 참조: 프롬프트 작성 방법\r\n\r\n⑤ Task 완료 처리 (서브에이전트 결과 수신 후)\r\n   Edit tool → task_status: \"In Progress\" → \"Executed\"\r\n   Edit tool → task_progress: 100\r\n   Edit tool → generated_files: \"파일1, 파일2, ...\"\r\n   Edit tool → modification_history: \"{TODAY}: 최초 생성\"\r\n\r\n⑥ JSON 기록 및 work_logs 업데이트\r\n   Edit tool → sal-grid/grid_records/{TaskID}.json (나머지 필드 갱신)\r\n   Edit tool → .claude/work_logs/current.md (실행 결과 기록)\r\n```\r\n\r\n> 주의: ③단계에서 반드시 Read tool로 기존 JSON을 먼저 읽은 뒤 Edit tool로 수정합니다.\r\n> Write tool로 JSON 전체를 덮어쓰는 것은 절대 금지입니다.\r\n\r\n---\r\n\r\n## 6.2 Task Agent 프롬프트 작성 가이드 ★★★\r\n\r\nTask tool을 호출할 때 `prompt` 필드에 아래 구조로 작성하세요.\r\n각 플레이스홀더({...})는 실제 값으로 치환합니다.\r\n\r\n```\r\n## 당신의 역할\r\n당신은 {task_agent} 역할의 서브에이전트입니다.\r\n아래 Task를 완전히 수행하고 결과를 반환하세요.\r\n작업 중간에 멈추거나 확인을 요청하지 말고 끝까지 수행하세요.\r\n\r\n## Task 정보\r\n- Task ID:    {TaskID}\r\n- Task 이름:  {Task Name}\r\n- Stage:      S{N} — {Stage Name}\r\n- Area:       {Area Code} — {Area Name}\r\n- 방법론:     {Vanilla / React}\r\n\r\n## Task Instruction\r\n(sal-grid/task-instructions/{TaskID}_instruction.md 파일 내용 전체를 여기에 붙여넣기)\r\n\r\n## 필수 준수 규칙\r\n\r\n### 파일명 규칙 (01_file-naming.md)\r\n- 모든 프로덕션 파일은 kebab-case 사용\r\n- 파일 최상단에 반드시 @task {TaskID} 주석 삽입\r\n- 예시: <!-- @task S1FE1 --> (HTML), // @task S1BA1 (JS)\r\n\r\n### 저장 위치 규칙 (02_save-location.md)\r\n- F Area   → Process/S{N}_{StageName}/Frontend/\r\n- BA Area  → Process/S{N}_{StageName}/Backend_APIs/\r\n- D Area   → supabase/migrations/ 또는 Process/S{N}_{StageName}/Database/\r\n- S Area   → Process/S{N}_{StageName}/Security/\r\n- BI Area  → Process/S{N}_{StageName}/Backend_Infra/\r\n- E Area   → Process/S{N}_{StageName}/External/\r\n- (해당 Area 코드에 맞는 경로를 사용하세요)\r\n\r\n## 프로덕션 환경\r\n- 호스팅:     Vercel (서버리스 함수 지원)\r\n- 데이터베이스: Supabase PostgreSQL (해당되는 경우)\r\n- 인증:       Supabase Auth (해당되는 경우)\r\n- 정적 자원:  public/ 디렉토리\r\n\r\n## 완료 조건\r\n(Instruction 파일의 \"완료 기준\" 목록을 그대로 붙여넣기)\r\n\r\n## 중요 사항\r\n1. 파일 생성 전 Read tool로 기존 파일 존재 여부 확인 (덮어쓰기 금지)\r\n2. JSON 파일은 반드시 Edit tool로만 수정 (Write tool 전체 덮어쓰기 금지)\r\n3. 하드코딩 금지: API 키, URL, 비밀번호는 환경 변수로 처리\r\n4. 오류 처리(try-catch 또는 .catch()) 반드시 포함\r\n5. 작업 완료 후 생성/수정된 파일 전체 경로 목록을 반환\r\n```\r\n\r\n### 모델 선택 기준\r\n\r\n| 작업 유형 | 모델 | 이유 |\r\n|-----------|------|------|\r\n| JSON 파일 생성 / 갱신 | `haiku` | 단순 구조화 작업 |\r\n| 텍스트 문서 작성 | `haiku` | 단순 변환 |\r\n| 파일 복사 / 이동 | `haiku` | 단순 반복 |\r\n| HTML / CSS 코드 작성 | `sonnet` | UI 품질 보장 |\r\n| JavaScript / API 로직 | `sonnet` | 복잡한 로직 |\r\n| 보안 / 인증 구현 | `sonnet` | 정확성 중요 |\r\n| 테스트 작성 / 분석 | `sonnet` | 분석적 사고 필요 |\r\n| **opus** | **절대 금지** | 메인 세션(소대장) 전용 |\r\n\r\n---\r\n\r\n## 6.3 Stage 단위 배치 실행\r\n\r\n### 의존성 기반 배치 구성 원칙\r\n\r\nStage를 실행하기 전에 해당 Stage의 모든 Task를 파악하고,\r\n의존성(`dependencies` 필드)을 분석하여 배치(Batch)를 구성합니다.\r\n\r\n```\r\nStep 1: Stage S{N} 내 Task 목록 파악\r\n         → sal-grid/index.json 읽기 → task_ids 필터 (S{N}으로 시작)\r\n\r\nStep 2: 각 Task의 dependencies 확인\r\n         → 의존성 없는 Task 그룹 → Batch A (동시 투입 가능)\r\n         → Batch A에 의존하는 Task → Batch B (Batch A 완료 후 투입)\r\n         → Batch B에 의존하는 Task → Batch C\r\n         → ... (의존성 체인이 끊어질 때까지 반복)\r\n\r\nStep 3: 배치 순서대로 Task tool 병렬 호출\r\n         → Batch A 완료 확인 → Batch B 투입\r\n         → Batch B 완료 확인 → Batch C 투입\r\n```\r\n\r\n### 배치 실행 예시 (S1)\r\n\r\n```\r\nS1 Task 목록:\r\n  S1FE1  (dependencies: [])        ← Batch A\r\n  S1BA1  (dependencies: [])        ← Batch A\r\n  S1DS1  (dependencies: [])        ← Batch A\r\n  S1SC1  (dependencies: [])        ← Batch A\r\n  S1FE2  (dependencies: [\"S1DS1\"]) ← Batch B (S1DS1 완료 후)\r\n\r\n실행 순서:\r\n  Batch A: [S1FE1, S1BA1, S1DS1, S1SC1] → 동시 4개 서브에이전트 투입\r\n    ↓ (전부 Executed 상태 확인 후)\r\n  Batch B: [S1FE2] → 1개 서브에이전트 투입 (S1DS1 의존)\r\n```\r\n\r\n### 병렬 Task tool 호출 시 주의사항\r\n\r\n- 같은 응답에서 여러 Task tool을 동시에 호출하면 병렬 실행됩니다.\r\n- 최대 3~5개 병렬 투입을 권장합니다 (리소스 고려).\r\n- 동일한 파일을 수정하는 Task는 반드시 순서대로 투입하세요 (충돌 방지).\r\n\r\n---\r\n\r\n## 6.4 Human-AI Task 처리\r\n\r\n`execution_type`이 `\"Human-AI\"` 또는 `\"Human-Assisted\"`인 Task는\r\nPO의 직접 참여가 필요합니다. AI가 단독으로 완료할 수 없습니다.\r\n\r\n### 사전 안내 메시지 형식\r\n\r\n```\r\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\r\n  [Human-AI Task] {TaskID}: {Task Name}\r\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\r\n\r\n이 Task는 PO의 직접 참여가 필요합니다.\r\n\r\n필요한 설정:\r\n  1. {외부 서비스} 계정 생성\r\n     URL: {서비스 URL}\r\n  2. API 키 발급\r\n     방법: {발급 절차}\r\n  3. 환경 변수 설정\r\n     파일: .env.local\r\n     변수: {ENV_VAR_NAME}={설명}\r\n\r\n설정 완료 후 \"완료\"라고 말씀해주세요.\r\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\r\n```\r\n\r\nAskUserQuestion tool로 PO 설정 완료 여부를 확인한 뒤,\r\n확인이 되면 나머지 AI 수행 부분을 Task Agent로 투입합니다.\r\nPO가 설정한 환경 변수를 Task Agent 프롬프트에 명시합니다.\r\n\r\n---\r\n\r\n## 6.5 작업 완료 시 로그 기록 형식\r\n\r\nTask 실행 완료 후 `.claude/work_logs/current.md`에 아래 형식으로 추가합니다.\r\n기존 내용을 덮어쓰지 말고 맨 아래에 추가(append)합니다.\r\n\r\n```markdown\r\n## {TODAY} — {TaskID} 실행 완료\r\n\r\n### 실행 결과\r\n- Task:     {TaskID} — {Task Name}\r\n- Stage:    S{N} — {Stage Name}\r\n- Area:     {Area Code} — {Area Name}\r\n- 상태:     Executed (Verification Agent 투입 대기)\r\n- 모델:     {haiku / sonnet}\r\n\r\n### 생성/수정 파일\r\n- `Process/S{N}_{StageName}/Frontend/{파일명}.html` — {간단 설명}\r\n- `Process/S{N}_{StageName}/Backend_APIs/{파일명}.js` — {간단 설명}\r\n\r\n### 다음 단계\r\n- Verification Agent ({verification_agent}) 투입 예정\r\n- 검증 완료 후 task_status: \"Completed\" 업데이트\r\n```\r\n\r\n---\r\n\r\n## 6.6 실행 중 오류 처리\r\n\r\n| 상황 | 대응 방법 |\r\n|------|----------|\r\n| 서브에이전트 파일 생성 실패 | 오류 메시지 읽기 → 원인 분석 → 수정된 프롬프트로 재투입 |\r\n| 의존성 파일 없음 | 선행 Task의 task_status 확인 → 선행 Task를 먼저 완료 |\r\n| 경로 / 권한 오류 | 정확한 절대 경로 사용, 대안 경로 시도 후 PO에게 보고 |\r\n| API 키 없음 | PO에게 Human-AI Task로 전환 안내 → 환경 변수 설정 요청 |\r\n| JSON 파싱 오류 | 생성된 JSON 검토 → 문법 교정 후 Edit tool로 재적용 |\r\n| 서브에이전트 타임아웃 | 단일 Task를 더 작은 단위로 분할하여 재투입 |\r\n\r\n---\r\n\r\n# PART 7: Task 검증 프로세스 ★★★ 핵심 확장\r\n\r\n## 7.1 Verification Agent 투입 원칙\r\n\r\n**Task Agent != Verification Agent** — 같은 Agent가 자신의 작업을 검증할 수 없습니다.\r\n이 원칙은 SAL Grid의 품질 보증 핵심 규칙입니다. 절대 예외 없습니다.\r\n\r\nMain Agent(소대장)가 아래 기준으로 Verification Agent를 선택합니다:\r\n\r\n| Area | Verification Agent |\r\n|------|--------------------|\r\n| F (Frontend) | Frontend Verification Engineer |\r\n| BA (Backend APIs) | Backend Verification Engineer |\r\n| D (Database) | Database Verification Engineer |\r\n| S (Security) | Security Verification Engineer |\r\n| BI (Backend Infra) | Backend Verification Engineer |\r\n| E (External) | Integration Verification Engineer |\r\n| T (Test) | QA Verification Engineer |\r\n\r\n---\r\n\r\n## 7.2 Verification Agent 프롬프트 작성 가이드 ★★★\r\n\r\nTask tool로 Verification Agent 투입 시 아래 구조로 프롬프트를 작성합니다.\r\n\r\n```\r\n## 당신의 역할\r\n당신은 {verification_agent} 역할의 검증 서브에이전트입니다.\r\n아래 Task의 결과물을 검증하고 상세한 검증 결과를 반환하세요.\r\n\r\n[중요] 작업자와 검증자는 반드시 분리되어야 합니다.\r\n당신은 이 Task를 직접 수행한 Agent가 아닙니다.\r\n검증 중 발견한 문제를 직접 수정하지 말고, fix_instructions에 기록하세요.\r\n\r\n## 검증 대상\r\n- Task ID:        {TaskID}\r\n- Task 이름:      {Task Name}\r\n- Task Agent:     {task_agent}\r\n- 생성된 파일:    {generated_files 목록}\r\n- 선행 의존성:    {dependencies 목록}\r\n\r\n## Verification Instruction\r\n(sal-grid/verification-instructions/{TaskID}_verification.md 파일 내용 전체를 여기에 붙여넣기)\r\n\r\n## 검증 수행 절차\r\n\r\n1. 파일 존재 확인\r\n   → generated_files의 각 경로를 Read tool로 읽기\r\n   → 파일이 없으면 즉시 \"Needs Fix\" 반환\r\n\r\n2. 코드 품질 검토\r\n   → 파일 내용을 읽어 아래 항목 검증\r\n\r\n3. 기능 완성도 검증\r\n   → Task Instruction의 완료 기준 항목을 하나씩 확인\r\n\r\n4. 통합 호환성 확인\r\n   → 선행 Task({dependencies}) 파일도 Read tool로 읽어 연동 확인\r\n\r\n## 검증 기준\r\n\r\n### 공통 파일/코드 품질\r\n- [ ] 파일이 지정된 경로에 실제로 존재하는가\r\n- [ ] 파일명이 kebab-case를 따르는가\r\n- [ ] 파일 최상단에 @task {TaskID} 주석이 있는가\r\n- [ ] 하드코딩된 API 키, URL, 비밀번호가 없는가\r\n- [ ] 오류 처리(try-catch 또는 .catch())가 포함되어 있는가\r\n- [ ] 환경 변수를 올바르게 참조하는가\r\n\r\n### 기능 완성도\r\n- [ ] Task Instruction의 완료 기준이 모두 충족되었는가\r\n- [ ] 엣지 케이스(빈 입력, 네트워크 오류, 권한 없음)를 처리하는가\r\n- [ ] 응답 코드/데이터 형식이 명세와 일치하는가\r\n\r\n### 통합 호환성\r\n- [ ] 선행 Task({dependencies}) 결과물과 인터페이스가 호환되는가\r\n- [ ] 함수 시그니처, API 경로, 데이터 스키마가 일치하는가\r\n\r\n## 검증 결과 반환 형식\r\n\r\n반드시 아래 JSON 형식으로만 결과를 반환하세요.\r\nJSON 외 추가 텍스트를 앞뒤에 붙이지 마세요.\r\n\r\n{\r\n  \"task_id\": \"{TaskID}\",\r\n  \"verification_result\": \"Verified\",\r\n  \"test_result\": {\r\n    \"unit_test\":        \"PASS — 각 함수/컴포넌트 단독 동작 확인\",\r\n    \"integration_test\": \"PASS — 선행 Task 결과물과 연동 정상\",\r\n    \"edge_cases\":       \"PASS — 예외 입력 처리 확인\",\r\n    \"manual_test\":      \"PASS — 파일 구조 및 로직 검토 완료\"\r\n  },\r\n  \"build_verification\": {\r\n    \"compile\": \"PASS — 문법 오류 없음\",\r\n    \"lint\":    \"PASS — 코딩 컨벤션 준수\",\r\n    \"runtime\": \"PASS — 실행 시 오류 없음\"\r\n  },\r\n  \"integration_verification\": {\r\n    \"dependency_propagation\": \"PASS — 선행 Task 결과 정상 활용\",\r\n    \"data_flow\":              \"PASS — 입출력 데이터 흐름 정상\"\r\n  },\r\n  \"blockers\": {\r\n    \"count\": 0,\r\n    \"items\": []\r\n  },\r\n  \"comprehensive_verification\": {\r\n    \"status\": \"Passed\",\r\n    \"note\": \"모든 검증 항목 통과. 선행 Task와의 통합도 문제없음.\"\r\n  },\r\n  \"fix_instructions\": \"\"\r\n}\r\n\r\n검증 실패(Needs Fix) 시에는:\r\n  \"verification_result\": \"Needs Fix\"\r\n  \"fix_instructions\": |\r\n    수정 필요 항목:\r\n    1. {파일 경로}: {구체적 수정 내용}\r\n    2. {파일 경로}: {구체적 수정 내용}\r\n    수정 후 재검증 필요.\r\n```\r\n\r\n---\r\n\r\n## 7.3 검증 결과 JSON 기록\r\n\r\nVerification Agent로부터 결과를 수신한 즉시 Main Agent가 기록합니다.\r\n반드시 Edit tool을 사용합니다 (Write tool 전체 덮어쓰기 금지).\r\n\r\n업데이트 대상 필드 (`sal-grid/grid_records/{TaskID}.json`):\r\n\r\n```json\r\n\"verification_status\":      \"Verified\" 또는 \"Needs Fix\",\r\n\"test_result\":              { ...검증 Agent 반환값 그대로 },\r\n\"build_verification\":       { ...검증 Agent 반환값 그대로 },\r\n\"integration_verification\": { ...검증 Agent 반환값 그대로 },\r\n\"blockers\":                 { ...검증 Agent 반환값 그대로 },\r\n\"comprehensive_verification\": { ...검증 Agent 반환값 그대로 }\r\n```\r\n\r\n검증 결과가 **Verified**이면:\r\n  → `task_status`: `\"Executed\"` → `\"Completed\"` 업데이트\r\n  → `task_progress`: 이미 100이면 유지\r\n\r\n검증 결과가 **Needs Fix**이면:\r\n  → PART 7.4 Needs Fix 루프 진행\r\n\r\n---\r\n\r\n## 7.4 Needs Fix 루프\r\n\r\n```\r\nNeeds Fix 수신\r\n    |\r\n    v\r\n1. fix_instructions 내용 파악\r\n   (어느 파일의 어떤 항목을 수정해야 하는가)\r\n\r\n    |\r\n    v\r\n2. JSON 상태 되돌림\r\n   task_status:          \"Executed\" → \"In Progress\"\r\n   verification_status:  \"Needs Fix\" (유지)\r\n\r\n    |\r\n    v\r\n3. Task Agent 재투입 (수정 프롬프트)\r\n   → 원래 Task 프롬프트 + 아래 섹션 추가:\r\n\r\n   ## 수정 요청 (이전 검증 실패)\r\n   이전 검증에서 아래 항목이 Needs Fix로 처리되었습니다.\r\n   아래 수정 사항만 반영하고, 나머지 파일은 건드리지 마세요.\r\n\r\n   {fix_instructions 내용 전체}\r\n\r\n   수정 완료 후 수정된 파일 경로 목록과 변경 내용을 반환하세요.\r\n\r\n    |\r\n    v\r\n4. 수정 완료 → task_status: \"In Progress\" → \"Executed\" 재업데이트\r\n\r\n    |\r\n    v\r\n5. Verification Agent 재투입 (동일 또는 다른 Agent)\r\n   → 동일한 검증 프롬프트 사용 (TaskID 동일)\r\n\r\n    |\r\n    v\r\n6. Verified → task_status: \"Completed\"\r\n   반복 Needs Fix → 3회 이상이면 PO에게 보고 후 수동 처리 요청\r\n```\r\n\r\n---\r\n\r\n## 7.5 Area별 검증 특이사항\r\n\r\nArea 코드에 따라 검증 Agent가 특별히 집중해야 할 항목이 다릅니다.\r\n검증 프롬프트의 \"검증 기준\" 섹션에 아래 항목을 추가하세요.\r\n\r\n| Area | 추가 검증 포인트 |\r\n|------|----------------|\r\n| F (Frontend) | HTML 시맨틱 태그 사용, 반응형 CSS(미디어쿼리), XSS 방지(innerHTML 미사용), 접근성(alt, label) |\r\n| BA (Backend APIs) | SQL Injection 방지(파라미터 바인딩), 입력 검증(타입/범위), HTTP 상태 코드 정확성, 인증 헤더 확인 |\r\n| D (Database) | 정규화(중복 컬럼 없음), 인덱스 존재, 마이그레이션 순서(외래키 순서), RLS 정책 적용 |\r\n| S (Security) | 인증 플로우(토큰 발급/갱신/만료), CORS 허용 도메인, 민감 정보 노출 방지, Rate Limiting |\r\n| BI (Backend Infra) | 환경 변수 분리(.env 미커밋), Supabase 클라이언트 초기화 중복 방지, 서버리스 함수 Cold Start 고려 |\r\n| E (External) | API 응답 처리(status 코드별 분기), 타임아웃 설정, 재시도(retry) 로직, Webhook 검증 |\r\n| T (Test) | 테스트 커버리지(핵심 시나리오 포함), 픽스처/목(Mock) 적절성, CI 통합 가능 여부 |\r\n\r\n---\r\n\r\n# PART 8: Stage Verification + PO 승인\r\n\r\n> **순환 구조**: PART 6 → PART 7 → PART 8은 **각 Stage마다 반복**된다.\r\n> Stage Gate 통과(Approved) 시 다음 Stage의 PART 6으로 순환한다.\r\n> 마지막 Stage까지 모두 Approved되면 PART 9로 진행한다.\r\n\r\n## 8.1 Stage Gate 체크리스트 (5항목)\r\n\r\nStage 내 모든 Task가 `\"Completed\"` 상태가 된 후,\r\nMain Agent가 직접 아래 5개 항목을 확인합니다.\r\n자동화 스크립트가 아닌 Read tool로 각 파일을 직접 읽어 확인합니다.\r\n\r\n```\r\n항목 1. 모든 Task가 task_status = \"Completed\"인가?\r\n  → sal-grid/index.json 읽기 → task_ids에서 해당 Stage Task 필터\r\n  → 각 sal-grid/grid_records/{TaskID}.json 읽어 task_status 확인\r\n  → 하나라도 \"Completed\"가 아니면 Stage Gate 중단\r\n\r\n항목 2. 모든 Task의 comprehensive_verification.status가 \"Passed\"인가?\r\n  → 각 grid_records에서 comprehensive_verification 확인\r\n  → \"Failed\" 또는 누락이 있으면 해당 Task 재검증 후 재확인\r\n\r\n항목 3. 전체 Blocker가 0개인가?\r\n  → 각 grid_records에서 blockers.count 확인\r\n  → 0이 아닌 Task가 있으면 해당 Task Needs Fix 처리\r\n\r\n항목 4. 전체 빌드가 성공하는가?\r\n  → Vanilla 방법론: 파일 존재 확인 + JS 문법 오류 없음 확인\r\n  → React 방법론: PO에게 \"npm run build 실행 요청\" (Human-AI Task)\r\n\r\n항목 5. 의존성 체인이 완결되었는가?\r\n  → 다음 Stage(S{N+1}) Task들의 dependencies 확인\r\n  → 해당 dependencies가 모두 \"Completed\"인지 검증\r\n```\r\n\r\n모든 항목이 통과되면 Stage Gate Report를 생성합니다.\r\n하나라도 실패하면 해당 항목을 먼저 해결한 뒤 재확인합니다.\r\n\r\n---\r\n\r\n## 8.2 Stage Verification Report 생성\r\n\r\n경로: `sal-grid/stage-gates/S{N}GATE_verification_report.md`\r\n\r\n```markdown\r\n# S{N}GATE Verification Report\r\n> 생성일: {TODAY} | Stage: S{N} — {Stage Name} | 방법론: {Vanilla/React}\r\n\r\n## 1. Task 완료 현황\r\n\r\n| Task ID | Task 이름 | Status | Verification | Blocker | 비고 |\r\n|---------|-----------|--------|-------------|---------|------|\r\n| S{N}F1  | {Task 이름} | Completed | Verified | 0 | - |\r\n| S{N}BA1 | {Task 이름} | Completed | Verified | 0 | - |\r\n| S{N}D1  | {Task 이름} | Completed | Verified | 0 | - |\r\n\r\n**완료율: {X}/{N} (100%)**\r\n**전체 Blocker: 0개**\r\n\r\n## 2. 빌드/테스트 결과\r\n\r\n| 항목 | 결과 | 상세 |\r\n|------|------|------|\r\n| 전체 Task 완료 | PASS | {X}/{N} Completed |\r\n| 종합 검증 | PASS | 전체 Passed |\r\n| 단위 테스트 | PASS | 모든 검증 통과 |\r\n| 통합 테스트 | PASS | 선행 Task 연동 확인 |\r\n| Blocker | PASS | 0개 |\r\n| 의존성 체인 | PASS | S{N+1} 진행 가능 |\r\n| 빌드 | PASS | {파일 존재 확인 / npm run build 결과} |\r\n\r\n## 3. AI 검증 의견\r\n\r\n{Stage 전체에 대한 종합 평가.\r\n완성도, 코드 품질, 특이사항, 개선 권고 등을\r\n2~4문장으로 기술합니다.}\r\n\r\n## 4. PO 테스트 가이드\r\n\r\n### 테스트 전 준비\r\n- [ ] 로컬 서버 실행: `npx serve .` (기본 포트 5000) 또는 `npm start` (React)\r\n- [ ] 브라우저 개발자 도구 콘솔 열기 (오류 확인용)\r\n- [ ] 필요 환경 변수 확인: `.env.local` 파일 존재 여부\r\n\r\n### 기능별 테스트\r\n\r\n#### 기능 1: {기능명}\r\n- **테스트 파일**: `{경로}/{파일명}.html`\r\n- **테스트 방법**:\r\n  1. 브라우저에서 `http://localhost:5000/{파일명}.html` 접속\r\n  2. {조작 순서를 번호로 기술}\r\n- **예상 결과**: {정상 동작 시 보여야 할 결과}\r\n- **실패 기준**: {이런 경우 실패로 판단}\r\n\r\n#### 기능 2: {기능명}\r\n(동일 형식 반복)\r\n\r\n## 5. AI 권고\r\n\r\n이 Stage는 모든 자동 검증 항목을 통과하였습니다.\r\nPO의 직접 테스트를 통한 최종 승인을 요청합니다.\r\n```\r\n\r\n---\r\n\r\n## 8.3 Stage Gate JSON 업데이트\r\n\r\n`sal-grid/stage_gate_records/S{N}_gate.json` 업데이트 (Edit tool 사용):\r\n\r\n```json\r\n{\r\n  \"total_tasks\":             {N},\r\n  \"completed_tasks\":         {N},\r\n  \"completion_percentage\":   100,\r\n  \"verification_checklist\": {\r\n    \"all_tasks_completed\":       true,\r\n    \"all_tasks_verified\":        true,\r\n    \"no_blockers\":               true,\r\n    \"build_success\":             true,\r\n    \"dependency_chain_complete\": true\r\n  },\r\n  \"ai_verification_status\":    \"Passed\",\r\n  \"ai_verification_timestamp\": \"{TODAY}\",\r\n  \"ai_verification_note\":      \"{종합 평가 내용 1~2문장}\",\r\n  \"po_test_status\":            \"Pending\",\r\n  \"stage_gate_status\":         \"AI Verified\"\r\n}\r\n```\r\n\r\n---\r\n\r\n## 8.4 PO 테스트 요청\r\n\r\nStage Gate JSON 업데이트 완료 후 PO에게 아래 메시지를 출력합니다.\r\n\r\n```\r\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\r\n  S{N} Stage Gate — AI 검증 완료 (PO 테스트 필요)\r\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\r\n\r\nAI 검증 결과:  PASSED\r\n완료 Task:     {N}/{N}개 (100%)\r\nBlocker:       0개\r\n빌드:          성공\r\n\r\nPO님의 직접 테스트가 필요합니다.\r\n위의 Stage Verification Report에 따라 테스트를 진행해주세요.\r\n\r\n보고서 위치:\r\n  sal-grid/stage-gates/S{N}GATE_verification_report.md\r\n\r\n테스트 완료 후 아래 중 하나로 응답해주세요:\r\n  \"승인\"            → S{N+1} Stage 진행\r\n  \"거부 + 피드백\"  → 수정 후 재검증\r\n\r\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\r\n```\r\n\r\nAskUserQuestion tool로 PO 응답을 기다립니다.\r\n\r\n---\r\n\r\n## 8.5 PO 승인/거부 처리\r\n\r\n### Approved (승인)\r\n\r\nPO가 \"승인\"이라고 응답한 경우:\r\n\r\n```json\r\n// sal-grid/stage_gate_records/S{N}_gate.json 업데이트\r\n{\r\n  \"po_test_status\":    \"Tested\",\r\n  \"po_feedback\":       \"승인\",\r\n  \"stage_gate_status\": \"Approved\",\r\n  \"approved_at\":       \"{TODAY}\"\r\n}\r\n```\r\n\r\n작업 흐름:\r\n1. JSON 업데이트 (위)\r\n2. Git 커밋: `feat: S{N} Stage Gate — PO 승인 완료`\r\n3. **Stage Gate 순환**: 다음 Stage (S{N+1})의 PART 6(Task 실행)으로 돌아감\r\n   - 마지막 Stage까지 모두 Approved 시 → PART 9(프로젝트 완료 + 배포)로 진행\r\n\r\n### Rejected (거부)\r\n\r\nPO가 \"거부 + 피드백\"으로 응답한 경우:\r\n\r\n```json\r\n// sal-grid/stage_gate_records/S{N}_gate.json 업데이트\r\n{\r\n  \"po_test_status\":    \"Tested\",\r\n  \"po_feedback\":       \"{PO가 제공한 피드백 내용}\",\r\n  \"stage_gate_status\": \"Rejected\"\r\n}\r\n```\r\n\r\n작업 흐름:\r\n1. JSON 업데이트 (위)\r\n2. PO 피드백 분석 → 영향을 받는 Task 식별\r\n3. 해당 Task들을 `task_status`: `\"Completed\"` → `\"In Progress\"` 되돌림\r\n4. Task Agent 재투입 (피드백 내용을 프롬프트에 포함)\r\n5. 수정 완료 → Verification Agent 재투입\r\n6. Verified → `\"Completed\"` 업데이트\r\n7. Stage Gate 체크리스트 재확인 → PO 재승인 요청\r\n\r\n---\r\n\r\n## 8.6 Task Verification vs Stage Verification 명확 구분\r\n\r\n| 구분 | Task Verification | Stage Verification |\r\n|------|------------------|-------------------|\r\n| 범위 | 개별 Task 1개 | Stage 내 전체 Task |\r\n| 주체 | Verification Agent (AI 서브에이전트) | Main Agent 직접 수행 |\r\n| 시점 | Task 실행(Executed) 직후 즉시 | 전체 Stage Task Completed 후 |\r\n| 기록 위치 | `grid_records/{TaskID}.json` | `stage_gate_records/S{N}_gate.json` |\r\n| 승인 방식 | AI 자동 (Verified / Needs Fix) | PO 수동 승인 (Approved / Rejected) |\r\n| 보고서 | JSON 데이터 (구조화) | `stage-gates/S{N}GATE_verification_report.md` |\r\n| 실패 시 | Needs Fix 루프 → Task Agent 재투입 | PO 피드백 → Task 수정 → 재승인 |\r\n\r\n---\r\n\r\n# PART 9: 프로젝트 완료 + 배포\r\n\r\n## 9.1 전체 Stage Gate 확인\r\n\r\n모든 Stage가 완료된 후 아래 체크리스트를 확인합니다.\r\n각 gate.json을 Read tool로 직접 읽어 `stage_gate_status` 필드를 확인하세요.\r\n\r\n```\r\n# index.json의 stages에 정의된 모든 Stage에 대해 아래를 확인한다 (S0~SN 동적):\r\nsal-grid/stage_gate_records/S0_gate.json → stage_gate_status: \"Approved\"\r\nsal-grid/stage_gate_records/S1_gate.json → stage_gate_status: \"Approved\"\r\n...\r\nsal-grid/stage_gate_records/S{N}_gate.json → stage_gate_status: \"Approved\"\r\n\r\nsal-grid/index.json → task_ids 전체 건수 확인\r\nsal-grid/grid_records/ → 전체 TaskID의 task_status: \"Completed\" 확인\r\n전체 Task 완료율: 100%\r\n```\r\n\r\n모든 Stage가 \"Approved\"이고 Task 완료율 100%인 경우에만 배포를 진행합니다.\r\n\r\n---\r\n\r\n## 9.2 GitHub Pages 배포 (Viewer)\r\n\r\n### 사전 조건 확인\r\n\r\nGitHub CLI(gh)가 설치되어 있고 로그인되어 있어야 합니다.\r\n아래 명령어로 확인합니다 (Bash tool 또는 PO에게 요청):\r\n\r\n```bash\r\ngh --version    # GitHub CLI 버전 확인\r\ngh auth status  # 로그인 상태 확인\r\n```\r\n\r\n### GitHub Pages 배포 절차\r\n\r\n```bash\r\n# Step 1: Git 초기화 (기존 repo가 없는 경우)\r\ngit init\r\ngit branch -M main\r\n\r\n# Step 2: 전체 스테이징 및 커밋\r\ngit add .\r\ngit commit -m \"feat: {PROJECT_NAME} — 개발 완료 전체 Stage Gate 통과\"\r\n\r\n# Step 3: GitHub 레포 생성 및 푸시\r\ngh repo create {프로젝트명-소문자-kebab-case} \\\r\n  --public \\\r\n  --source=. \\\r\n  --push\r\n\r\n# Step 4: GitHub Pages 활성화 (main 브랜치 루트)\r\ngh api repos/{GitHub-username}/{repo-name}/pages \\\r\n  -X POST \\\r\n  -f source='{\"branch\":\"main\",\"path\":\"/\"}'\r\n```\r\n\r\n### Viewer URL 패턴\r\n\r\n```\r\nhttps://{GitHub-username}.github.io/{repo-name}/{DEV_ROOT}/Process/S0_Project-SAL-Grid_생성/viewer/viewer_json.html\r\n```\r\n\r\n배포 후 약 1~2분 뒤 GitHub Pages가 활성화됩니다.\r\nPO에게 URL을 안내하고 접속 가능 여부를 확인받습니다.\r\n\r\n---\r\n\r\n## 9.3 SSAL Works 플랫폼 연동 (선택)\r\n\r\n**PO의 명시적 요청이 있을 때만 수행합니다.**\r\nAI가 자동으로 판단하여 수행하지 않습니다.\r\n\r\nPO가 \"Viewer 연결해줘\" 또는 \"SSAL Works에 등록해줘\"라고 요청하면:\r\n  → `scripts/connect-viewer.js` 스크립트 실행 (해당 파일이 있는 경우)\r\n  → 없으면 PO에게 스크립트 경로 확인 요청\r\n\r\n---\r\n\r\n## 9.4 최종 완료 보고\r\n\r\n모든 배포가 완료되면 아래 형식으로 최종 보고를 출력합니다.\r\n\r\n```\r\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\r\n  PROJECT SAL GRID — 개발 완료\r\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\r\n\r\n  프로젝트: {PROJECT_NAME}\r\n  방법론:   {Vanilla / React}\r\n  완료일:   {TODAY}\r\n\r\n  Stage 실행 결과 (index.json stages 기준 — 전체 Stage)\r\n  ──────────────────────\r\n  S0 Project SAL Grid 생성 ... Approved\r\n  S1 {Stage명} .............. Approved\r\n  ...\r\n  S{N} {Stage명} ............ Approved\r\n  (모든 Stage Approved)\r\n\r\n  총 Task: {N}개 | 완료: {N}개 (100%)\r\n\r\n  배포 현황\r\n  ──────────────────────\r\n  Production:  {Vercel 배포 URL}\r\n  Viewer:      {GitHub Pages URL}\r\n\r\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\r\n```\r\n\r\n---\r\n\r\n## 9.5 최종 Git 커밋\r\n\r\n```bash\r\ngit add .\r\ngit commit -m \"feat: {PROJECT_NAME} 개발 완료 — {N}개 Task, 전체 Stage Gate 통과\"\r\ngit push\r\n```\r\n\r\n커밋 메시지에는 Task 수와 완료된 Stage 범위를 반드시 포함합니다.\r\n\r\n---\r\n\r\n# APPENDIX: 참조 테이블\r\n\r\n---\r\n\r\n## APPENDIX A: 11 Area 정의표\r\n\r\n| 코드 | 영문명 | 한글명 | 폴더명 | Task Agent | Verification Agent |\r\n|------|--------|--------|--------|------------|--------------------|\r\n| FE | Frontend | 프론트엔드 | Frontend/ | Frontend Developer | Frontend Verification Engineer |\r\n| BA | Backend APIs | 백엔드 API | Backend_APIs/ | Backend API Developer | Backend Verification Engineer |\r\n| DB | Database | 데이터베이스 | Database/ | Database Engineer | Database Verification Engineer |\r\n| SC | Security | 보안/인증 | Security/ | Security Engineer | Security Verification Engineer |\r\n| BI | Backend Infra | 백엔드 인프라 | Backend_Infra/ | Backend Infra Engineer | Backend Verification Engineer |\r\n| EX | External | 외부 연동 | External/ | Integration Engineer | Integration Verification Engineer |\r\n| TS | Testing | 테스트 | Testing/ | QA Engineer | QA Verification Engineer |\r\n| DV | DevOps | 배포/운영 | DevOps/ | DevOps Engineer | DevOps Verification Engineer |\r\n| DS | Design | 디자인 시스템 | Design/ | UI/UX Designer | Frontend Verification Engineer |\r\n| DC | Documentation | 문서화 | Documentation/ | Technical Writer | QA Verification Engineer |\r\n| CS | Content System | 콘텐츠 시스템 | Content_System/ | Content Engineer | QA Verification Engineer |\r\n\r\n> S0 Stage에서는 DC, DS Area Task가 주로 사용되며, SAL Grid 구조 자체를 생성합니다.\r\n> DS Area는 디자인 토큰, 컴포넌트 가이드라인 등을 관리합니다.\r\n\r\n---\r\n\r\n## APPENDIX B: 22속성 정의표\r\n\r\n| 번호 | 필드명 | 설명 | 타입 | 작성 시점 | 초기값 |\r\n|------|--------|------|------|-----------|--------|\r\n| 1 | task_id | SAL ID (예: S1FE1) | String | 생성 시 | 필수 |\r\n| 2 | task_name | Task 이름 (한글) | String | 생성 시 | 필수 |\r\n| 3 | stage | 소속 Stage 번호 (0 이상 정수) | Integer | 생성 시 | 필수 |\r\n| 4 | area | Area 코드 (FE, BA, DB, SC, BI, EX, TS, DV, DS, DC, CS) | String | 생성 시 | 필수 |\r\n| 5 | level | Level 번호 (1~N, Area 내 순번) | Integer | 생성 시 | 필수 |\r\n| 6 | task_status | Task 진행 상태 | Enum | 실행 단계 | \"Pending\" |\r\n| 7 | task_progress | 진행률 (0~100) | Integer | 실행 단계 | 0 |\r\n| 8 | task_agent | 수행 Agent 이름 | String | 생성 시 | 필수 |\r\n| 9 | verification_agent | 검증 Agent 이름 | String | 생성 시 | 필수 |\r\n| 10 | verification_status | 검증 상태 | Enum | 검증 후 | \"Not Verified\" |\r\n| 11 | execution_type | 실행 유형 (AI-Only / Human-AI / Human-Assisted) | Enum | 생성 시 | \"AI-Only\" |\r\n| 12 | dependencies | 선행 Task ID 목록 | Array[String] | 생성 시 | [] |\r\n| 13 | generated_files | 생성된 파일 경로 목록 (콤마 구분) | String | 실행 후 | \"\" |\r\n| 14 | test_result | 검증 단위/통합 테스트 결과 | Object | 검증 후 | {} |\r\n| 15 | build_verification | 빌드/컴파일/린트 결과 | Object | 검증 후 | {} |\r\n| 16 | integration_verification | 통합 연동 확인 결과 | Object | 검증 후 | {} |\r\n| 17 | blockers | Blocker 수 및 목록 | Object | 검증 후 | {\"count\":0,\"items\":[]} |\r\n| 18 | comprehensive_verification | 종합 검증 결과 및 노트 | Object | 검증 후 | {} |\r\n| 19 | modification_history | 수정 이력 (날짜: 내용) | String | 수정 시 | \"\" |\r\n| 20 | fix_instructions | Needs Fix 시 수정 지침 | String | Needs Fix 시 | \"\" |\r\n| 21 | notes | 기타 메모 | String | 언제든 | \"\" |\r\n| 22 | priority | 우선순위 (High / Medium / Low) | Enum | 생성 시 | \"Medium\" |\r\n\r\n---\r\n\r\n## APPENDIX C: 상태 전이 규칙\r\n\r\n### task_status 전이 다이어그램\r\n\r\n```\r\nPending\r\n    |\r\n    | (실행 시작 / JSON 업데이트)\r\n    v\r\nIn Progress\r\n    |\r\n    | (Task Agent 완료 / generated_files 기록)\r\n    v\r\nExecuted\r\n    |               |\r\n    | (Verified)    | (Needs Fix → 재수정)\r\n    v               v\r\nCompleted       In Progress  (되돌림 후 재실행)\r\n```\r\n\r\n### verification_status 전이 다이어그램\r\n\r\n```\r\nNot Verified\r\n    |\r\n    | (Verification Agent 투입)\r\n    v\r\nIn Review\r\n    |               |\r\n    | (Verified)    | (Needs Fix)\r\n    v               v\r\nVerified        Needs Fix\r\n                    |\r\n                    | (수정 완료 → 재검증)\r\n                    v\r\n                In Review (재투입)\r\n                    |\r\n                    v\r\n                Verified\r\n```\r\n\r\n### 상태 전이 규칙 표\r\n\r\n| 현재 상태 | 다음 상태 | 조건 |\r\n|-----------|-----------|------|\r\n| Pending | In Progress | Main Agent가 Task를 시작할 때 |\r\n| In Progress | Executed | Task Agent가 파일 생성 완료 후 |\r\n| Executed | In Review | Verification Agent 투입 시 |\r\n| In Review | Verified | 모든 검증 항목 통과 |\r\n| In Review | Needs Fix | 하나 이상의 검증 항목 실패 |\r\n| Needs Fix | In Progress | 수정 Task Agent 재투입 시 |\r\n| Verified | Completed | Main Agent가 확인 후 최종 업데이트 |\r\n| Completed | In Progress | PO 거부 피드백으로 재작업 시 (예외) |\r\n\r\n> \"Completed\"에서 다시 \"In Progress\"로 되돌리는 것은 PO가 Stage Gate를 거부한 경우에만 허용됩니다.\r\n\r\n---\r\n\r\n## APPENDIX D: Vanilla vs React 차이 매핑표\r\n\r\n| 항목 | Vanilla (HTML/CSS/JS) | React (Next.js or CRA) |\r\n|------|----------------------|------------------------|\r\n| Root 디렉토리 | `Process/S{N}_{StageName}/` | `Process/S{N}_{StageName}/` |\r\n| 메인 페이지 | `index.html` | `pages/index.jsx` 또는 `app/page.tsx` |\r\n| 에러 페이지 | `404.html` | `pages/404.jsx` 또는 `not-found.tsx` |\r\n| FE Area 산출물 | `.html` + `.css` + `.js` | `.jsx`/`.tsx` 컴포넌트 |\r\n| BA Area 산출물 | `api/{기능}.js` (Vercel Functions) | `pages/api/{기능}.js` 또는 `app/api/{기능}/route.ts` |\r\n| 정적 자원 | `assets/` (이미지, 폰트 등) | `public/` (이미지, 폰트 등) |\r\n| 스타일 | `styles/` 또는 파일별 `<style>` | CSS Modules / Tailwind / styled-components |\r\n| 환경 변수 | `.env.local` (`window.env` 또는 Vercel 환경 변수) | `.env.local` (`process.env.NEXT_PUBLIC_*`) |\r\n| 빌드 명령어 | 없음 (정적 파일 그대로 배포) | `npm run build` |\r\n| 배포 방식 | Vercel 정적 호스팅 | Vercel Next.js 빌드 |\r\n| GitHub Pages | 직접 지원 (정적) | `next export` 후 배포 |\r\n| @task 주석 | `<!-- @task {TaskID} -->` (HTML 최상단) | `// @task {TaskID}` (파일 최상단 주석) |\r\n| 패키지 관리 | 없음 (CDN 사용 가능) | `package.json` + `node_modules/` |\r\n\r\n---\r\n\r\n## APPENDIX E: Stage Gate JSON 템플릿\r\n\r\n> Template의 `stage_gate_records/` 폴더에 실제 파일이 있으므로, 구조는 Template 파일을 우선 참조하라.\r\n\r\n`sal-grid/stage_gate_records/S{N}_gate.json` 완전 구조:\r\n\r\n```json\r\n{\r\n  \"stage_id\": \"S{N}\",\r\n  \"stage_name\": \"{Stage Name}\",\r\n  \"methodology\": \"Vanilla\",\r\n  \"total_tasks\": 0,\r\n  \"completed_tasks\": 0,\r\n  \"completion_percentage\": 0,\r\n  \"task_ids\": [],\r\n  \"verification_checklist\": {\r\n    \"all_tasks_completed\": false,\r\n    \"all_tasks_verified\": false,\r\n    \"no_blockers\": false,\r\n    \"build_success\": false,\r\n    \"dependency_chain_complete\": false\r\n  },\r\n  \"ai_verification_status\": \"Pending\",\r\n  \"ai_verification_timestamp\": \"\",\r\n  \"ai_verification_note\": \"\",\r\n  \"stage_gate_report\": \"sal-grid/stage-gates/S{N}GATE_verification_report.md\",\r\n  \"po_test_status\": \"Pending\",\r\n  \"po_feedback\": \"\",\r\n  \"stage_gate_status\": \"Pending\",\r\n  \"approved_at\": \"\",\r\n  \"created_at\": \"{TODAY}\",\r\n  \"updated_at\": \"{TODAY}\"\r\n}\r\n```\r\n\r\n### stage_gate_status 전이\r\n\r\n| 값 | 의미 |\r\n|----|------|\r\n| \"Pending\" | Stage 진행 전 또는 진행 중 |\r\n| \"AI Verified\" | AI 검증 완료, PO 테스트 대기 |\r\n| \"Approved\" | PO 승인 완료, 다음 Stage 진행 가능 |\r\n| \"Rejected\" | PO 거부, 수정 후 재승인 필요 |\r\n\r\n---\r\n\r\n## APPENDIX F: Sub-agent 레지스트리\r\n\r\n### Task Agent 종류 (모델: sonnet 기준)\r\n\r\n| 번호 | Agent 이름 | 담당 Area | 주요 책임 |\r\n|------|------------|-----------|----------|\r\n| 1 | Frontend Developer | FE | HTML/CSS/JS UI 구현, 반응형 레이아웃, 접근성 |\r\n| 2 | Backend API Developer | BA | REST API, Supabase 쿼리, 서버리스 함수 |\r\n| 3 | Database Engineer | DB | 스키마 설계, 마이그레이션, RLS 정책 |\r\n| 4 | Security Engineer | SC | 인증/인가, JWT, CORS, Rate Limiting |\r\n| 5 | Backend Infra Engineer | BI | Supabase 클라이언트 설정, 환경 변수 관리 |\r\n| 6 | Integration Engineer | EX | 외부 API 연동, Webhook, SDK 통합 |\r\n| 7 | QA Engineer | TS | 테스트 코드 작성, 테스트 케이스 정의 |\r\n| 8 | DevOps Engineer | DV | Vercel 설정, CI/CD, 배포 자동화 |\r\n\r\n> haiku 모델: JSON 파일 생성 전담 서브에이전트, 텍스트 변환 전담 서브에이전트\r\n> opus 모델: 절대 서브에이전트로 사용 금지 (메인 세션 전용)\r\n\r\n### Verification Agent 종류 (모델: sonnet 기준)\r\n\r\n| 번호 | Agent 이름 | 검증 대상 Area | 주요 검증 포인트 |\r\n|------|------------|--------------|----------------|\r\n| 1 | Frontend Verification Engineer | FE, DS | 시맨틱 HTML, 반응형, 접근성, XSS |\r\n| 2 | Backend Verification Engineer | BA, BI | SQL Injection, 입력 검증, 상태 코드, 인증 |\r\n| 3 | Database Verification Engineer | DB | 정규화, 인덱스, 마이그레이션 순서, RLS |\r\n| 4 | Security Verification Engineer | SC | 인증 플로우, 토큰, CORS, 민감 정보 노출 |\r\n| 5 | Integration Verification Engineer | EX | API 응답 처리, 타임아웃, 재시도 |\r\n| 6 | QA Verification Engineer | TS, DC, CS | 테스트 커버리지, 문서 정확성 |\r\n\r\n---\r\n\r\n# 특수 명령어 (Special Commands)\r\n\r\n---\r\n\r\n## `/sal-grid-dev add` — 기존 Grid에 Task 추가\r\n\r\n기존 SAL Grid가 생성된 상태에서 Task를 추가합니다.\r\n\r\n### 실행 절차\r\n\r\n```\r\nStep 1: 기존 Grid 현황 파악\r\n  → sal-grid/index.json 읽기\r\n  → 현재 task_ids 목록 및 각 Stage별 분포 확인\r\n  → 가장 마지막 SAL ID 확인 (예: S2FE3이 마지막이면 다음은 S2FE4)\r\n\r\nStep 2: PO에게 새 Task 정보 수집 (AskUserQuestion)\r\n  - Task 이름은 무엇인가요?\r\n  - 어느 Stage에 속하는 Task인가요? (index.json의 stages 참조)\r\n  - Area는 무엇인가요? (FE/BA/DB/SC/BI/EX/TS/DV/DS/DC/CS)\r\n  - 선행 의존성이 있다면 어느 Task ID인가요?\r\n  - 실행 유형은? (AI-Only / Human-AI / Human-Assisted)\r\n\r\nStep 3: SAL ID 결정\r\n  → 해당 Stage + Area의 기존 마지막 Level 번호 + 1\r\n  → 예: S2FE3이 마지막이면 새 Task는 S2FE4\r\n\r\nStep 4: 의존성 검증\r\n  → dependencies에 명시된 TaskID가 모두 선행 Stage 이하인지 확인\r\n  → 역방향 의존성(후행 Stage → 선행 Stage) 금지\r\n\r\nStep 5: 5개 파일 동시 생성/업데이트 (07_task-crud.md 준수)\r\n  1. sal-grid/grid_records/{NewTaskID}.json (새 파일 생성)\r\n  2. sal-grid/task-instructions/{NewTaskID}_instruction.md (새 파일 생성)\r\n  3. sal-grid/verification-instructions/{NewTaskID}_verification.md (새 파일 생성)\r\n  4. sal-grid/index.json (task_ids에 신규 ID 추가)\r\n  5. sal-grid/stage_gate_records/S{N}_gate.json (total_tasks +1)\r\n\r\nStep 6: 완료 보고\r\n  \"S{N}{Area}{L}이 추가되었습니다.\"\r\n  생성 파일 목록 출력\r\n```\r\n\r\n---\r\n\r\n## `/sal-grid-dev status` — 전체 진행 현황 조회\r\n\r\nSAL Grid의 현재 진행 상태를 시각화합니다.\r\n\r\n### 실행 절차\r\n\r\n```\r\nStep 1: sal-grid/index.json 읽기 → task_ids 전체 목록 파악\r\nStep 2: 각 grid_records/{TaskID}.json 읽기 → task_status 수집\r\nStep 3: stage_gate_records/S{N}_gate.json × N 읽기 → stage_gate_status 수집\r\nStep 4: 아래 형식으로 출력\r\n```\r\n\r\n### 출력 형식\r\n\r\n```\r\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\r\n  SAL GRID STATUS — {PROJECT_NAME}\r\n  조회일: {TODAY}\r\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\r\n  Overall: XX% (XX/XX tasks completed)\r\n\r\n  Stage 현황\r\n  ─────────────────────────────────────────────\r\n  S0  [██████████] 10/10 (100%)  [Approved]\r\n  S1  [████░░░░░░]  4/10  (40%)  [In Progress]\r\n  S2  [░░░░░░░░░░]  0/15   (0%)  [Pending]\r\n  S3  [░░░░░░░░░░]  0/12   (0%)  [Pending]\r\n  S4  [░░░░░░░░░░]  0/ 8   (0%)  [Pending]\r\n\r\n  현황 요약\r\n  ─────────────────────────────────────────────\r\n  Completed:    XX개\r\n  In Progress:   X개 (현재 실행 중)\r\n  Executed:      X개 (검증 대기)\r\n  Pending:     XX개\r\n  Active:        X개 | Blockers: X개\r\n\r\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\r\n```\r\n\r\n진행 바 계산:\r\n- 전체 10칸 기준\r\n- 완료 비율(%)에 따라 채워진 블록(█) 수 계산\r\n- 예: 40% → █ 4개 + 빈칸 6개\r\n\r\n---\r\n\r\n## `/sal-grid-dev rebuild` — SAL Grid 전체 재생성\r\n\r\nTASK_PLAN.md를 기반으로 SAL Grid를 처음부터 재생성합니다.\r\n\r\n### 실행 절차\r\n\r\n```\r\nStep 1: 기존 진행 상태 백업\r\n  → sal-grid/ 폴더를 sal-grid-backup-{YYYYMMDD-HHMMSS}/ 로 복사\r\n  → 백업 완료 메시지 출력\r\n\r\nStep 2: TASK_PLAN.md 재파싱\r\n  → Read tool로 sal-grid/TASK_PLAN.md 읽기\r\n  → 전체 Task 목록 재추출\r\n\r\nStep 3: 기존 진행 상태 복원 여부 확인 (AskUserQuestion)\r\n  \"sal-grid-backup-{timestamp}/에 기존 진행 내역이 백업되었습니다.\r\n   재생성 후 기존 진행 상태(Completed, Verified 등)를 복원할까요?\r\n   예) 복원 O   / 아니오) 새로 시작\"\r\n\r\nStep 4-A: 복원 O인 경우\r\n  → sal-grid/ 전체 재생성 (PART 2~5 절차대로)\r\n  → 백업 파일에서 task_status, verification_status, generated_files,\r\n    test_result, modification_history 등 진행 관련 필드 복사\r\n  → stage_gate_records의 승인 상태도 복원\r\n\r\nStep 4-B: 새로 시작인 경우\r\n  → sal-grid/ 전체 재생성 (PART 2~5 절차대로)\r\n  → 모든 상태를 초기값으로 설정\r\n\r\nStep 5: 완료 보고\r\n  \"SAL Grid가 재생성되었습니다.\r\n   기존 백업: sal-grid-backup-{timestamp}/\r\n   총 Task: {N}개\"\r\n```\r\n\r\n---\r\n\r\n## 주의사항 (전체 스킬 공통)\r\n\r\n1. **폴더 임의 생성 금지** — 반드시 PO 승인 후 생성. 사전 경로 안내 후 확인 요청.\r\n2. **기존 파일 덮어쓰기 금지** — Read tool로 파일 존재 여부를 먼저 확인. 이미 존재하면 스킵 또는 확인 요청.\r\n3. **SAL ID 역방향 의존성 금지** — 선행 Stage 번호는 항상 후행 Stage 번호보다 작거나 같아야 함. S2가 S3에 의존할 수 없음.\r\n4. **Completed는 Verified 후에만** — Verification Agent가 \"Verified\"를 반환한 후에만 task_status를 \"Completed\"로 변경. 절대 예외 없음.\r\n5. **Task Agent != Verification Agent** — 동일 Agent가 자신의 결과물을 검증하는 것은 절대 금지.\r\n6. **JSON 문법 확인** — JSON 파일 생성/수정 후 필드 누락, 쉼표 오류, 따옴표 오류가 없는지 반드시 확인.\r\n7. **프로젝트 맥락 계승** — 실행 전 Brainstorming 자료 및 프로토타입 파일을 반드시 읽고 시작. 맥락 없이 진행 금지.\r\n8. **sub-agent 모델 원칙** — haiku(단순 반복/변환), sonnet(복잡한 코드/분석), opus는 서브에이전트로 절대 사용 금지.\r\n9. **Edit tool 우선** — JSON 파일은 항상 Edit tool로 부분 수정. Write tool로 전체 덮어쓰기는 데이터 손실 위험.\r\n10. **의존성 먼저 완료** — dependencies에 명시된 Task가 \"Completed\" 상태인지 확인 후 해당 Task를 시작.\r\n\r\n---\r\n\r\n## 관련 특허\r\n\r\n> 3차원 좌표계(Stage-Area-Level)가 인코딩된 식별자 기반으로 구축하는 소프트웨어 개발 방법론 (특허 출원)\r\n>\r\n> SAL Grid의 핵심 개념:\r\n> - S(Stage): 개발 단계 (0 이상 정수, 동적)\r\n> - A(Area): 기술 영역 (FE, BA, DB, SC, BI, EX, TS, DV, DS, DC, CS)\r\n> - L(Level): Area 내 순번 (1~N)\r\n>\r\n> SAL ID 예시: S2BA3 = Stage 2, Backend APIs, Level 3\r\n\r\n---\r\n\r\n## V2 변경 로그 (V2-260305)\r\n\r\n| 항목 | V1 | V2 |\r\n|------|----|----|\r\n| Stage 수 | 고정 5개 (S0~S4) | 동적 N개 (프로젝트 규모에 따라) |\r\n| 소급 도입 | 미지원 | 지원 (기존 프로젝트에 SAL Grid 도입) |\r\n| 상태값 포맷 | camelCase (`InProgress`) | 공백 포함 (`In Progress`) |\r\n| task_status | Pending, InProgress, Completed, Blocked, Failed | Pending, In Progress, Executed, Completed, Blocked, Failed |\r\n| verification_status | NotStarted, InVerification, Verified, VerificationFailed | Not Verified, In Review, Verified, Needs Fix |\r\n| Stage 번호 | 0~4 고정 | 0 이상 정수 (동적) |\r\n| index.json stages | 선택 | 필수 (Stage 정의 관리) |\r\n| 버전 형식 | V1 | V2-YYMMDD |\r\n\r\n## V3 변경 로그 (V3-260307)\r\n\r\n| 항목 | V2 | V3 |\r\n|------|----|----|\r\n| 파일 소스 | SKILL.md 인라인 (Single Source of Truth) | SAL_Grid_Dev_Suite_Template (외부 Template) |\r\n| PART 2 방식 | 인라인 내용 직접 Write | Template에서 cp -r 복사 후 플레이스홀더 치환 |\r\n| PART 4.2~4.5.3 | 인라인 템플릿 포함 (~437줄) | Template 참조 지시 (~80줄) |\r\n| PART 5 | 인라인 스크립트 포함 (~385줄) | Template 복사 확인 (~50줄) |\r\n| Template 경로 탐지 | 없음 | 1.0.5 섹션 추가 (G드라이브 → 프로젝트 루트 → 다운로드 안내) |\r\n| Viewer 원본 경로 | SSAL Works 내부 G드라이브 경로 하드코딩 | {TEMPLATE_PATH} 기반 동적 경로 |\r\n| SKILL.md 줄 수 | ~4,488줄 | ~2,200줄 (인라인 내용 제거) |\r\n| 버전 형식 | V2-YYMMDD | V3-YYMMDD |";
+
+let folderPath = localStorage.getItem('vcos_salgrid_folder') || '';
+if (folderPath) document.getElementById('folderInput').value = folderPath;
+renderCmd();
+
+function updateFolder() {
+  var val = document.getElementById('folderInput').value.trim();
+  folderPath = val;
+  if (val) localStorage.setItem('vcos_salgrid_folder', val);
+  else localStorage.removeItem('vcos_salgrid_folder');
+  renderCmd();
+}
+
+function clearFolder() {
+  localStorage.removeItem('vcos_salgrid_folder');
+  folderPath = '';
+  document.getElementById('folderInput').value = '';
+  renderCmd();
+}
+
+function renderCmd() {
+  var box = document.getElementById('salGridCmd');
+  if (!box) return;
+  box.textContent = folderPath
+    ? 'cd "' + folderPath + '"\n\n' + SKILL_CONTENT
+    : SKILL_CONTENT;
+}
+
+function copyCmd(btn) {
+  var text = folderPath
+    ? 'cd "' + folderPath + '"\n\n' + SKILL_CONTENT
+    : SKILL_CONTENT;
+  navigator.clipboard.writeText(text).then(function() {
+    btn.textContent = '✅ 복사됨!';
+    btn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
+    setTimeout(function() {
+      btn.textContent = '📋 전체 복사 (cd 명령어 + sal-grid-dev 스킬)';
+      btn.style.background = 'linear-gradient(135deg,var(--sg2),var(--sg))';
+    }, 2000);
+  });
+}
+</script>
+</body>
+</html>
