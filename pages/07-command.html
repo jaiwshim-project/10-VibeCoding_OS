@@ -184,7 +184,7 @@ function buildAllSectionsCmd() {
     const qLabels    = ['구조적 리스크','누락 항목','파괴 시나리오','엣지 케이스','단순화 사항','UX 개선 사항'];
     const qNoteLines = (collab.qNotes||[]).map((note,i) => note&&note.trim() ? `  [${qLabels[i]}] ${note.trim()}` : '').filter(Boolean).join('\n') || '  (없음)';
     const squadDesc  = squads.filter(s=>s.id!=='hq').map(s => `  ${s.emoji} ${s.name}: ${s.role}`).join('\n');
-    const skillList  = skills.length ? skills.map(s => `  ${s.emoji||'⚡'} ${s.name} | ${s.short||''}`).join('\n') : '  (없음)';
+    const skillList  = skills.length ? skills.map(s => `  ${s.emoji||'⚡'} ${s.name}\n     📌 ${s.desc||s.short||''}\n     시점: ${s.when||''} | 모델: ${s.model||''} | 명령: ${s.cmd||''}`).join('\n\n') : '  (없음)';
 
     return `## 🚀 VCOS — 1~6단계 통합 바이브 코딩 명령어
 
@@ -281,7 +281,7 @@ function getTabContent() {
   }
   if (activeTab === 'skills') {
     if (!skills.length) return '## ⚡ SKILL EXECUTION STRATEGY\n\n스킬 데이터 없음';
-    return `## ⚡ SKILL EXECUTION STRATEGY\n\n프로젝트 적용 스킬 (${skills.length}개):\n\n${skills.map(s=>`${s.emoji||'⚡'} ${s.name}\n   시점: ${s.when||''}\n   모델: ${s.model||''}\n   명령: ${s.cmd||''}`).join('\n\n')}`;
+    return `## ⚡ SKILL EXECUTION STRATEGY\n\n프로젝트 적용 스킬 (${skills.length}개):\n\n${skills.map(s=>`${s.emoji||'⚡'} ${s.name}\n   📌 ${s.desc||s.short||''}\n   시점: ${s.when||''}\n   모델: ${s.model||''}\n   명령: ${s.cmd||''}`).join('\n\n')}`;
   }
   return cmd;
 }
