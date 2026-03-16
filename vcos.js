@@ -34,8 +34,11 @@ const FEATURE_LABELS = {
   video:        '🎥 영상/미디어',
   lms:          '🎓 LMS/학습 관리',
   ecommerce:    '🛒 인터넷 쇼핑/커머스',
-  supabase:     '🗄️ Supabase 연동',
-  vercel:       '🚀 Vercel 배포 연동',
+  supabase:        '🗄️ Supabase 연동',
+  vercel:          '🚀 Vercel 배포 연동',
+  color_theme:     '🎨 컬러 색상과 배경',
+  mobile_optimize: '📲 모바일 화면 최적화',
+  opacity_optimize:'👁️ 투명도 최적화',
   manual:       '📖 매뉴얼 페이지',
   svg_sitemap:  '🗺️ SVG 구조도',
   chatbot:      '💬 챗봇 인터페이스(RAG)'
