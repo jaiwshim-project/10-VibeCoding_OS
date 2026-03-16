@@ -169,11 +169,107 @@ let activeTab = 'full';
 function setTab(tab) {
   activeTab = tab;
   document.querySelectorAll('.tab2').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  if (_skillsExpanded) { _skillsExpanded = false; document.getElementById('btnExpandSkills').textContent = '📖 스킬 내용 펼치기'; }
   renderCmd();
+}
+
+/* ── 1~6단계 전체 통합 명령어 생성 ── */
+function buildAllSectionsCmd() {
+  try {
+    const collab = JSON.parse(localStorage.getItem('vcosAiCollab') || '{}');
+    const squadCmd = (c.total < 16) ? '/platoon-formation-v1' : '/platoon-formation-v2';
+    const feats = (p.features||[]).map(f => `  - ${FEATURE_LABELS[f]||f}`).join('\n') || '  - (없음)';
+    const scaleLabels = ['','개인 프로젝트','스타트업 MVP','중규모 서비스','엔터프라이즈'];
+    const aiLabels   = ['없음','기본 (챗봇/Q&A)','중급 (추천/분석)','고급 (RAG/에이전트)'];
+    const qLabels    = ['구조적 리스크','누락 항목','파괴 시나리오','엣지 케이스','단순화 사항','UX 개선 사항'];
+    const qNoteLines = (collab.qNotes||[]).map((note,i) => note&&note.trim() ? `  [${qLabels[i]}] ${note.trim()}` : '').filter(Boolean).join('\n') || '  (없음)';
+    const squadDesc  = squads.filter(s=>s.id!=='hq').map(s => `  ${s.emoji} ${s.name}: ${s.role}`).join('\n');
+    const skillList  = skills.length ? skills.map(s => `  ${s.emoji||'⚡'} ${s.name} | ${s.short||''}`).join('\n') : '  (없음)';
+
+    return `## 🚀 VCOS — 1~6단계 통합 바이브 코딩 명령어
+
+════════════════════════════════════════
+## SECTION 1. 프로젝트 인텐트
+════════════════════════════════════════
+
+PROJECT  : ${p.name||''}
+PURPOSE  : ${p.purpose||''}
+USERS    : ${Array.isArray(p.users)?p.users.join(', '):''}
+STACK    : ${p.techStack||''}
+SCALE    : ${scaleLabels[p.scale||1]}
+AI LEVEL : ${aiLabels[p.aiLevel||0]}
+
+기능 목록:
+${feats}
+
+════════════════════════════════════════
+## SECTION 2. AI 협업 준비
+════════════════════════════════════════
+
+진짜 문제     : ${collab.realProblem||'(미입력)'}
+정제된 인텐트 : ${collab.refinedIntent||'(미입력)'}
+✅ 결정된 것  : ${collab.memoDecided||'(미입력)'}
+⏳ 미결 이슈  : ${collab.memoPending||'(미입력)'}
+📌 주요 맥락  : ${collab.memoContext||'(미입력)'}
+
+사전 검토 사항:
+${qNoteLines}
+
+════════════════════════════════════════
+## SECTION 3. 복잡도 분석
+════════════════════════════════════════
+
+복잡도 점수  : ${c.total}점
+프로젝트 타입 : ${type.label} ${type.badge}
+기능 수      : ${c.featureCount}개
+  UI/UX      : ${c.ui}점
+  백엔드      : ${c.backend}점
+  AI 기능    : ${c.ai}점
+  외부 연동  : ${c.integration}점
+  데이터      : ${c.data}점
+  보안        : ${c.security}점
+
+════════════════════════════════════════
+## SECTION 4. 분대 편성
+════════════════════════════════════════
+
+분대 편성 명령 : ${squadCmd}
+투입 분대      : ${squads.length}개
+
+${squadDesc}
+
+════════════════════════════════════════
+## SECTION 5. 스킬 전략
+════════════════════════════════════════
+
+활성 스킬 : ${skills.length}개
+
+${skillList}
+
+════════════════════════════════════════
+## SECTION 6. 토큰 최적화
+════════════════════════════════════════
+
+예상 총 토큰 : ${tk.total.toLocaleString()}
+예상 비용    : $${tk.cost}
+  Haiku      : ${tk.haiku.toLocaleString()} (60%)
+  Sonnet     : ${tk.sonnet.toLocaleString()} (35%)
+  Opus       : ${tk.opus.toLocaleString()} (5%)
+
+════════════════════════════════════════
+## EXECUTION ORDER
+════════════════════════════════════════
+
+1. ${squadCmd} 실행
+2. 핵심 기능 순서대로 구현
+3. 완성 후 /review-evaluate 최소 3회 실행
+4. ${rs.v4}점 달성 시 프로덕션 배포`;
+  } catch(e) { return '데이터 로드 오류: ' + e.message; }
 }
 
 function getTabContent() {
   if (activeTab === 'full') return cmd;
+  if (activeTab === 'allsections') return buildAllSectionsCmd();
   if (activeTab === 'mission') {
     const feats = (p.features||[]).map(f => `- ${FEATURE_LABELS[f]||f}`).join('\n') || '- (기능 목록)';
     return `## 📋 PROJECT INTENT\n\nProject : ${p.name||''}\nPurpose : ${p.purpose||''}\nUsers   : ${Array.isArray(p.users)?p.users.join(', '):''}\nType    : ${type.label}\nStack   : ${p.techStack||''}\n\n## 🎯 MISSION\n\n${p.purpose||p.name+' 플랫폼'}\n\n핵심 기능:\n${feats}`;
@@ -262,6 +358,7 @@ document.getElementById('content').innerHTML = `
 
 <div class="tab-bar2">
   <button class="tab2 active" data-tab="full" onclick="setTab('full')">📄 전체 명령어</button>
+  <button class="tab2" data-tab="allsections" onclick="setTab('allsections')" style="background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff;border-color:#2563eb;font-weight:700">📊 1~6단계 통합</button>
   <button class="tab2" data-tab="mission" onclick="setTab('mission')">🎯 Mission 파트</button>
   <button class="tab2" data-tab="squad" onclick="setTab('squad')">🪖 Squad 파트</button>
   <button class="tab2" data-tab="skills" onclick="setTab('skills')">⚡ Skills 파트</button>
@@ -272,6 +369,7 @@ document.getElementById('content').innerHTML = `
   <div class="action-strip">
     <button class="btn btn-primary btn-lg" onclick="copyText(getTabContent(), this)">📋 복사 (현재 탭)</button>
     <button class="btn btn-primary" onclick="copyText(cmd, this)">📋 전체 복사</button>
+    <button class="btn btn-primary" style="background:linear-gradient(135deg,#1e3a8a,#2563eb);border:none" onclick="copyText(buildAllSectionsCmd(), this)">📊 1~6단계 통합 복사</button>
     <button class="btn btn-success" onclick="downloadCmd()">⬇️ .md 파일 다운로드</button>
     <button class="btn btn-secondary" onclick="location.href='01-intent.html'">✏️ 프로젝트 수정</button>
     <button class="btn btn-secondary" id="btnExpandSkills" onclick="toggleSkillExpand(this)">📖 스킬 내용 펼치기</button>
