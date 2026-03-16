@@ -274,6 +274,7 @@ document.getElementById('content').innerHTML = `
     <button class="btn btn-primary" onclick="copyText(cmd, this)">📋 전체 복사</button>
     <button class="btn btn-success" onclick="downloadCmd()">⬇️ .md 파일 다운로드</button>
     <button class="btn btn-secondary" onclick="location.href='01-intent.html'">✏️ 프로젝트 수정</button>
+    <button class="btn btn-secondary" id="btnExpandSkills" onclick="toggleSkillExpand(this)">📖 스킬 내용 펼치기</button>
   </div>
 </div>
 
@@ -343,6 +344,287 @@ document.getElementById('content').innerHTML = `
 `;
 
 renderCmd();
+
+/* ── 스킬 내용 펼치기 / 접기 ── */
+let _skillsExpanded = false;
+function toggleSkillExpand(btn) {
+  const out = document.getElementById('cmdOutput');
+  if (!_skillsExpanded) {
+    const pv2 = document.getElementById('sk-platoon-v2').textContent.trim();
+    const re  = document.getElementById('sk-review-evaluate').textContent.trim();
+    out.textContent = out.textContent
+      .replace(/\/platoon-formation-v[12]/g, '\n\n' + pv2 + '\n\n')
+      .replace(/\/review-evaluate/g, '\n\n' + re + '\n\n');
+    btn.textContent = '📖 스킬 내용 접기';
+    _skillsExpanded = true;
+  } else {
+    renderCmd();
+    btn.textContent = '📖 스킬 내용 펼치기';
+    _skillsExpanded = false;
+  }
+}
+</script>
+<!-- ── 스킬 내용 저장소 (브라우저가 실행하지 않는 타입) ── -->
+<script type="text/x-skill-content" id="sk-platoon-v2">
+# Platoon Formation (소대 편제 방식 팀구성)
+
+현재 프로젝트 디렉토리 이름을 기반으로 Agent Teams 소대(42명)를 편성하고, 용병(CLI/API/MCP)을 전략적으로 활용하여 임무를 수행한다.
+
+---
+
+## Phase 1. 팀 생성 및 소대 편성
+
+### Step 1: 팀 생성
+- 현재 작업 디렉토리의 폴더명을 추출하여 `{폴더명}-platoon` 이름으로 TeamCreate 실행
+- 예: 작업 디렉토리가 `mychatbot-world`이면 → `mychatbot-platoon`
+
+### Step 1-1: HQ 편성 (본부)
+
+| 직책 | 역할 | 모델 | 비고 |
+|------|------|------|------|
+| **소대장** (team-lead) | Orchestrator, 전략적 의사결정 | opus | 직접 코딩 최소화 |
+| **연락병** (Chatbot) | 지휘관(User) ↔ 소대장 간 연락 | - | 채팅 인터페이스 |
+
+### Step 2: 분대장 스폰 (NATO 호출부호)
+
+3명의 Teammate를 백그라운드로 스폰한다.
+
+| 호출부호 | 직책 | 기본 역할 | 모델 |
+|---------|------|----------|------|
+| **Alpha** | 1분대장 | 역할 미정 (임무 시 배정) | sonnet |
+| **Bravo** | 2분대장 | 역할 미정 (임무 시 배정) | sonnet |
+| **Charlie** | 3분대장 | 역할 미정 (임무 시 배정) | sonnet |
+
+### Step 2-1: 표준 정규병 11명 (각 분대 공통)
+
+| # | Sub-Agent | 역할 | 기본 모델 |
+|---|-----------|------|----------|
+| 1 | frontend-developer | 프론트엔드 UI 개발 | sonnet |
+| 2 | backend-developer | 백엔드 API / 서버 로직 | sonnet |
+| 3 | database-developer | DB 스키마 / 쿼리 최적화 | sonnet |
+| 4 | ui-designer | UI/UX 디자인 | sonnet |
+| 5 | api-developer | API 엔드포인트 설계 / 구현 | sonnet |
+| 6 | code-reviewer | 코드 리뷰 / 품질 검증 | sonnet |
+| 7 | test-runner | 테스트 실행 / 자동화 | haiku |
+| 8 | debugger | 디버깅 / 문제 해결 | sonnet |
+| 9 | security-specialist | 보안 점검 / 취약점 분석 | sonnet |
+| 10 | documentation-writer | 문서 작성 / README / 가이드 | haiku |
+| 11 | devops-troubleshooter | 배포 / 환경 / CI-CD / 인프라 | sonnet |
+
+**투입 원칙:** 단순 반복 = haiku, 복잡한 코드/분석 = sonnet, opus 사용 금지
+
+---
+
+## Phase 2. 용병 투입 전략 (외부 AI — 공유 풀)
+
+| # | 용병명 | 호출 방법 | 특장점 | 투입 시점 |
+|---|-------|----------|--------|----------|
+| 1 | **Codex** | `codex -p "프롬프트" --full-auto` | 코드 자동 생성/실행 | 새 프로젝트 스캐폴딩 |
+| 2 | **Gemini** | `gemini -p "프롬프트" --context-window=2M` | 대용량 컨텍스트(200만 토큰) | 전체 코드베이스 분석 |
+| 3 | **Grok** | `grok -p "프롬프트" --fast` | 빠른 응답 | 빠른 프로토타이핑 |
+| 4 | **Perplexity** | MCP (`perplexity_ask`) | 실시간 웹 검색 | 최신 정보, 리서치 |
+
+---
+
+## Phase 5. 소대 운영 원칙
+
+### 지휘관 상호작용 제한 (최대 3회)
+
+| 횟수 | 시점 | 용도 |
+|------|------|------|
+| **1회** | 사전 준비 | 외부 파일 접근 허용 (필요 시만) |
+| **2회** | Phase 7 | 작전 개시 승인 |
+| **3회** | Phase 9 | 해산 승인 |
+
+### 편제표 (42명)
+
+| 역할 | 인원 | 모델 |
+|------|------|------|
+| 소대장 (team-lead) | 1 | opus |
+| 연락병 (Chatbot) | 1 | - |
+| 분대장 (Teammate) | 3 | sonnet |
+| 정규병 (SubAgent) | 33 | haiku / sonnet |
+| 용병 (외부 AI) | 4 | 타사 모델 |
+| **합계** | **42** | |
+
+**편제 공식:** HQ(2) + 3 Squads × 12(Leader+11) + 4 Mercenaries(Shared) = 42
+
+---
+
+## Phase 6. 대기 상태 보고
+
+편성 완료 후 소대 현황을 표로 보고:
+
+```
+╔════════════════════════════════════════════════════════════╗
+║      {프로젝트명}-platoon 소대 편성 완료 (42명)             ║
+╚════════════════════════════════════════════════════════════╝
+
+[HQ] 소대장(Opus) + 연락병(Chatbot) = 2명
+
+| 분대 | 분대장 | 역할 | 정규병 | 상태 |
+|------|--------|------|--------|------|
+| 1분대 | Alpha   | 역할 미정 | 11명 | 대기 |
+| 2분대 | Bravo   | 역할 미정 | 11명 | 대기 |
+| 3분대 | Charlie | 역할 미정 | 11명 | 대기 |
+
+[용병 풀] Codex / Gemini / Grok / Perplexity
+
+편제: HQ(2) + 3 x 12(Leader+11) + 4 Mercenaries = 42명
+소대 편성 완료. 지휘관님, 분대별 임무 개요를 알려주십시오!
+```
+
+---
+
+## Phase 7. 작전 수행 전 승인 게이트
+
+지휘관이 임무를 부여하면 소대장은 TaskCreate 후 AskUserQuestion으로 승인을 받는다.
+
+**승인 후 작전 개시 → 단계 간 전환은 소대장 자율 판단 (중간 승인 불필요)**
+
+---
+
+## Phase 9. 해산 승인 게이트
+
+Phase 8.5(결과 종합 보고) 완료 후:
+- AskUserQuestion으로 해산 여부 질의
+- 승인 시 즉시: shutdown_request → TeamDelete
+
+---
+
+## 요약 편제표 (42명)
+
+```
+HQ (2명)
+├── 소대장 (Opus) — Orchestrator
+└── 연락병 (Chatbot) — User ↔ 소대장
+
+1분대 (12명): Alpha + 정규병 11명
+2분대 (12명): Bravo + 정규병 11명
+3분대 (12명): Charlie + 정규병 11명
+
+용병 풀 (4명, 공유): Codex / Gemini / Grok / Perplexity
+```
+
+### 스킬 생태계 (18 Skills, 11-Tier)
+- Methodology: sal-grid-dev
+- C2: review-evaluate
+- Deployment: deploy-subagent, deploy-skill
+- Capability: create-image, doc-generator, youtube-generate, find-skills, api-builder, ui-ux-builder
+- Database: db-schema | Security: security-audit
+- Testing: e2e-test, api-test | Debugging: troubleshoot
+- Performance: performance-check | DevOps: cicd-setup | CPC 인프라: cpc-setup
+
+### 전체 프로세스 흐름 (지휘관 상호작용 최대 3회)
+```
+0. [허용] 외부 파일 접근 허용 (외부 파일 필요 시에만, 1회)
+1. 소대 편성 (Phase 1~6)
+2. [승인 1] 작전 개시 (Phase 7) — AskUserQuestion
+3. 작전 수행 (Phase 8) — 단계 전환은 소대장 자율
+4. 결과 종합 (Phase 8.5) — 보고 수집 → 종합 보고서 출력
+5. [승인 2] 해산 (Phase 9) — AskUserQuestion → 즉시 해산
+```
+</script>
+
+<script type="text/x-skill-content" id="sk-review-evaluate">
+# /review-evaluate — 검토 및 평가 (Review & Evaluate)
+
+콘텐츠를 **검토(Review)**하여 문제점을 파악하고, 직접 **수정(Fix)**한 뒤, **평가(Evaluate)**하여 품질 점수를 부여한다.
+**97점 이상 도달할 때까지 최소 3회 순환**한다.
+
+## Usage
+/review-evaluate [file_path_or_directory]
+
+---
+
+## Phase 1. 평가 대상 결정
+
+- 인자가 있는 경우: 해당 파일/디렉토리를 대상으로 한다.
+- 인자가 없는 경우: 직전 실행 이후 작업(생성/수정)한 모든 파일을 대상으로 한다.
+- 대상이 모호하면 AskUserQuestion으로 사용자(PO)에게 확인한다.
+
+---
+
+## Phase 2. 순환 루프 (Review → Fix → Evaluate)
+
+**최소 3회 반복, 97점 이상 도달 시 종료 조건 진입.**
+
+```
+┌─────────────────────────────────────────────┐
+│            순환 루프 (Round N)                │
+│                                             │
+│  Step 1. 검토 (Review) — 문제점 식별 + 분류  │
+│  Step 2. 수정 (Fix)    — 발견 문제점 직접 수정│
+│  Step 3. 평가 (Evaluate) — 5기준 점수 산정   │
+│                                             │
+│  판단:                                       │
+│    Round < 3           → 다음 라운드 계속    │
+│    Round >= 3, < 97점  → 다음 라운드 계속    │
+│    Round >= 3, >= 97점 → Phase 3 진입        │
+└─────────────────────────────────────────────┘
+```
+
+### Step 1: 검토 (Review)
+
+심각도 분류: [Critical] → [High] → [Medium] → [Low]
+
+각 문제점: 설명 (파일명:줄번호) + 수정 제안
+
+### Step 2: 수정 (Fix)
+
+- Critical / High: 반드시 수정
+- Medium: 가능하면 수정
+- Low: 선택적 수정
+
+### Step 3: 평가 기준 (각 20점, 총 100점)
+
+| 기준 | 내용 |
+|------|------|
+| 기술적 정확성 | 정보의 정확성과 최신성 |
+| 가독성 | 읽기 쉬움과 이해 용이성 |
+| 구조 및 구성 | 논리적 흐름과 체계적 배치 |
+| 완성도 | 주제의 포괄적 커버리지 |
+| 유용성 | 실용적 활용 가능성 |
+
+평가 보고 형식:
+```
+📊 평가 결과 (Round N)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⭐ 종합 평점: XX/100점
+• 기술적 정확성: XX/20점
+• 가독성: XX/20점
+• 구조 및 구성: XX/20점
+• 완성도: XX/20점
+• 유용성: XX/20점
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+---
+
+## Phase 3. 97점 도달 — 종료 확인
+
+```
+✅ 품질 목표 달성 (Round N)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⭐ 최종 평점: XX/100점 (목표 97점 달성)
+🔄 총 라운드: N회
+
+추가 검토·평가를 진행하시겠습니까?
+- [완료] 검토·평가 종료
+- [추가] 1회 더 검토·평가 수행
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+---
+
+## Execution Flow 요약
+
+```
+1. 평가 대상 결정
+2. Round 1~3 이상: 검토 → 수정 → 평가 (97점 미만이면 계속)
+3. 97점 이상 + 3회 이상 → 사용자(PO)에게 추가 여부 확인
+4. 종료 또는 추가 라운드
+```
 </script>
 </body>
 </html>
