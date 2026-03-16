@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VCOS — 06 Claude Code 명령어 생성</title>
 <link rel="stylesheet" href="../vcos.css">
+<script src="../vcos-skills.js"></script>
 <style>
 /* 06 명령어 생성 */
 .output-wrap { position:relative }
@@ -281,7 +282,13 @@ function getTabContent() {
   }
   if (activeTab === 'skills') {
     if (!skills.length) return '## ⚡ SKILL EXECUTION STRATEGY\n\n스킬 데이터 없음';
-    return `## ⚡ SKILL EXECUTION STRATEGY\n\n프로젝트 적용 스킬 (${skills.length}개):\n\n${skills.map(s=>`${s.emoji||'⚡'} ${s.name}\n   📌 ${s.desc||s.short||''}\n   시점: ${s.when||''}\n   모델: ${s.model||''}\n   명령: ${s.cmd||''}`).join('\n\n')}`;
+    const fc = window.SKILL_FULL_CONTENTS || {};
+    return `## ⚡ SKILL EXECUTION STRATEGY\n\n프로젝트 적용 스킬 (${skills.length}개):\n\n` +
+      skills.map(s => {
+        const full = fc[s.cmd] || fc[s.name];
+        const header = `${'═'.repeat(60)}\n${s.emoji||'⚡'} ${s.name}  |  시점: ${s.when||''}  |  모델: ${s.model||''}\n${'═'.repeat(60)}`;
+        return full ? header + '\n\n' + full : header + `\n\n📌 ${s.desc||s.short||''}\n   명령: ${s.cmd||''}`;
+      }).join('\n\n');
   }
   return cmd;
 }
@@ -448,11 +455,19 @@ let _skillsExpanded = false;
 function toggleSkillExpand(btn) {
   const out = document.getElementById('cmdOutput');
   if (!_skillsExpanded) {
-    const pv2 = document.getElementById('sk-platoon-v2').textContent.trim();
-    const re  = document.getElementById('sk-review-evaluate').textContent.trim();
-    out.textContent = out.textContent
-      .replace(/\/platoon-formation-v[12]/g, '\n\n' + pv2 + '\n\n')
-      .replace(/\/review-evaluate/g, '\n\n' + re + '\n\n');
+    const fc = window.SKILL_FULL_CONTENTS || {};
+    let text = out.textContent;
+    // Replace every skill command reference with full content
+    Object.entries(fc).forEach(([cmd, content]) => {
+      const escaped = cmd.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      text = text.replace(new RegExp(escaped, 'g'), '\n\n' + content + '\n\n');
+    });
+    // Fallback: also handle platoon-formation-v1/v2 via hidden tags if still present
+    const pv2El = document.getElementById('sk-platoon-v2');
+    const reEl  = document.getElementById('sk-review-evaluate');
+    if (pv2El) text = text.replace(/\/platoon-formation-v[12]/g, '\n\n' + pv2El.textContent.trim() + '\n\n');
+    if (reEl)  text = text.replace(/\/review-evaluate(?!-core)/g, '\n\n' + reEl.textContent.trim() + '\n\n');
+    out.textContent = text;
     btn.textContent = '📖 스킬 내용 접기';
     _skillsExpanded = true;
   } else {
