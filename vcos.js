@@ -460,6 +460,7 @@ function buildFooter(isHome) {
         <a href="${prefix}manual.html" class="footer-btn footer-btn-ghost" style="border-color:rgba(124,58,237,.4);color:rgba(167,139,250,.9)">📖 매뉴얼</a>
         <a href="${isHome?'../03-04 AX덴탈그룹/skills/02 스킬 모음 claude-20260305T005001Z-1-001/skills_overview.svg':'../../03-04 AX덴탈그룹/skills/02 스킬 모음 claude-20260305T005001Z-1-001/skills_overview.svg'}" target="_blank" class="footer-btn footer-btn-ghost" style="border-color:rgba(124,58,237,.5);color:rgba(196,181,253,.95);background:rgba(124,58,237,.08);font-weight:700">🗂️ SAL 22 스킬</a>
         <a href="${isHome?'pages/skills-map.html':'../pages/skills-map.html'}" class="footer-btn footer-btn-ghost" style="border-color:rgba(234,88,12,.5);color:rgba(255,200,100,.95);background:rgba(234,88,12,.08);font-weight:700">⚡ 25 스킬 구조도</a>
+        <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" class="footer-btn footer-btn-ghost" style="border-color:rgba(66,133,244,.5);color:rgba(138,193,255,.95);background:rgba(66,133,244,.08);font-weight:700">🔑 Gemini KEY</a>
       </div>
 
     </div>
