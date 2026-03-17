@@ -381,12 +381,12 @@ function buildNav(activeNum, isHome) {
           </div>
         </div>
       </div>
-      <a href="${refineHref}" class="nav-link${isRefine?' active':''}" style="margin-left:6px;${isRefine?'':'background:rgba(234,88,12,.12);border:1px solid rgba(234,88,12,.35);'}">
-        <span class="nav-num" style="${isRefine?'background:rgba(255,255,255,.35)':'background:rgba(234,88,12,.5)'};font-size:7px;width:18px">P2</span>고도화</a>
-      <a href="${salGridHref}" class="nav-link${isSalGrid?' active':''}" style="margin-left:4px;${isSalGrid?'':'background:rgba(67,56,202,.12);border:1px solid rgba(67,56,202,.35);'}">
-        <span class="nav-num" style="${isSalGrid?'background:rgba(255,255,255,.35)':'background:rgba(67,56,202,.5)'};font-size:7px;width:18px">P3</span>SAL-Grid</a>
+      <a href="${salGridHref}" class="nav-link${isSalGrid?' active':''}" style="margin-left:6px;${isSalGrid?'':'background:rgba(67,56,202,.12);border:1px solid rgba(67,56,202,.35);'}">
+        <span class="nav-num" style="${isSalGrid?'background:rgba(255,255,255,.35)':'background:rgba(67,56,202,.5)'};font-size:7px;width:18px">P2</span>SAL-Grid</a>
       <a href="${debugLoopHref}" class="nav-link${isDebugLoop?' active':''}" style="margin-left:4px;${isDebugLoop?'':'background:rgba(225,29,72,.12);border:1px solid rgba(225,29,72,.35);'}">
-        <span class="nav-num" style="${isDebugLoop?'background:rgba(255,255,255,.35)':'background:rgba(225,29,72,.5)'};font-size:7px;width:18px">P4</span>Debug Loop</a>
+        <span class="nav-num" style="${isDebugLoop?'background:rgba(255,255,255,.35)':'background:rgba(225,29,72,.5)'};font-size:7px;width:18px">P3</span>Debug Loop</a>
+      <a href="${refineHref}" class="nav-link${isRefine?' active':''}" style="margin-left:4px;${isRefine?'':'background:rgba(234,88,12,.12);border:1px solid rgba(234,88,12,.35);'}">
+        <span class="nav-num" style="${isRefine?'background:rgba(255,255,255,.35)':'background:rgba(234,88,12,.5)'};font-size:7px;width:18px">P4</span>고도화</a>
       <a href="${slideshowHref}" class="nav-link${isSlideshow?' active':''}" style="margin-left:4px;${isSlideshow?'':'background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.35);'}">
         <span class="nav-num" style="${isSlideshow?'background:rgba(255,255,255,.35)':'background:rgba(124,58,237,.5)'};font-size:7px;width:18px">P5</span>Slideshow</a>
       <a href="${youtubeHref}" class="nav-link${isYoutube?' active':''}" style="margin-left:4px;${isYoutube?'':'background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.35);'}">
