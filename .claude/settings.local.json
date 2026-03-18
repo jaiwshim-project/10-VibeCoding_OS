@@ -58,7 +58,18 @@
       "Bash(grep \"\\\\.json$\")",
       "Bash(grep:*)",
       "Bash(git:*)",
-      "Bash(gh auth:*)"
+      "Bash(gh auth:*)",
+      "Bash(if ! grep -q \"vcos.js\" \"$f\")",
+      "Bash(then)",
+      "Bash(sed -i '/<\\\\/script>/i\\\\<script src=\"\"../vcos.js\"\"><\\\\/script>' \"$f\")",
+      "Bash(fi)",
+      "Bash(mkdir:*)",
+      "Bash(for file:*)",
+      "Bash(do sed:*)",
+      "Bash(echo \"✅ $file 수정 완료\")",
+      "Bash(echo \"✅ $file 수정\")",
+      "Bash(grep -h \"href=\"\"index.html\"\">홈\" *.html)",
+      "Bash(echo \"✅ $file 로고 링크 수정\")"
     ]
   }
 }
