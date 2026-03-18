@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>정책 — 오세훈 플랫폼</title>
+  <link rel="stylesheet" href="../styles/design-system.css">
+  <style>
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--space-6);
+    }
+
+    /* 헤더 */
+    header {
+      background-color: white;
+      border-bottom: 1px solid var(--border);
+      padding: var(--space-4) var(--space-6);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    nav a {
+      margin-left: var(--space-6);
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: var(--font-weight-medium);
+      transition: var(--transition);
+    }
+
+    nav a:hover,
+    nav a.active {
+      color: var(--primary);
+    }
+
+    /* 검색 & 필터 섹션 */
+    .search-filter-section {
+      background: var(--bg-light);
+      padding: var(--space-6);
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--space-8);
+    }
+
+    .search-box {
+      margin-bottom: var(--space-6);
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: var(--space-4);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-base);
+    }
+
+    .filter-group {
+      display: flex;
+      gap: var(--space-4);
+      flex-wrap: wrap;
+      margin-bottom: var(--space-4);
+    }
+
+    .filter-group label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      cursor: pointer;
+    }
+
+    .filter-group input {
+      cursor: pointer;
+    }
+
+    .sort-controls {
+      display: flex;
+      gap: var(--space-3);
+      align-items: center;
+    }
+
+    .sort-controls select {
+      padding: var(--space-3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+
+    /* 정책 카드 */
+    .policies-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: var(--space-6);
+      margin-bottom: var(--space-8);
+    }
+
+    .policy-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .policy-card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-4px);
+    }
+
+    .policy-header {
+      padding: var(--space-6);
+      background: linear-gradient(135deg, var(--primary-light) 0%, rgba(0, 102, 204, 0.05) 100%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .policy-icon {
+      font-size: 40px;
+      margin-bottom: var(--space-3);
+    }
+
+    .policy-category {
+      display: inline-block;
+      padding: 4px 12px;
+      background: var(--primary);
+      color: white;
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      margin-bottom: var(--space-3);
+    }
+
+    .policy-title {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      margin-bottom: var(--space-2);
+      color: var(--text);
+    }
+
+    .policy-body {
+      padding: var(--space-6);
+      flex: 1;
+    }
+
+    .policy-summary {
+      font-size: var(--font-size-base);
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: var(--space-4);
+    }
+
+    .policy-footer {
+      padding: var(--space-6);
+      background: var(--bg-light);
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: var(--space-3);
+    }
+
+    .policy-footer button {
+      flex: 1;
+    }
+
+    /* 상세 정책 모달 */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: white;
+      border-radius: var(--radius-lg);
+      max-width: 700px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-xl);
+    }
+
+    .modal-header {
+      padding: var(--space-6);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+
+    .modal-body {
+      padding: var(--space-6);
+    }
+
+    .modal-section {
+      margin-bottom: var(--space-6);
+    }
+
+    .modal-section h3 {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      margin-bottom: var(--space-3);
+      color: var(--primary);
+    }
+
+    .modal-section p {
+      font-size: var(--font-size-base);
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: var(--space-3);
+    }
+
+    .budget-info {
+      background: var(--bg-light);
+      padding: var(--space-4);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-3);
+    }
+
+    .budget-label {
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      margin-bottom: var(--space-1);
+    }
+
+    .budget-value {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--primary);
+    }
+
+    /* 푸터 */
+    footer {
+      background-color: var(--text);
+      color: white;
+      padding: var(--space-8) var(--space-6);
+      text-align: center;
+      margin-top: var(--space-8);
+    }
+
+    footer a {
+      color: var(--primary-light);
+      text-decoration: none;
+    }
+
+    /* 반응형 */
+    @media (max-width: 768px) {
+      .container {
+        padding: var(--space-4);
+      }
+
+      .filter-group {
+        flex-direction: column;
+      }
+
+      .policies-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .sort-controls {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .sort-controls select {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 640px) {
+      nav {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 헤더 -->
+  <header>
+    <div class="header-content">
+      <a href="/" class="logo">🏛️ 오세훈 플랫폼</a>
+      <nav>
+        <a href="/">홈</a>
+        <a href="profile.html">프로필</a>
+        <a href="policies.html" class="active">정책</a>
+        <a href="news.html">뉴스</a>
+        <a href="chatbot.html">챗봇</a>
+        <a href="map.html">지도</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 style="margin-bottom: var(--space-6); font-size: var(--font-size-3xl);">정책 & 비전</h1>
+
+    <!-- 검색 & 필터 -->
+    <div class="search-filter-section">
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="정책 검색...">
+      </div>
+
+      <div style="display: flex; gap: var(--space-4); flex-wrap: wrap; margin-bottom: var(--space-6); align-items: flex-end;">
+        <div style="flex: 1; min-width: 200px;">
+          <label style="display: block; margin-bottom: var(--space-2); font-weight: var(--font-weight-semibold);">카테고리</label>
+          <div class="filter-group">
+            <label>
+              <input type="checkbox" name="category" value="all" checked>
+              모두
+            </label>
+            <label>
+              <input type="checkbox" name="category" value="economy">
+              경제
+            </label>
+            <label>
+              <input type="checkbox" name="category" value="housing">
+              주택
+            </label>
+            <label>
+              <input type="checkbox" name="category" value="transport">
+              교통
+            </label>
+          </div>
+        </div>
+
+        <div class="sort-controls">
+          <label style="margin: 0;">정렬:</label>
+          <select id="sortSelect">
+            <option value="latest">최신</option>
+            <option value="popular">인기</option>
+            <option value="relevant">관련도</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 정책 카드 그리드 -->
+    <div class="policies-grid" id="policiesGrid">
+      <!-- 정책 1 -->
+      <div class="policy-card" data-category="economy">
+        <div class="policy-header">
+          <div class="policy-icon">💼</div>
+          <span class="policy-category">경제</span>
+          <h2 class="policy-title">일자리 창출</h2>
+        </div>
+        <div class="policy-body">
+          <p class="policy-summary">
+            50만 개의 새로운 일자리 창출로 청년 실업 해소 및 지역 경제 활성화를 추진합니다.
+          </p>
+        </div>
+        <div class="policy-footer">
+          <button class="btn btn-primary btn-sm policy-detail-btn" data-policy="job">상세보기</button>
+          <button class="btn btn-secondary btn-sm">공유</button>
+        </div>
+      </div>
+
+      <!-- 정책 2 -->
+      <div class="policy-card" data-category="housing">
+        <div class="policy-header">
+          <div class="policy-icon">🏠</div>
+          <span class="policy-category">주택</span>
+          <h2 class="policy-title">주택 안정화</h2>
+        </div>
+        <div class="policy-body">
+          <p class="policy-summary">
+            전월세 가격 안정화 및 청년 주거 지원으로 주거 문제를 해결합니다.
+          </p>
+        </div>
+        <div class="policy-footer">
+          <button class="btn btn-primary btn-sm policy-detail-btn" data-policy="housing">상세보기</button>
+          <button class="btn btn-secondary btn-sm">공유</button>
+        </div>
+      </div>
+
+      <!-- 정책 3 -->
+      <div class="policy-card" data-category="transport">
+        <div class="policy-header">
+          <div class="policy-icon">🚇</div>
+          <span class="policy-category">교통</span>
+          <h2 class="policy-title">교통 혁신</h2>
+        </div>
+        <div class="policy-body">
+          <p class="policy-summary">
+            지능형 신호 시스템 도입으로 교통 혼잡 50% 감소를 목표합니다.
+          </p>
+        </div>
+        <div class="policy-footer">
+          <button class="btn btn-primary btn-sm policy-detail-btn" data-policy="transport">상세보기</button>
+          <button class="btn btn-secondary btn-sm">공유</button>
+        </div>
+      </div>
+
+      <!-- 정책 4 -->
+      <div class="policy-card" data-category="economy">
+        <div class="policy-header">
+          <div class="policy-icon">🎓</div>
+          <span class="policy-category">경제</span>
+          <h2 class="policy-title">스타트업 지원</h2>
+        </div>
+        <div class="policy-body">
+          <p class="policy-summary">
+            청년 창업자를 위한 자금 지원 및 멘토링 프로그램을 확대합니다.
+          </p>
+        </div>
+        <div class="policy-footer">
+          <button class="btn btn-primary btn-sm policy-detail-btn" data-policy="startup">상세보기</button>
+          <button class="btn btn-secondary btn-sm">공유</button>
+        </div>
+      </div>
+
+      <!-- 정책 5 -->
+      <div class="policy-card" data-category="housing">
+        <div class="policy-header">
+          <div class="policy-icon">👨‍👩‍👧‍👦</div>
+          <span class="policy-category">주택</span>
+          <h2 class="policy-title">가족 맞춤형 주택</h2>
+        </div>
+        <div class="policy-body">
+          <p class="policy-summary">
+            다자녀 가구를 위한 특별 주택 공급 및 금융 지원 제도입니다.
+          </p>
+        </div>
+        <div class="policy-footer">
+          <button class="btn btn-primary btn-sm policy-detail-btn" data-policy="family">상세보기</button>
+          <button class="btn btn-secondary btn-sm">공유</button>
+        </div>
+      </div>
+
+      <!-- 정책 6 -->
+      <div class="policy-card" data-category="transport">
+        <div class="policy-header">
+          <div class="policy-icon">🚌</div>
+          <span class="policy-category">교통</span>
+          <h2 class="policy-title">대중교통 개선</h2>
+        </div>
+        <div class="policy-body">
+          <p class="policy-summary">
+            버스 운행 빈도 증대 및 지하철 노선 확충으로 접근성을 높입니다.
+          </p>
+        </div>
+        <div class="policy-footer">
+          <button class="btn btn-primary btn-sm policy-detail-btn" data-policy="transit">상세보기</button>
+          <button class="btn btn-secondary btn-sm">공유</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 모달 -->
+  <div class="modal-overlay" id="policyModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modalTitle">정책 상세</h2>
+        <button class="modal-close" onclick="closePolicyModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-section">
+          <h3>개요</h3>
+          <p id="modalOverview"></p>
+        </div>
+
+        <div class="modal-section">
+          <h3>문제 인식</h3>
+          <p id="modalProblem"></p>
+        </div>
+
+        <div class="modal-section">
+          <h3>해결 방안</h3>
+          <p id="modalSolution"></p>
+        </div>
+
+        <div class="modal-section">
+          <h3>기대 효과</h3>
+          <p id="modalEffect"></p>
+        </div>
+
+        <div class="modal-section">
+          <h3>예산</h3>
+          <div class="budget-info">
+            <div class="budget-label">총 예산</div>
+            <div class="budget-value" id="modalBudget"></div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: var(--space-3);">
+          <button class="btn btn-secondary" onclick="closePolicyModal()">닫기</button>
+          <button class="btn btn-primary">다운로드</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 푸터 -->
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 오세훈 캠프. 모든 권리 보유.</p>
+      <div style="margin-top: var(--space-4); font-size: var(--font-size-sm);">
+        <a href="#">개인정보</a> |
+        <a href="#">이용약관</a> |
+        <a href="#">문의</a> |
+        <a href="#">SNS</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // 정책 데이터
+    const policies = {
+      job: {
+        title: '일자리 창출',
+        overview: '50만 개의 새로운 일자리 창출로 청년 실업 해소 및 지역 경제 활성화를 추진합니다.',
+        problem: '현재 청년 실업률은 6% 이상으로 높은 수준입니다. 경제의 저성장과 고령화로 인해 고용 시장이 축소되고 있습니다.',
+        solution: '중소기업 지원, 산업 구조 전환, 창업 지원 등 다각적 접근으로 일자리를 창출합니다.',
+        effect: '청년 실업률 50% 감소, 지역 경제 활성화, GDP 1.5% 성장 기여',
+        budget: '5조 원'
+      },
+      housing: {
+        title: '주택 안정화',
+        overview: '전월세 가격 안정화 및 청년 주거 지원으로 주거 문제를 해결합니다.',
+        problem: '서울 아파트 매매가가 10년간 2배 이상 상승하였고, 월세도 지속 상승 중입니다.',
+        solution: '장기전세주택 공급 확대, 전월세 상한제, 청년 주거 지원금 지급',
+        effect: '전월세 상승률 50% 억제, 청년층 주거안정성 향상, 서민 부담 완화',
+        budget: '3조 원'
+      },
+      transport: {
+        title: '교통 혁신',
+        overview: '지능형 신호 시스템 도입으로 교통 혼잡을 획기적으로 개선합니다.',
+        problem: '서울의 교통 혼잡도는 전국 최고 수준이며, 연간 GDP 손실이 10조 원을 넘습니다.',
+        solution: 'AI 기반 신호 제어, 도로 확충, 대중교통 개선, 보행자 중심 도시설계',
+        effect: '교통 혼잡 50% 감소, 통근 시간 30% 단축, 환경 개선',
+        budget: '4조 원'
+      },
+      startup: {
+        title: '스타트업 지원',
+        overview: '청년 창업자를 위한 자금 지원 및 멘토링 프로그램을 확대합니다.',
+        problem: '청년들의 창업 의욕은 높으나 자금과 정보 부족으로 실패율이 높습니다.',
+        solution: '창업자금 저금리 융자, 공유 오피스 제공, 경영 멘토링, 네트워킹',
+        effect: '연 1,000개 창업 기업 지원, 고용 창출 5만 명, 스타트업 생태계 조성',
+        budget: '1조 원'
+      },
+      family: {
+        title: '가족 맞춤형 주택',
+        overview: '다자녀 가구를 위한 특별 주택 공급 및 금융 지원 제도입니다.',
+        problem: '주택 부담으로 출산율이 계속 하락하고 있습니다.',
+        solution: '3자녀 이상 가구 특별 공급, 저금리 대출, 세금 감면',
+        effect: '출산율 향상, 저출산 문제 완화, 가족 정책 선진화',
+        budget: '2조 원'
+      },
+      transit: {
+        title: '대중교통 개선',
+        overview: '버스 운행 빈도 증대 및 지하철 노선 확충으로 접근성을 높입니다.',
+        problem: '지역별 대중교통 격차가 크고, 버스 승차감이 열악합니다.',
+        solution: '버스 증차, 지하철 신규 노선 개발, 승객 편의 시설 개선',
+        effect: '대중교통 이용률 30% 증가, 환경 오염 감소, 교통 형평성 개선',
+        budget: '1.5조 원'
+      }
+    };
+
+    // 모달 열기
+    document.querySelectorAll('.policy-detail-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const policyKey = e.target.dataset.policy;
+        const policy = policies[policyKey];
+
+        document.getElementById('modalTitle').textContent = policy.title;
+        document.getElementById('modalOverview').textContent = policy.overview;
+        document.getElementById('modalProblem').textContent = policy.problem;
+        document.getElementById('modalSolution').textContent = policy.solution;
+        document.getElementById('modalEffect').textContent = policy.effect;
+        document.getElementById('modalBudget').textContent = policy.budget;
+
+        document.getElementById('policyModal').classList.add('active');
+      });
+    });
+
+    // 모달 닫기
+    function closePolicyModal() {
+      document.getElementById('policyModal').classList.remove('active');
+    }
+
+    // 검색 기능
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      document.querySelectorAll('.policy-card').forEach(card => {
+        const title = card.querySelector('.policy-title').textContent.toLowerCase();
+        const summary = card.querySelector('.policy-summary').textContent.toLowerCase();
+        if (title.includes(searchTerm) || summary.includes(searchTerm)) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+
+    // 정렬 기능
+    document.getElementById('sortSelect').addEventListener('change', (e) => {
+      const sortValue = e.target.value;
+      // 정렬 로직은 필요시 추가
+    });
+  </script>
+</body>
+</html>

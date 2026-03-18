@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>뉴스 — 오세훈 플랫폼</title>
+  <link rel="stylesheet" href="../styles/design-system.css">
+  <style>
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--space-6);
+    }
+
+    /* 헤더 */
+    header {
+      background-color: white;
+      border-bottom: 1px solid var(--border);
+      padding: var(--space-4) var(--space-6);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    nav a {
+      margin-left: var(--space-6);
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: var(--font-weight-medium);
+      transition: var(--transition);
+    }
+
+    nav a:hover,
+    nav a.active {
+      color: var(--primary);
+    }
+
+    /* 검색 & 필터 섹션 */
+    .search-filter-section {
+      background: var(--bg-light);
+      padding: var(--space-6);
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--space-8);
+    }
+
+    .search-box {
+      margin-bottom: var(--space-6);
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: var(--space-4);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-base);
+    }
+
+    .filter-group {
+      display: flex;
+      gap: var(--space-4);
+      flex-wrap: wrap;
+    }
+
+    .filter-group label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      cursor: pointer;
+    }
+
+    /* 뉴스 피드 레이아웃 */
+    .news-grid {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: var(--space-8);
+      margin-bottom: var(--space-8);
+    }
+
+    /* 메인 뉴스 */
+    .news-main {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+    }
+
+    .news-item {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: var(--transition);
+      display: flex;
+      gap: var(--space-4);
+      cursor: pointer;
+    }
+
+    .news-item:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+
+    .news-thumbnail {
+      width: 250px;
+      height: 200px;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, var(--primary-light) 0%, rgba(0, 102, 204, 0.05) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 80px;
+    }
+
+    .news-content {
+      padding: var(--space-6);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .news-date {
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      margin-bottom: var(--space-2);
+    }
+
+    .news-category {
+      display: inline-block;
+      padding: 4px 12px;
+      background: rgba(0, 102, 204, 0.1);
+      color: var(--primary);
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      margin-bottom: var(--space-3);
+      width: fit-content;
+    }
+
+    .news-title {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      margin-bottom: var(--space-3);
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .news-summary {
+      font-size: var(--font-size-base);
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: var(--space-4);
+      flex: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .news-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text-secondary);
+      font-size: var(--font-size-sm);
+    }
+
+    .news-link {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: var(--font-weight-semibold);
+    }
+
+    /* 사이드바 */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+    }
+
+    .sidebar-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+    }
+
+    .sidebar-title {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      margin-bottom: var(--space-4);
+    }
+
+    .sidebar-list {
+      list-style: none;
+    }
+
+    .sidebar-list-item {
+      padding: var(--space-3) 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-list-item:last-child {
+      border-bottom: none;
+    }
+
+    .sidebar-list-link {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: var(--font-weight-medium);
+      transition: var(--transition);
+    }
+
+    .sidebar-list-link:hover {
+      text-decoration: underline;
+    }
+
+    /* 상세 뉴스 모달 */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: white;
+      border-radius: var(--radius-lg);
+      max-width: 800px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-xl);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: var(--space-6);
+      right: var(--space-6);
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+
+    .modal-image {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: var(--primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 80px;
+    }
+
+    .modal-content {
+      padding: var(--space-8);
+    }
+
+    .modal-meta {
+      display: flex;
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+    }
+
+    .modal-title {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      margin-bottom: var(--space-6);
+      color: var(--text);
+    }
+
+    .modal-body {
+      font-size: var(--font-size-base);
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: var(--space-8);
+    }
+
+    .modal-footer {
+      display: flex;
+      gap: var(--space-3);
+      padding-top: var(--space-6);
+      border-top: 1px solid var(--border);
+    }
+
+    .modal-footer button {
+      flex: 1;
+    }
+
+    /* 푸터 */
+    footer {
+      background-color: var(--text);
+      color: white;
+      padding: var(--space-8) var(--space-6);
+      text-align: center;
+      margin-top: var(--space-8);
+    }
+
+    footer a {
+      color: var(--primary-light);
+      text-decoration: none;
+    }
+
+    /* 반응형 */
+    @media (max-width: 968px) {
+      .news-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        flex-direction: row;
+        gap: var(--space-4);
+      }
+
+      .sidebar-card {
+        flex: 1;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: var(--space-4);
+      }
+
+      .news-item {
+        flex-direction: column;
+      }
+
+      .news-thumbnail {
+        width: 100%;
+        height: 200px;
+      }
+
+      .sidebar {
+        flex-direction: column;
+        gap: var(--space-6);
+      }
+    }
+
+    @media (max-width: 640px) {
+      nav {
+        display: none;
+      }
+
+      .filter-group {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 헤더 -->
+  <header>
+    <div class="header-content">
+      <a href="/" class="logo">🏛️ 오세훈 플랫폼</a>
+      <nav>
+        <a href="/">홈</a>
+        <a href="profile.html">프로필</a>
+        <a href="policies.html">정책</a>
+        <a href="news.html" class="active">뉴스</a>
+        <a href="chatbot.html">챗봇</a>
+        <a href="map.html">지도</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 style="margin-bottom: var(--space-6); font-size: var(--font-size-3xl);">뉴스 & 업데이트</h1>
+
+    <!-- 검색 & 필터 -->
+    <div class="search-filter-section">
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="뉴스 검색...">
+      </div>
+
+      <div>
+        <label style="display: block; margin-bottom: var(--space-2); font-weight: var(--font-weight-semibold);">카테고리</label>
+        <div class="filter-group">
+          <label>
+            <input type="checkbox" name="category" value="all" checked>
+            모두
+          </label>
+          <label>
+            <input type="checkbox" name="category" value="campaign">
+            공약
+          </label>
+          <label>
+            <input type="checkbox" name="category" value="schedule">
+            일정
+          </label>
+          <label>
+            <input type="checkbox" name="category" value="press">
+            언론
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 뉴스 그리드 -->
+    <div class="news-grid">
+      <div class="news-main">
+        <!-- 뉴스 1 -->
+        <div class="news-item" onclick="openNews('news1')">
+          <div class="news-thumbnail">📰</div>
+          <div class="news-content">
+            <div class="news-date">2026년 3월 19일</div>
+            <span class="news-category">공약</span>
+            <h3 class="news-title">오세훈 후보, 일자리 창출 정책 발표</h3>
+            <p class="news-summary">
+              오세훈 서울시장 예정 후보는 오늘 50만 개의 일자리 창출 계획을 발표했습니다. 이는 전임 시장 대비 3배 이상의 규모로, 경제 활성화와 청년 실업 해소에 중점을 두고 있습니다.
+            </p>
+            <div class="news-meta">
+              <span>조회수: 2,345</span>
+              <a href="#" class="news-link">전체 읽기 →</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 뉴스 2 -->
+        <div class="news-item" onclick="openNews('news2')">
+          <div class="news-thumbnail">🏠</div>
+          <div class="news-content">
+            <div class="news-date">2026년 3월 18일</div>
+            <span class="news-category">공약</span>
+            <h3 class="news-title">주택 안정화 정책 공개 토론</h3>
+            <p class="news-summary">
+              강남구에서 주민들과의 만남을 통해 주택 정책에 대한 의견을 수렴했습니다. 참석자들은 높은 만족도를 보였으며, 추가 지원 정책 강화를 요청했습니다.
+            </p>
+            <div class="news-meta">
+              <span>조회수: 1,876</span>
+              <a href="#" class="news-link">전체 읽기 →</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 뉴스 3 -->
+        <div class="news-item" onclick="openNews('news3')">
+          <div class="news-thumbnail">🚇</div>
+          <div class="news-content">
+            <div class="news-date">2026년 3월 17일</div>
+            <span class="news-category">공약</span>
+            <h3 class="news-title">교통 혁신 계획 초안 공개</h3>
+            <p class="news-summary">
+              지능형 신호 시스템과 대중교통 개선안을 포함한 교통 혁신 계획이 공개되었습니다. 시민 의견 수렴 기간은 3월 30일까지이며, 많은 시민의 관심을 받고 있습니다.
+            </p>
+            <div class="news-meta">
+              <span>조회수: 3,456</span>
+              <a href="#" class="news-link">전체 읽기 →</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 뉴스 4 -->
+        <div class="news-item" onclick="openNews('news4')">
+          <div class="news-thumbnail">🤝</div>
+          <div class="news-content">
+            <div class="news-date">2026년 3월 16일</div>
+            <span class="news-category">일정</span>
+            <h3 class="news-title">강남역 광장 거리 캠페인 성료</h3>
+            <p class="news-summary">
+              3월 15일 강남역 광장에서 개최된 거리 캠페인에 3,000명 이상의 시민이 참석해 뜨거운 호응을 보였습니다. 시민들로부터 다양한 정책 건의를 받았습니다.
+            </p>
+            <div class="news-meta">
+              <span>조회수: 2,123</span>
+              <a href="#" class="news-link">전체 읽기 →</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 뉴스 5 -->
+        <div class="news-item" onclick="openNews('news5')">
+          <div class="news-thumbnail">📻</div>
+          <div class="news-content">
+            <div class="news-date">2026년 3월 15일</div>
+            <span class="news-category">언론</span>
+            <h3 class="news-title">"오세훈 정책, 현실성과 대담성 겸비" - 경제신문 사설</h3>
+            <p class="news-summary">
+              국내 주요 경제신문이 오세훈 후보의 경제 정책에 대해 호평하며, "현실성과 대담성을 모두 갖춘 정책"이라고 평가했습니다.
+            </p>
+            <div class="news-meta">
+              <span>조회수: 4,567</span>
+              <a href="#" class="news-link">전체 읽기 →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 사이드바 -->
+      <div class="sidebar">
+        <div class="sidebar-card">
+          <h3 class="sidebar-title">인기 뉴스</h3>
+          <ul class="sidebar-list">
+            <li class="sidebar-list-item">
+              <a href="#" class="sidebar-list-link">교통 혁신 계획 초안 공개</a>
+            </li>
+            <li class="sidebar-list-item">
+              <a href="#" class="sidebar-list-link">오세훈 정책 평가 사설</a>
+            </li>
+            <li class="sidebar-list-item">
+              <a href="#" class="sidebar-list-link">시민 간담회 개최</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="sidebar-card">
+          <h3 class="sidebar-title">다가오는 일정</h3>
+          <ul class="sidebar-list">
+            <li class="sidebar-list-item">
+              <a href="#" class="sidebar-list-link">3.22 정책 토론회</a>
+            </li>
+            <li class="sidebar-list-item">
+              <a href="#" class="sidebar-list-link">3.28 거리 캠페인</a>
+            </li>
+            <li class="sidebar-list-item">
+              <a href="#" class="sidebar-list-link">4.5 시민 포럼</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 모달 -->
+  <div class="modal-overlay" id="newsModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeNews()">×</button>
+      <div class="modal-image">📄</div>
+      <div class="modal-content">
+        <div class="modal-meta">
+          <span id="modalDate"></span>
+          <span id="modalCategory"></span>
+          <span id="modalViews"></span>
+        </div>
+        <h2 class="modal-title" id="modalTitle"></h2>
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closeNews()">닫기</button>
+          <button class="btn btn-primary">공유</button>
+          <button class="btn btn-primary">구독</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 푸터 -->
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 오세훈 캠프. 모든 권리 보유.</p>
+      <div style="margin-top: var(--space-4); font-size: var(--font-size-sm);">
+        <a href="#">개인정보</a> |
+        <a href="#">이용약관</a> |
+        <a href="#">문의</a> |
+        <a href="#">SNS</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const newsData = {
+      news1: {
+        title: '오세훈 후보, 일자리 창출 정책 발표',
+        date: '2026년 3월 19일',
+        category: '공약',
+        views: '2,345',
+        body: '오세훈 서울시장 예정 후보는 오늘 50만 개의 일자리 창출 계획을 발표했습니다. 이는 전임 시장 대비 3배 이상의 규모로, 경제 활성화와 청년 실업 해소에 중점을 두고 있습니다.\n\n발표에 따르면, 중소기업 지원, 산업 구조 전환, 창업 지원 등 다각적인 접근을 통해 50만 개의 일자리를 창출할 계획입니다. 이는 향후 5년간 연간 10만 개씩 창출되는 목표입니다.\n\n오 후보는 "이 계획이 실현되면 청년 실업률을 50% 이상 감소시킬 수 있을 것"이라고 강조했습니다.'
+      },
+      news2: {
+        title: '주택 안정화 정책 공개 토론',
+        date: '2026년 3월 18일',
+        category: '공약',
+        views: '1,876',
+        body: '강남구에서 주민들과의 만남을 통해 주택 정책에 대한 의견을 수렴했습니다. 약 500명 이상의 주민들이 참석해 높은 관심을 보였습니다.\n\n오세훈 후보는 장기전세주택 공급 확대, 전월세 상한제, 청년 주거 지원금 지급 등의 정책을 설명했으며, 참석자들로부터 상세한 질문을 받았습니다.\n\n참석자들은 정책의 현실성과 실행 가능성에 높은 점수를 주었으며, 추가 지원 정책의 강화를 요청했습니다.'
+      },
+      news3: {
+        title: '교통 혁신 계획 초안 공개',
+        date: '2026년 3월 17일',
+        category: '공약',
+        views: '3,456',
+        body: '지능형 신호 시스템과 대중교통 개선안을 포함한 교통 혁신 계획이 공개되었습니다. 이 계획은 서울의 교통 혼잡을 획기적으로 개선하기 위해 마련되었습니다.\n\n주요 내용은 다음과 같습니다:\n- AI 기반 신호 제어 시스템 도입\n- 도로 확충 및 개선\n- 대중교통 운행 빈도 증가\n- 보행자 중심 도시설계\n\n시민 의견 수렴 기간은 3월 30일까지이며, 누구나 온라인 플랫폼을 통해 의견을 제출할 수 있습니다.'
+      },
+      news4: {
+        title: '강남역 광장 거리 캠페인 성료',
+        date: '2026년 3월 16일',
+        category: '일정',
+        views: '2,123',
+        body: '3월 15일 강남역 광장에서 개최된 거리 캠페인에 3,000명 이상의 시민이 참석해 뜨거운 호응을 보였습니다.\n\n현장에서는 오세훈 후보가 직접 주요 정책을 설명하고, 시민들과 대화를 나누었습니다. 시민들로부터는 다양한 정책 건의와 응원의 말씀을 받았습니다.\n\n이번 캠페인을 통해 정책의 필요성과 시민들의 기대감을 다시 한번 확인할 수 있었습니다.'
+      },
+      news5: {
+        title: '"오세훈 정책, 현실성과 대담성 겸비" - 경제신문 사설',
+        date: '2026년 3월 15일',
+        category: '언론',
+        views: '4,567',
+        body: '국내 주요 경제신문이 오세훈 후보의 경제 정책에 대해 호평하며, "현실성과 대담성을 모두 갖춘 정책"이라고 평가했습니다.\n\n사설에 따르면, 후보의 정책은 다음과 같은 특징을 가지고 있습니다:\n- 현실적인 실행 계획과 구체적인 로드맵\n- 기존 정책의 문제점을 지적하고 개선 방안 제시\n- 시민 중심의 정책 개발\n\n이는 다른 후보들의 정책과 비교했을 때 차별화되는 점이라고 평가했습니다.'
+      }
+    };
+
+    function openNews(newsKey) {
+      const news = newsData[newsKey];
+      document.getElementById('modalTitle').textContent = news.title;
+      document.getElementById('modalDate').textContent = news.date;
+      document.getElementById('modalCategory').textContent = news.category;
+      document.getElementById('modalViews').textContent = `조회수: ${news.views}`;
+      document.getElementById('modalBody').textContent = news.body;
+      document.getElementById('newsModal').classList.add('active');
+    }
+
+    function closeNews() {
+      document.getElementById('newsModal').classList.remove('active');
+    }
+
+    // 검색 기능
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      document.querySelectorAll('.news-item').forEach(item => {
+        const title = item.querySelector('.news-title').textContent.toLowerCase();
+        const summary = item.querySelector('.news-summary').textContent.toLowerCase();
+        if (title.includes(searchTerm) || summary.includes(searchTerm)) {
+          item.style.display = '';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
