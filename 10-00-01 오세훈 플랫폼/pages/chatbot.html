@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="오세훈 후보 AI 어시스턴트 — 정책, 공약에 대해 물어보세요.">
   <title>AI 챗봇 — 오세훈 플랫폼</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../styles/design-system.css">
   <style>
     .container {
@@ -341,18 +343,21 @@
 </head>
 <body>
   <!-- 헤더 -->
-  <header>
-    <div class="header-content">
-      <a href="index.html" class="logo">🏛️ 오세훈 플랫폼</a>
-      <nav>
-        <a href="index.html">홈</a>
-        <a href="profile.html">프로필</a>
-        <a href="policies.html">정책</a>
-        <a href="news.html">뉴스</a>
-        <a href="chatbot.html" class="active">챗봇</a>
-        <a href="map.html">지도</a>
-      </nav>
-    </div>
+  <header class="header">
+    <nav class="nav-container">
+      <a href="../index.html" class="nav-logo">🏛️ <span>오세훈 플랫폼</span></a>
+      <button class="nav-toggle" aria-label="메뉴 열기" aria-expanded="false" id="navToggle">☰</button>
+      <ul class="nav-links" id="navLinks" role="navigation">
+        <li><a href="profile.html" class="nav-link">프로필</a></li>
+        <li><a href="policies.html" class="nav-link">정책</a></li>
+        <li><a href="news.html" class="nav-link">뉴스</a></li>
+        <li><a href="chatbot.html" class="nav-link active">AI 챗봇</a></li>
+        <li><a href="map.html" class="nav-link">지도</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="btn btn-ghost btn-sm" id="themeToggle" aria-label="다크모드 전환">🌙</button>
+      </div>
+    </nav>
   </header>
 
   <main class="container">
@@ -426,17 +431,41 @@
   </main>
 
   <!-- 푸터 -->
-  <footer>
-    <div class="container">
-      <p>&copy; 2026 오세훈 캠프. 모든 권리 보유.</p>
-      <div style="margin-top: var(--space-4); font-size: var(--font-size-sm);">
-        <a href="#">개인정보</a> |
-        <a href="#">이용약관</a> |
-        <a href="#">문의</a> |
-        <a href="#">SNS</a>
+  <footer class="footer" role="contentinfo">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <div class="footer-logo">🏛️ 오세훈 플랫폼</div>
+        <p class="footer-tagline">서울의 내일을 함께 만들어 가겠습니다</p>
       </div>
+      <nav class="footer-links">
+        <a href="../index.html">홈</a>
+        <a href="profile.html">프로필</a>
+        <a href="policies.html">정책</a>
+        <a href="news.html">뉴스</a>
+        <a href="map.html">지도</a>
+      </nav>
+      <p class="footer-copy">© 2026 오세훈 선거캠프. All rights reserved.</p>
     </div>
   </footer>
+
+  <script>
+    document.getElementById('navToggle').addEventListener('click', function() {
+      const exp = this.getAttribute('aria-expanded') === 'true';
+      this.setAttribute('aria-expanded', String(!exp));
+      document.getElementById('navLinks').classList.toggle('nav-open');
+    });
+    const themeToggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
+    const saved = localStorage.getItem('theme') || 'light';
+    html.setAttribute('data-theme', saved);
+    themeToggle.textContent = saved === 'dark' ? '☀️' : '🌙';
+    themeToggle.addEventListener('click', () => {
+      const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      themeToggle.textContent = next === 'dark' ? '☀️' : '🌙';
+    });
+  </script>
 
   <script>
     // Mock 답변 데이터

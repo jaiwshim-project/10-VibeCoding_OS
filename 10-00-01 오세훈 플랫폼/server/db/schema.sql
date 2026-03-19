@@ -335,5 +335,219 @@ VALUES (
 -- GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO authenticated;
 
 -- ============================================================================
+-- 테이블 10: campaign_tasks (캠프 태스크 협업 관리)
+-- Charlie 분대 Task #40 — Phase 4: 스태프 협업 기능
+-- ============================================================================
+
+CREATE TABLE campaign_tasks (
+  id             SERIAL PRIMARY KEY,
+
+  -- 기본 정보
+  title          VARCHAR(300)  NOT NULL,
+  description    TEXT,
+  status         VARCHAR(20)   NOT NULL DEFAULT 'pending'
+                   CHECK (status IN ('pending', 'in-progress', 'completed', 'cancelled')),
+  priority       VARCHAR(10)   NOT NULL DEFAULT 'medium'
+                   CHECK (priority IN ('low', 'medium', 'high')),
+
+  -- 날짜
+  due_date       DATE,
+  completed_at   TIMESTAMP,
+
+  -- 담당자 및 생성자 (users 테이블 FK; 다중 담당자는 task_assignees 별도 테이블)
+  created_by     INT           REFERENCES users(id) ON DELETE SET NULL,
+
+  -- 태그 (PostgreSQL 배열 타입)
+  tags           TEXT[]        DEFAULT '{}',
+
+  -- 메타
+  created_at     TIMESTAMP     NOT NULL DEFAULT NOW(),
+  updated_at     TIMESTAMP     NOT NULL DEFAULT NOW()
+);
+
+-- 인덱스
+CREATE INDEX idx_ctask_status    ON campaign_tasks(status);
+CREATE INDEX idx_ctask_priority  ON campaign_tasks(priority);
+CREATE INDEX idx_ctask_due_date  ON campaign_tasks(due_date);
+CREATE INDEX idx_ctask_created   ON campaign_tasks(created_at DESC);
+CREATE INDEX idx_ctask_created_by ON campaign_tasks(created_by);
+
+-- GIN 인덱스: 태그 배열 검색 최적화
+CREATE INDEX idx_ctask_tags      ON campaign_tasks USING GIN (tags);
+
+-- Full-text 검색 인덱스 (제목 + 설명)
+CREATE INDEX idx_ctask_fts ON campaign_tasks
+  USING GIN (to_tsvector('korean', coalesce(title, '') || ' ' || coalesce(description, '')));
+
+-- 자동 updated_at 트리거
+CREATE TRIGGER trigger_campaign_tasks_timestamp
+  BEFORE UPDATE ON campaign_tasks
+  FOR EACH ROW EXECUTE FUNCTION update_timestamp();
+
+-- ============================================================================
+-- 테이블 11: task_assignees (태스크 담당자 — 다대다)
+-- ============================================================================
+
+CREATE TABLE task_assignees (
+  id          SERIAL    PRIMARY KEY,
+  task_id     INT       NOT NULL REFERENCES campaign_tasks(id) ON DELETE CASCADE,
+  user_id     INT       REFERENCES users(id) ON DELETE SET NULL,
+  -- user_id가 없으면 assignee_name으로 저장 (외부 스태프용)
+  assignee_name VARCHAR(100),
+  assigned_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+  CONSTRAINT chk_assignee CHECK (user_id IS NOT NULL OR assignee_name IS NOT NULL)
+);
+
+CREATE INDEX idx_ta_task   ON task_assignees(task_id);
+CREATE INDEX idx_ta_user   ON task_assignees(user_id) WHERE user_id IS NOT NULL;
+
+-- ============================================================================
+-- 테이블 12: task_subtasks (체크리스트 / 서브태스크)
+-- ============================================================================
+
+CREATE TABLE task_subtasks (
+  id          SERIAL    PRIMARY KEY,
+  task_id     INT       NOT NULL REFERENCES campaign_tasks(id) ON DELETE CASCADE,
+  text        VARCHAR(500) NOT NULL,
+  done        BOOLEAN   NOT NULL DEFAULT FALSE,
+  done_at     TIMESTAMP,
+  done_by     INT       REFERENCES users(id) ON DELETE SET NULL,
+  sort_order  SMALLINT  NOT NULL DEFAULT 0,
+  created_at  TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_ts_task       ON task_subtasks(task_id);
+CREATE INDEX idx_ts_sort       ON task_subtasks(task_id, sort_order);
+
+-- ============================================================================
+-- 테이블 13: task_comments (태스크 댓글)
+-- ============================================================================
+
+CREATE TABLE task_comments (
+  id          SERIAL    PRIMARY KEY,
+  task_id     INT       NOT NULL REFERENCES campaign_tasks(id) ON DELETE CASCADE,
+  author_id   INT       REFERENCES users(id) ON DELETE SET NULL,
+  -- 비로그인 스태프 지원용
+  author_name VARCHAR(100),
+  text        TEXT      NOT NULL,
+  created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at  TIMESTAMP NOT NULL DEFAULT NOW(),
+
+  CONSTRAINT chk_comment_author CHECK (author_id IS NOT NULL OR author_name IS NOT NULL)
+);
+
+CREATE INDEX idx_tc_task       ON task_comments(task_id);
+CREATE INDEX idx_tc_author     ON task_comments(author_id) WHERE author_id IS NOT NULL;
+CREATE INDEX idx_tc_created    ON task_comments(created_at DESC);
+
+-- 자동 updated_at 트리거
+CREATE TRIGGER trigger_task_comments_timestamp
+  BEFORE UPDATE ON task_comments
+  FOR EACH ROW EXECUTE FUNCTION update_timestamp();
+
+-- ============================================================================
+-- 테이블 14: task_activity_log (태스크 활동 로그)
+-- ============================================================================
+
+CREATE TABLE task_activity_log (
+  id          SERIAL    PRIMARY KEY,
+  task_id     INT       NOT NULL REFERENCES campaign_tasks(id) ON DELETE CASCADE,
+  user_id     INT       REFERENCES users(id) ON DELETE SET NULL,
+  action      VARCHAR(50) NOT NULL,
+  -- 예: 'status_changed', 'assignee_added', 'comment_added', 'subtask_toggled'
+  detail      JSONB,
+  -- { "from": "pending", "to": "in-progress" }
+  created_at  TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_tal_task    ON task_activity_log(task_id);
+CREATE INDEX idx_tal_created ON task_activity_log(created_at DESC);
+
+-- ============================================================================
+-- 뷰: 태스크 대시보드 (통계 요약)
+-- ============================================================================
+
+CREATE OR REPLACE VIEW v_task_dashboard AS
+SELECT
+  status,
+  priority,
+  COUNT(*)                                             AS count,
+  COUNT(*) FILTER (WHERE due_date < CURRENT_DATE
+                   AND status <> 'completed')          AS overdue_count,
+  ROUND(
+    COUNT(*) FILTER (WHERE status = 'completed')::NUMERIC
+    / NULLIF(COUNT(*), 0) * 100, 1
+  )                                                    AS completion_rate_pct
+FROM campaign_tasks
+GROUP BY status, priority;
+
+-- ============================================================================
+-- 뷰: 태스크 + 담당자 + 진행률 통합 뷰
+-- ============================================================================
+
+CREATE OR REPLACE VIEW v_tasks_with_progress AS
+SELECT
+  ct.id,
+  ct.title,
+  ct.description,
+  ct.status,
+  ct.priority,
+  ct.due_date,
+  ct.tags,
+  ct.created_at,
+  ct.updated_at,
+  ct.created_by,
+
+  -- 담당자 집합 (배열로 반환)
+  ARRAY_AGG(DISTINCT COALESCE(ta.assignee_name, u.name)) FILTER (
+    WHERE ta.id IS NOT NULL
+  ) AS assignees,
+
+  -- 서브태스크 집계
+  COUNT(DISTINCT ts.id)                                                           AS subtask_total,
+  COUNT(DISTINCT ts.id) FILTER (WHERE ts.done = TRUE)                            AS subtask_done,
+  ROUND(
+    COUNT(DISTINCT ts.id) FILTER (WHERE ts.done = TRUE)::NUMERIC
+    / NULLIF(COUNT(DISTINCT ts.id), 0) * 100, 0
+  )                                                                               AS progress_pct,
+
+  -- 댓글 수
+  COUNT(DISTINCT tc.id)                                                           AS comment_count,
+
+  -- 기한 초과 여부
+  (ct.due_date IS NOT NULL
+    AND ct.due_date < CURRENT_DATE
+    AND ct.status <> 'completed')                                                 AS is_overdue
+
+FROM campaign_tasks ct
+LEFT JOIN task_assignees  ta ON ta.task_id = ct.id
+LEFT JOIN users           u  ON u.id = ta.user_id
+LEFT JOIN task_subtasks   ts ON ts.task_id = ct.id
+LEFT JOIN task_comments   tc ON tc.task_id = ct.id
+GROUP BY ct.id;
+
+-- ============================================================================
+-- 초기 데이터: campaign_tasks 샘플
+-- ============================================================================
+
+-- 관리자 ID 기반 삽입 (INSERT INTO users 직후 실행 가정)
+DO $$
+DECLARE v_admin_id INT;
+BEGIN
+  SELECT id INTO v_admin_id FROM users WHERE role = 'admin' LIMIT 1;
+
+  IF v_admin_id IS NOT NULL THEN
+    INSERT INTO campaign_tasks (title, description, status, priority, due_date, tags, created_by) VALUES
+      ('도봉구 캠프 전략 수정',    '도봉구 지지층 결집 전략 수정 및 유권자 접점 행사 일정 확정', 'in-progress', 'high',   '2026-03-25', ARRAY['전략','지역'],       v_admin_id),
+      ('강남구 경제정책 자료 준비', '강남구 지역 특성에 맞는 경제정책 자료 작성 및 인쇄물 발주', 'pending',     'high',   '2026-03-22', ARRAY['정책','자료'],       v_admin_id),
+      ('판세 분석 보고서 작성',    '주간 판세 분석 및 선거구별 전략 보고서',                    'in-progress', 'high',   '2026-03-20', ARRAY['판세','보고서'],     v_admin_id),
+      ('여론조사 데이터 입력',     '최신 여론조사 결과를 시스템에 입력하고 대시보드 반영',       'completed',   'medium', '2026-03-19', ARRAY['데이터','여론조사'], v_admin_id),
+      ('캠프 일정 조율',          '지역별 방문 일정 및 행사 일정 최종 확인',                    'pending',     'medium', '2026-03-21', ARRAY['일정'],             v_admin_id)
+    ON CONFLICT DO NOTHING;
+  END IF;
+END $$;
+
+-- ============================================================================
 -- 끝
 -- ============================================================================

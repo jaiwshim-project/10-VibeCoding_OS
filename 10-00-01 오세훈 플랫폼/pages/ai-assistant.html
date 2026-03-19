@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>오세훈 플랫폼 — AI 어시스턴트</title>
+  <title>오세훈 선거캠프 워룸 — AI 어시스턴트</title>
   <link rel="stylesheet" href="../styles/design-system.css">
   <script src="../js/auth.js"></script>
   <style>
@@ -306,7 +306,7 @@
       50% { opacity: 0.3; }
     }
 
-    /* 반응형 */
+    /* ── 반응형: 태블릿 ── */
     @media (max-width: 1024px) {
       .assistant-layout {
         grid-template-columns: 1fr;
@@ -314,38 +314,73 @@
 
       .sidebar {
         flex-direction: row;
+        flex-wrap: wrap;
       }
 
       .sidebar-section {
         flex: 1;
+        min-width: 200px;
       }
     }
 
+    /* ── 반응형: 모바일 ── */
     @media (max-width: 768px) {
       .container {
         padding: var(--space-4);
       }
 
-      .navbar-menu {
-        gap: var(--space-3);
-        font-size: var(--font-size-sm);
+      .page-header h1 {
+        font-size: var(--font-size-2xl);
+      }
+
+      .page-header {
+        margin-bottom: var(--space-5);
       }
 
       .chat-section {
-        min-height: 400px;
+        min-height: 350px;
+        max-height: 60vh;
       }
 
       .message-user-text,
       .message-assistant-text {
         max-width: 100%;
+        font-size: var(--font-size-sm);
+      }
+
+      .chat-input-area {
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+
+      .chat-input-area button {
+        width: 100%;
       }
 
       .sidebar {
         flex-direction: column;
+        gap: var(--space-3);
       }
 
       .sidebar-section {
         flex: 1;
+      }
+
+      /* 빠른 질문 버튼 */
+      .quick-question-btn {
+        font-size: var(--font-size-sm);
+        padding: var(--space-2) var(--space-3);
+      }
+
+      /* 히스토리 */
+      .history-list {
+        max-height: 150px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .chat-section {
+        min-height: 280px;
       }
     }
   </style>
@@ -354,7 +389,7 @@
   <!-- 네비게이션 -->
   <nav class="navbar">
     <div class="navbar-content">
-      <a href="../index.html" class="navbar-logo">🎯 오세훈 플랫폼</a>
+      <a href="../index.html" class="navbar-logo">🎯 오세훈 선거캠프 워룸</a>
       <ul class="navbar-menu">
         <li><a href="dashboard.html">통합 분석</a></li>
         <li><a href="intelligence.html">판세 인텔리전스</a></li>

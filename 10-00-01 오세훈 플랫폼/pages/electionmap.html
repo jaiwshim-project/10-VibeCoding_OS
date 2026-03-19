@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>오세훈 플랫폼 — 일렉션 맵</title>
+  <title>오세훈 선거캠프 워룸 — 일렉션 맵</title>
   <link rel="stylesheet" href="../styles/design-system.css">
   <script src="../js/auth.js"></script>
   <style>
@@ -336,38 +336,94 @@
       color: var(--text-secondary);
     }
 
-    /* 반응형 */
+    /* ── 반응형: 태블릿 ── */
+    @media (max-width: 1024px) {
+      .heatmap-container {
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      }
+
+      .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    /* ── 반응형: 모바일 ── */
     @media (max-width: 768px) {
       .container {
         padding: var(--space-4);
       }
 
-      .navbar-menu {
-        gap: var(--space-3);
-        font-size: var(--font-size-sm);
+      .page-header h1 {
+        font-size: var(--font-size-2xl);
+      }
+
+      .page-header {
+        margin-bottom: var(--space-5);
+      }
+
+      .section {
+        padding: var(--space-4);
+        margin-bottom: var(--space-4);
+      }
+
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-2);
       }
 
       .heatmap-container {
-        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
         gap: var(--space-2);
       }
 
+      .heatmap-cell {
+        padding: var(--space-3) var(--space-2);
+        font-size: var(--font-size-sm);
+      }
+
       .legend {
-        flex-direction: column;
+        flex-wrap: wrap;
         gap: var(--space-2);
+      }
+
+      /* 테이블: 가로 스크롤 */
+      .table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
       }
 
       .district-detail-table {
         font-size: var(--font-size-sm);
+        min-width: 480px;
       }
 
       .district-detail-table thead th,
       .district-detail-table tbody td {
-        padding: var(--space-2);
+        padding: var(--space-2) var(--space-3);
       }
 
       .summary-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-3);
+      }
+
+      .summary-card {
+        padding: var(--space-4);
+      }
+
+      .summary-card-value {
+        font-size: var(--font-size-2xl);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .heatmap-container {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .summary-grid {
+        grid-template-columns: 1fr 1fr;
       }
     }
   </style>
@@ -376,7 +432,7 @@
   <!-- 네비게이션 -->
   <nav class="navbar">
     <div class="navbar-content">
-      <a href="../index.html" class="navbar-logo">🎯 오세훈 플랫폼</a>
+      <a href="../index.html" class="navbar-logo">🎯 오세훈 선거캠프 워룸</a>
       <ul class="navbar-menu">
         <li><a href="dashboard.html">통합 분석</a></li>
         <li><a href="intelligence.html">판세 인텔리전스</a></li>

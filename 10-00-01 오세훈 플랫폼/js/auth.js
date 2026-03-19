@@ -1,6 +1,7 @@
 /**
- * 공통 인증 모듈
- * 스태프 로그인 여부 확인 및 토큰 관리
+ * 공통 인증 모듈 — v2.0 (Bravo Squad Phase 2 강화)
+ * 스태프 로그인 여부 확인, JWT 만료 검증, 토큰 관리
+ * Task #36: security-specialist + api-developer 적용
  */
 
 /**
@@ -26,20 +27,72 @@ function getAuthToken() {
 }
 
 /**
- * 로그인 여부 확인
+ * JWT 페이로드 디코딩 (서명 검증 없이 클라이언트 측 만료 확인용)
+ * @param {string} token - JWT 토큰
+ * @returns {Object|null} 페이로드 또는 null
+ */
+function decodeJwtPayload(token) {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+    const payload = parts[1];
+    // Base64URL → Base64 변환
+    const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonStr = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(jsonStr);
+  } catch (error) {
+    console.error('JWT decode error:', error);
+    return null;
+  }
+}
+
+/**
+ * JWT 토큰 만료 여부 확인 (클라이언트 측 사전 검증)
+ * @param {string} token - JWT 토큰
+ * @returns {boolean} 만료 여부
+ */
+function isTokenExpired(token) {
+  if (!token) return true;
+  const payload = decodeJwtPayload(token);
+  if (!payload || !payload.exp) return false; // exp 없으면 만료 없는 토큰으로 간주
+  // 10초 여유 두고 검사 (클럭 스큐 방지)
+  return Date.now() / 1000 > payload.exp - 10;
+}
+
+/**
+ * 로그인 여부 확인 (JWT 만료 포함)
  * @returns {boolean} 로그인 상태
  */
 function isLoggedIn() {
-  return !!getAuthToken() && !!getCurrentUser();
+  const token = getAuthToken();
+  const user = getCurrentUser();
+  if (!token || !user) return false;
+  // JWT 만료 시 자동 로그아웃
+  if (isTokenExpired(token)) {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+    return false;
+  }
+  return true;
 }
 
 /**
  * 로그아웃
+ * @param {string} [reason] - 로그아웃 사유 (선택사항, URL 파라미터로 전달)
  */
-function logout() {
+function logout(reason) {
   localStorage.removeItem('authToken');
   localStorage.removeItem('user');
-  window.location.href = 'login.html';
+  localStorage.removeItem('redirectAfterLogin');
+  const redirectUrl = reason
+    ? `login.html?reason=${encodeURIComponent(reason)}`
+    : 'login.html';
+  window.location.href = redirectUrl;
 }
 
 /**
@@ -58,9 +111,9 @@ function requireLogin(requiredRole = null) {
     return false;
   }
 
-  // 역할 확인 (필요한 경우)
-  if (requiredRole && user.role !== requiredRole && user.role !== 'admin') {
-    console.error(`접근 권한 없음: ${requiredRole} 역할 필요`);
+  // 역할 계층 기반 권한 확인
+  if (requiredRole && !hasRequiredRole(user.role, requiredRole)) {
+    console.error(`접근 권한 없음: ${requiredRole} 이상 역할 필요 (현재: ${user.role})`);
     alert('접근 권한이 없습니다. 관리자에게 문의하세요.');
     window.location.href = 'dashboard.html';
     return false;
@@ -84,19 +137,44 @@ function getAuthHeaders(headers = {}) {
 
 /**
  * API 응답의 인증 에러 처리
- * 토큰 만료 등의 경우 로그인 페이지로 리디렉트
+ * 토큰 만료(401) 또는 권한 없음(403) 시 로그인 페이지로 리디렉트
  * @param {Response} response - fetch 응답 객체
  * @returns {boolean} 인증 에러 여부
  */
 function handleAuthError(response) {
-  if (response.status === 401 || response.status === 403) {
+  if (response.status === 401) {
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
+    // 현재 위치 저장 후 로그인으로 이동
+    localStorage.setItem('redirectAfterLogin', window.location.pathname);
     alert('세션이 만료되었습니다. 다시 로그인해주세요.');
-    window.location.href = 'login.html';
+    window.location.href = 'login.html?reason=session_expired';
+    return true;
+  }
+  if (response.status === 403) {
+    alert('접근 권한이 없습니다. 관리자에게 문의하세요.');
+    window.location.href = 'dashboard.html';
     return true;
   }
   return false;
+}
+
+/**
+ * 역할(role) 계층 구조 정의
+ * admin > manager > staff > viewer
+ */
+const ROLE_HIERARCHY = { admin: 4, manager: 3, staff: 2, viewer: 1 };
+
+/**
+ * 사용자가 특정 역할 이상인지 확인
+ * @param {string} userRole - 사용자 역할
+ * @param {string} requiredRole - 필요한 역할
+ * @returns {boolean} 권한 충족 여부
+ */
+function hasRequiredRole(userRole, requiredRole) {
+  const userLevel = ROLE_HIERARCHY[userRole] || 0;
+  const requiredLevel = ROLE_HIERARCHY[requiredRole] || 0;
+  return userLevel >= requiredLevel;
 }
 
 /**

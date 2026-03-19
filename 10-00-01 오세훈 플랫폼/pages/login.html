@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>오세훈 플랫폼 — 스태프 로그인</title>
+  <title>오세훈 선거캠프 워룸 — 스태프 로그인</title>
   <link rel="stylesheet" href="../styles/design-system.css">
   <style>
     body {
@@ -172,6 +172,50 @@
       margin-right: 6px;
     }
 
+    .password-wrapper {
+      position: relative;
+    }
+
+    .password-wrapper .form-input {
+      padding-right: var(--space-12, 48px);
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .toggle-pw {
+      position: absolute;
+      right: var(--space-3);
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      color: var(--text-secondary);
+      padding: 4px;
+      line-height: 1;
+    }
+
+    .toggle-pw:focus {
+      outline: 2px solid var(--primary);
+      border-radius: 4px;
+    }
+
+    .lockout-message {
+      padding: var(--space-3) var(--space-4);
+      background: rgba(245, 158, 11, 0.1);
+      color: #B45309;
+      border-radius: var(--radius-md);
+      border-left: 4px solid #F59E0B;
+      font-size: var(--font-size-sm);
+      display: none;
+      animation: slideIn 0.3s ease;
+    }
+
+    .lockout-message.show {
+      display: block;
+    }
+
     @keyframes pulse {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.3; }
@@ -205,12 +249,13 @@
   <div class="login-container">
     <div class="login-header">
       <div class="login-logo">🎯</div>
-      <h1 class="login-title">오세훈 플랫폼</h1>
+      <h1 class="login-title">오세훈 선거캠프 워룸</h1>
       <p class="login-subtitle">캠프 전략 분석 시스템</p>
     </div>
 
-    <div id="errorMessage" class="error-message"></div>
-    <div id="successMessage" class="success-message"></div>
+    <div id="errorMessage" class="error-message" role="alert" aria-live="polite"></div>
+    <div id="successMessage" class="success-message" role="status" aria-live="polite"></div>
+    <div id="lockoutMessage" class="lockout-message" role="alert" aria-live="assertive"></div>
 
     <div class="demo-info">
       <strong>📋 테스트 계정</strong>
@@ -220,7 +265,7 @@
 
     <form class="login-form" id="loginForm">
       <div class="form-group">
-        <label class="form-label">아이디</label>
+        <label class="form-label" for="username">아이디</label>
         <input
           type="text"
           id="username"
@@ -228,19 +273,30 @@
           placeholder="아이디를 입력하세요"
           required
           autocomplete="username"
+          aria-required="true"
         />
       </div>
 
       <div class="form-group">
-        <label class="form-label">비밀번호</label>
-        <input
-          type="password"
-          id="password"
-          class="form-input"
-          placeholder="비밀번호를 입력하세요"
-          required
-          autocomplete="current-password"
-        />
+        <label class="form-label" for="password">비밀번호</label>
+        <div class="password-wrapper">
+          <input
+            type="password"
+            id="password"
+            class="form-input"
+            placeholder="비밀번호를 입력하세요"
+            required
+            autocomplete="current-password"
+            aria-describedby="passwordHelp"
+          />
+          <button
+            type="button"
+            class="toggle-pw"
+            id="togglePw"
+            aria-label="비밀번호 표시/숨기기"
+            title="비밀번호 표시/숨기기"
+          >👁</button>
+        </div>
       </div>
 
       <button type="submit" class="login-button" id="loginBtn">로그인</button>
@@ -256,16 +312,103 @@
     const loginBtn = document.getElementById('loginBtn');
     const errorMessage = document.getElementById('errorMessage');
     const successMessage = document.getElementById('successMessage');
+    const lockoutMessage = document.getElementById('lockoutMessage');
 
+    // ─── 보안: 로그인 실패 횟수 제한 (브루트포스 방지) ───
+    const MAX_ATTEMPTS = 5;
+    const LOCKOUT_DURATION_MS = 5 * 60 * 1000; // 5분
+    const STORAGE_KEY_ATTEMPTS = 'loginAttempts';
+    const STORAGE_KEY_LOCKOUT = 'loginLockoutUntil';
+
+    function getAttempts() {
+      return parseInt(localStorage.getItem(STORAGE_KEY_ATTEMPTS) || '0', 10);
+    }
+
+    function getLockoutUntil() {
+      return parseInt(localStorage.getItem(STORAGE_KEY_LOCKOUT) || '0', 10);
+    }
+
+    function isLockedOut() {
+      const lockoutUntil = getLockoutUntil();
+      return Date.now() < lockoutUntil;
+    }
+
+    function getRemainingLockoutSeconds() {
+      return Math.ceil((getLockoutUntil() - Date.now()) / 1000);
+    }
+
+    function incrementAttempts() {
+      const attempts = getAttempts() + 1;
+      localStorage.setItem(STORAGE_KEY_ATTEMPTS, String(attempts));
+      if (attempts >= MAX_ATTEMPTS) {
+        localStorage.setItem(STORAGE_KEY_LOCKOUT, String(Date.now() + LOCKOUT_DURATION_MS));
+      }
+      return attempts;
+    }
+
+    function resetAttempts() {
+      localStorage.removeItem(STORAGE_KEY_ATTEMPTS);
+      localStorage.removeItem(STORAGE_KEY_LOCKOUT);
+    }
+
+    function showLockout() {
+      const remaining = getRemainingLockoutSeconds();
+      lockoutMessage.textContent = `⚠️ 로그인 시도 횟수 초과. ${Math.floor(remaining / 60)}분 ${remaining % 60}초 후 다시 시도하세요.`;
+      lockoutMessage.classList.add('show');
+      loginBtn.disabled = true;
+    }
+
+    // 잠금 해제 타이머
+    let lockoutTimer = null;
+    function startLockoutCountdown() {
+      if (lockoutTimer) clearInterval(lockoutTimer);
+      lockoutTimer = setInterval(() => {
+        if (!isLockedOut()) {
+          clearInterval(lockoutTimer);
+          lockoutMessage.classList.remove('show');
+          loginBtn.disabled = false;
+          resetAttempts();
+        } else {
+          showLockout();
+        }
+      }, 1000);
+    }
+
+    // 페이지 로드 시 잠금 상태 확인
+    if (isLockedOut()) {
+      showLockout();
+      startLockoutCountdown();
+    }
+
+    // ─── 비밀번호 표시/숨기기 토글 ───
+    const togglePwBtn = document.getElementById('togglePw');
+    const passwordInput = document.getElementById('password');
+
+    togglePwBtn.addEventListener('click', () => {
+      const isHidden = passwordInput.type === 'password';
+      passwordInput.type = isHidden ? 'text' : 'password';
+      togglePwBtn.textContent = isHidden ? '🙈' : '👁';
+      togglePwBtn.setAttribute('aria-label', isHidden ? '비밀번호 숨기기' : '비밀번호 표시');
+    });
+
+    // ─── 로그인 폼 제출 ───
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const username = document.getElementById('username').value;
+      // 잠금 상태 재확인
+      if (isLockedOut()) {
+        showLockout();
+        startLockoutCountdown();
+        return;
+      }
+
+      const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value;
 
       // 에러 메시지 초기화
       errorMessage.classList.remove('show');
       successMessage.classList.remove('show');
+      lockoutMessage.classList.remove('show');
 
       // 버튼 비활성화
       loginBtn.disabled = true;
@@ -282,29 +425,44 @@
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.message || '로그인 실패');
+          throw new Error(data.message || '아이디 또는 비밀번호가 올바르지 않습니다.');
         }
 
-        // 로그인 성공
-        successMessage.textContent = '✅ 로그인 성공! 리디렉트 중...';
+        // 로그인 성공 — 실패 횟수 초기화
+        resetAttempts();
+
+        successMessage.textContent = '✅ 로그인 성공! 이동 중...';
         successMessage.classList.add('show');
 
         // JWT 토큰 저장
         localStorage.setItem('authToken', data.data.token);
         localStorage.setItem('user', JSON.stringify(data.data.user));
 
-        // 대시보드로 리디렉트
+        // 로그인 전 접근하려던 페이지로 리디렉트, 없으면 dashboard
+        const redirectPath = localStorage.getItem('redirectAfterLogin');
+        localStorage.removeItem('redirectAfterLogin');
+        const destination = redirectPath || 'dashboard.html';
+
         setTimeout(() => {
-          window.location.href = 'dashboard.html';
-        }, 1000);
+          window.location.href = destination;
+        }, 800);
+
       } catch (error) {
         console.error('Login error:', error);
-        errorMessage.textContent = `❌ ${error.message}`;
-        errorMessage.classList.add('show');
 
-        // 버튼 복원
-        loginBtn.disabled = false;
-        loginBtn.textContent = originalText;
+        // 실패 횟수 증가
+        const attempts = incrementAttempts();
+        const remaining = MAX_ATTEMPTS - attempts;
+
+        if (isLockedOut()) {
+          showLockout();
+          startLockoutCountdown();
+        } else {
+          errorMessage.textContent = `❌ ${error.message}${remaining > 0 ? ` (남은 시도: ${remaining}회)` : ''}`;
+          errorMessage.classList.add('show');
+          loginBtn.disabled = false;
+          loginBtn.textContent = originalText;
+        }
       }
     });
   </script>
