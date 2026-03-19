@@ -12,12 +12,16 @@
 const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 const {
   verifyToken,
   optionalAuth,
   sendError,
   sendSuccess,
 } = require('../middleware/auth');
+
+// Gemini API 초기화
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 /**
  * 세션 ID 생성
@@ -199,34 +203,66 @@ async function performRAGSearch(db, candidateId, query) {
 }
 
 /**
- * AI 응답 생성 (Gemini API 호출)
- * 실제 구현에서는 Gemini API를 호출
+ * AI 응답 생성 (Gemini 2.0 Flash API 호출)
+ * RAG 컨텍스트를 포함한 시스템 프롬프트와 함께 요청
  */
 async function generateAIResponse(userMessage, ragContext) {
   try {
-    // 실제 구현: Gemini API 호출
-    // const response = await callGeminiAPI({
-    //   model: 'gemini-1.5-pro',
-    //   prompt: userMessage,
-    //   context: ragContext.sources,
-    // });
+    // RAG 컨텍스트 포매팅
+    let contextText = '';
+    if (ragContext.sources && ragContext.sources.length > 0) {
+      contextText = '다음 참고 자료를 기반으로 답변하세요:\n\n';
+      ragContext.sources.forEach(source => {
+        contextText += `[${source.source_type.toUpperCase()}] ${source.title}\n`;
+        contextText += `${source.content}\n\n`;
+      });
+    }
 
-    // 현재는 더미 응답 반환
-    const sources = ragContext.sources.map(s => `${s.source_type}: ${s.title}`);
-    const message = `감사합니다. 질문하신 "${userMessage}"에 대해 설명드리겠습니다.\n\n` +
-                   `다음 자료를 참고한 답변입니다:\n${sources.join('\n')}\n\n` +
-                   `더 자세한 정보가 필요하신 경우 저희 웹사이트의 정책 섹션을 확인해주세요.`;
+    // 시스템 프롬프트
+    const systemPrompt = `당신은 오세훈 서울시장 선거캠프 AI 어시스턴트입니다.
+- 역할: 캠프 내부 스태프를 위한 선거 전략, 정책, 판세 분석 전문가
+- 대상: 후보자 본인과 캠프 스태프만 (대외비 취급)
+- 언어: 한국어 전용
+- 톤: 전문적이고 정확하며 전략적인 조언 제공
+- 제약: 공개된 정보만 활용, 개인정보 보호 준수`;
+
+    // Gemini 모델 초기화
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-2.0-flash',
+      systemInstruction: systemPrompt,
+    });
+
+    // 전체 프롬프트 구성
+    const fullPrompt = contextText + userMessage;
+
+    // API 호출
+    const result = await model.generateContent(fullPrompt);
+    const response = await result.response;
+    const aiMessage = response.text();
+
+    // 토큰 사용량 (근사치 - Gemini API에서 정확한 토큰 정보는 별도 구성 필요)
+    const estimatedTokens = Math.ceil(fullPrompt.length / 4 + aiMessage.length / 4);
 
     return {
-      message,
-      model: 'gemini-1.5-pro',
-      tokens: 150,
+      message: aiMessage,
+      model: 'gemini-2.0-flash',
+      tokens: estimatedTokens,
     };
   } catch (error) {
     console.error('AI response generation error:', error);
+
+    // 폴백 응답 (API 키 미설정 등의 경우)
+    if (error.message.includes('API key')) {
+      return {
+        message: '[시스템 알림] Gemini API 설정이 필요합니다. 관리자에게 문의하세요.',
+        model: 'gemini-2.0-flash',
+        tokens: 0,
+      };
+    }
+
     return {
       message: '죄송합니다. 응답 생성 중 오류가 발생했습니다. 나중에 다시 시도해주세요.',
-      model: 'error',
+      model: 'gemini-2.0-flash',
       tokens: 0,
     };
   }

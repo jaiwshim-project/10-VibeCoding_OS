@@ -575,41 +575,60 @@
       chatMessages.appendChild(loadingDiv);
       chatMessages.scrollTop = chatMessages.scrollHeight;
 
-      // 더미 응답 (실제로는 Gemini API 호출)
-      setTimeout(() => {
+      // 실제 Gemini API 호출
+      try {
+        // 세션 ID가 없으면 생성
+        if (!window.chatSessionId) {
+          const sessionRes = await fetch('/api/chat/start', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ candidateId: 1 })
+          });
+          const sessionData = await sessionRes.json();
+          window.chatSessionId = sessionData.data.sessionId;
+        }
+
+        // AI 응답 요청
+        const response = await fetch('/api/chat/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sessionId: window.chatSessionId,
+            candidateId: 1,
+            message: message
+          })
+        });
+
         loadingDiv.remove();
 
-        const response = getResponseForQuestion(message);
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const aiMessage = data.data.assistantMessage.content;
+
         const assistantMessageDiv = document.createElement('div');
         assistantMessageDiv.className = 'chat-message';
-        assistantMessageDiv.innerHTML = `<div class="message-assistant"><div class="message-assistant-text">${response}</div></div>`;
+        assistantMessageDiv.innerHTML = `<div class="message-assistant"><div class="message-assistant-text">${escapeHtml(aiMessage)}</div></div>`;
         chatMessages.appendChild(assistantMessageDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
-      }, 1000);
+      } catch (error) {
+        console.error('Chat API error:', error);
+        loadingDiv.remove();
+
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'chat-message';
+        errorDiv.innerHTML = `<div class="message-assistant"><div class="message-assistant-text">오류가 발생했습니다. Gemini API 설정을 확인해주세요.</div></div>`;
+        chatMessages.appendChild(errorDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
     });
 
     function escapeHtml(text) {
       const div = document.createElement('div');
       div.textContent = text;
       return div.innerHTML;
-    }
-
-    function getResponseForQuestion(question) {
-      const lowerQuestion = question.toLowerCase();
-
-      if (lowerQuestion.includes('지지도')) {
-        return '현재 지지도는 45%로 지난주 대비 3.2% 포인트 상승했습니다. 특히 40대 남성층과 강북 지역에서 강세를 보이고 있으며, 호의도도 60%로 높은 수준입니다.';
-      } else if (lowerQuestion.includes('당선') || lowerQuestion.includes('목표')) {
-        return '당선 목표는 50%+1입니다. 현재 진행 상황을 보면, 기반 구축 85%, 지역 간담회 75%, 여론조사 60%까지 진행되고 있습니다.';
-      } else if (lowerQuestion.includes('경쟁') || lowerQuestion.includes('후보')) {
-        return '경쟁 후보 A는 38% 지지도로 7% 포인트 차이를 유지 중이며, 후보 B는 32%입니다. 정책 신뢰도와 리더십 평가에서 우리가 우위를 점하고 있습니다.';
-      } else if (lowerQuestion.includes('지역') || lowerQuestion.includes('투표')) {
-        return '서울시 25개 자치구 중 강북 지역(도봉, 노원, 강북)에서 강세이며, 강남 3구(강남, 서초, 강서)에서 약세입니다. 부동층 25%를 대상으로 집중 설득 중입니다.';
-      } else if (lowerQuestion.includes('정책')) {
-        return '우선순위 1순위는 서울 교통 혁신, 주택 공급 확대, 청년 일자리 창출입니다. 이 3개 분야에서 경제 활성화와 시민 복지를 동시에 추진하고 있습니다.';
-      } else {
-        return '알겠습니다. 선거 캠프와 관련된 더 자세한 질문이나 정보가 필요하시면 언제든지 물어봐 주세요. 팀과 협력하여 최선의 답변을 드리겠습니다.';
-      }
     }
   </script>
 </body>
