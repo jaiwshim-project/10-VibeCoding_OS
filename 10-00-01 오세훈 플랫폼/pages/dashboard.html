@@ -230,6 +230,127 @@
       color: var(--success);
     }
 
+    /* 알림 패널 (Alerts Panel) */
+    .alerts-section {
+      background: linear-gradient(135deg, var(--primary-light) 0%, rgba(230, 0, 18, 0.05) 100%);
+      border: 1px solid rgba(230, 0, 18, 0.2);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      margin-bottom: var(--space-8);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .alerts-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin-bottom: var(--space-4);
+    }
+
+    .alerts-header h3 {
+      margin: 0;
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--primary);
+    }
+
+    .alert-item {
+      background: white;
+      padding: var(--space-4);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-3);
+      border-left: 4px solid var(--primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+    }
+
+    .alert-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .alert-item.update {
+      border-left-color: var(--success);
+    }
+
+    .alert-item.urgent {
+      border-left-color: var(--danger);
+    }
+
+    .alert-content {
+      flex: 1;
+    }
+
+    .alert-title {
+      font-weight: var(--font-weight-semibold);
+      color: var(--text);
+      margin-bottom: var(--space-1);
+    }
+
+    .alert-time {
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+    }
+
+    .alert-badge {
+      display: inline-block;
+      padding: var(--space-1) var(--space-3);
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-bold);
+      background: rgba(230, 0, 18, 0.1);
+      color: var(--primary);
+    }
+
+    /* 진행률 섹션 */
+    .progress-section {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      margin-bottom: var(--space-8);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .progress-item {
+      margin-bottom: var(--space-6);
+    }
+
+    .progress-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: var(--space-2);
+    }
+
+    .progress-label-text {
+      font-weight: var(--font-weight-medium);
+      color: var(--text);
+    }
+
+    .progress-value {
+      font-weight: var(--font-weight-bold);
+      color: var(--primary);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background-color: var(--bg-lighter);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary) 0%, #c70011 100%);
+      border-radius: var(--radius-full);
+      transition: width 0.3s ease;
+    }
+
     /* 반응형 */
     @media (max-width: 768px) {
       .container {
@@ -253,6 +374,14 @@
       .priority-table tbody td {
         padding: var(--space-2);
       }
+
+      .alert-item {
+        flex-direction: column;
+      }
+
+      .alert-badge {
+        margin-top: var(--space-2);
+      }
     }
   </style>
 </head>
@@ -268,6 +397,8 @@
         <li><a href="electionmap.html">일렉션 맵</a></li>
         <li><a href="winningtrategy.html">당선 전략</a></li>
         <li><a href="ai-assistant.html">AI 어시스턴트</a></li>
+        <li><a href="tasks.html">태스크</a></li>
+        <li><a href="#" onclick="logout(); return false;">로그아웃</a></li>
       </ul>
     </div>
   </nav>
@@ -300,6 +431,92 @@
         <div class="kpi-label">주요 관심사 이슈</div>
         <div class="kpi-value">5</div>
         <div class="kpi-trend">추적 중</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">투표율 예측</div>
+        <div class="kpi-value">61%</div>
+        <div class="kpi-trend">↑ 2.5% 상승</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">부동층 비율</div>
+        <div class="kpi-value">25%</div>
+        <div class="kpi-trend">↓ 2% 감소</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">주간 변화율</div>
+        <div class="kpi-value">+2.8%</div>
+        <div class="kpi-trend">좋은 추세</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">강북 지역 지지도</div>
+        <div class="kpi-value">52%</div>
+        <div class="kpi-trend">↑ 1.3% 상승</div>
+      </div>
+    </div>
+
+    <!-- 실시간 알림 패널 -->
+    <div class="alerts-section">
+      <div class="alerts-header">
+        <h3>🔔 실시간 알림</h3>
+      </div>
+      <div id="alertsContainer">
+        <div class="alert-item update">
+          <div class="alert-content">
+            <div class="alert-title">지난주 지지도 3.2% 포인트 상승</div>
+            <div class="alert-time">2시간 전</div>
+          </div>
+          <span class="alert-badge">업데이트</span>
+        </div>
+        <div class="alert-item">
+          <div class="alert-content">
+            <div class="alert-title">강남구 캠프 전략 수정 마감일</div>
+            <div class="alert-time">3/25 (5일 남음)</div>
+          </div>
+          <span class="alert-badge">마감예정</span>
+        </div>
+        <div class="alert-item update">
+          <div class="alert-content">
+            <div class="alert-title">호의도 60% 달성, 목표 초과</div>
+            <div class="alert-time">1일 전</div>
+          </div>
+          <span class="alert-badge">달성</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 태스크 진행률 -->
+    <div class="progress-section">
+      <div class="section-header">
+        <h2>📋 캠프 태스크 진행 현황</h2>
+      </div>
+      <div id="progressContainer">
+        <div class="progress-item">
+          <div class="progress-label">
+            <span class="progress-label-text">전체 태스크 진행률</span>
+            <span class="progress-value" id="totalProgress">20%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-bar-fill" id="totalProgressBar" style="width: 20%;"></div>
+          </div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-label">
+            <span class="progress-label-text">진행 중 태스크</span>
+            <span class="progress-value" id="inProgressCount">2개</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-bar-fill" id="inProgressBar" style="width: 40%; background: linear-gradient(90deg, var(--warning) 0%, #f39c12 100%);"></div>
+          </div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-label">
+            <span class="progress-label-text">완료된 태스크</span>
+            <span class="progress-value" id="completedCount">1개</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-bar-fill" id="completedBar" style="width: 20%; background: linear-gradient(90deg, var(--success) 0%, #22C55E 100%);"></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -395,6 +612,14 @@
   </div>
 
   <script>
+    // 인증 상태 확인
+    document.addEventListener('DOMContentLoaded', () => {
+      initAuth();
+      setActiveMenu();
+      loadDashboardData();
+      loadTaskProgress();
+    });
+
     // 현재 페이지 활성화
     function setActiveMenu() {
       const currentPage = window.location.pathname.split('/').pop();
@@ -409,7 +634,125 @@
       });
     }
 
-    setActiveMenu();
+    // 대시보드 데이터 로드 (통계)
+    async function loadDashboardData() {
+      try {
+        const response = await fetch('/api/stats/summary', {
+          method: 'GET',
+          headers: getAuthHeaders({
+            'Content-Type': 'application/json',
+          }),
+        });
+
+        if (response.status === 401 || response.status === 403) {
+          handleAuthError(response);
+          return;
+        }
+
+        const result = await response.json();
+        if (result.success && result.data) {
+          const summary = result.data;
+
+          // 알림 업데이트
+          if (summary.notifications && summary.notifications.length > 0) {
+            updateAlerts(summary.notifications);
+          }
+        }
+      } catch (error) {
+        console.error('대시보드 데이터 로드 실패:', error);
+      }
+    }
+
+    // 태스크 진행률 로드
+    async function loadTaskProgress() {
+      try {
+        const response = await fetch('/api/tasks', {
+          method: 'GET',
+          headers: getAuthHeaders({
+            'Content-Type': 'application/json',
+          }),
+        });
+
+        if (response.status === 401 || response.status === 403) {
+          handleAuthError(response);
+          return;
+        }
+
+        const result = await response.json();
+        if (result.success && result.data) {
+          const tasks = result.data;
+          updateTaskProgress(tasks);
+        }
+      } catch (error) {
+        console.error('태스크 로드 실패:', error);
+      }
+    }
+
+    // 알림 업데이트
+    function updateAlerts(notifications) {
+      const alertsContainer = document.getElementById('alertsContainer');
+
+      if (notifications.length === 0) {
+        alertsContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">알림이 없습니다</p>';
+        return;
+      }
+
+      alertsContainer.innerHTML = notifications.map(notif => {
+        const time = new Date(notif.timestamp);
+        const timeAgo = getTimeAgo(time);
+        const badgeClass = notif.type === 'update' ? 'update' : 'urgent';
+
+        return `
+          <div class="alert-item ${badgeClass}">
+            <div class="alert-content">
+              <div class="alert-title">${escapeHtml(notif.message)}</div>
+              <div class="alert-time">${timeAgo}</div>
+            </div>
+            <span class="alert-badge">${notif.type === 'update' ? '업데이트' : '알림'}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 태스크 진행률 업데이트
+    function updateTaskProgress(tasks) {
+      const total = tasks.length;
+      const completed = tasks.filter(t => t.status === 'completed').length;
+      const inProgress = tasks.filter(t => t.status === 'in-progress').length;
+      const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
+      const inProgressRate = total > 0 ? Math.round((inProgress / total) * 100) : 0;
+      const completedRate = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+      // UI 업데이트
+      document.getElementById('totalProgress').textContent = completionRate + '%';
+      document.getElementById('totalProgressBar').style.width = completionRate + '%';
+
+      document.getElementById('inProgressCount').textContent = inProgress + '개';
+      document.getElementById('inProgressBar').style.width = inProgressRate + '%';
+
+      document.getElementById('completedCount').textContent = completed + '개';
+      document.getElementById('completedBar').style.width = completedRate + '%';
+    }
+
+    // 상대 시간 계산
+    function getTimeAgo(date) {
+      const now = new Date();
+      const seconds = Math.floor((now - date) / 1000);
+
+      if (seconds < 60) return '방금 전';
+      if (seconds < 3600) return Math.floor(seconds / 60) + '분 전';
+      if (seconds < 86400) return Math.floor(seconds / 3600) + '시간 전';
+      if (seconds < 604800) return Math.floor(seconds / 86400) + '일 전';
+
+      return date.toLocaleDateString('ko-KR');
+    }
+
+    // HTML 이스케이프
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
   </script>
   <script src="../js/nav.js"></script>
 </body>
