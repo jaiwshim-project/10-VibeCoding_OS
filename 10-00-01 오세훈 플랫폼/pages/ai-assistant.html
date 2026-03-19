@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>오세훈 플랫폼 — AI 어시스턴트</title>
+  <link rel="stylesheet" href="../styles/design-system.css">
+  <style>
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: var(--space-6);
+    }
+
+    /* 네비게이션 */
+    .navbar {
+      background: white;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: var(--space-4) var(--space-6);
+    }
+
+    .navbar-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .navbar-logo {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .navbar-menu {
+      display: flex;
+      gap: var(--space-6);
+      list-style: none;
+    }
+
+    .navbar-menu a {
+      text-decoration: none;
+      color: var(--text);
+      font-weight: var(--font-weight-medium);
+      transition: color var(--transition);
+      font-size: var(--font-size-base);
+    }
+
+    .navbar-menu a:hover {
+      color: var(--primary);
+    }
+
+    .navbar-menu a.active {
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 4px;
+    }
+
+    /* 페이지 제목 */
+    .page-header {
+      margin-bottom: var(--space-8);
+    }
+
+    .page-header h1 {
+      font-size: var(--font-size-3xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--text);
+      margin-bottom: var(--space-2);
+    }
+
+    .page-header p {
+      font-size: var(--font-size-lg);
+      color: var(--text-secondary);
+    }
+
+    /* 레이아웃 */
+    .assistant-layout {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: var(--space-6);
+      margin-bottom: var(--space-8);
+    }
+
+    /* 채팅 영역 */
+    .chat-section {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-sm);
+      min-height: 500px;
+    }
+
+    .chat-header {
+      border-bottom: 2px solid var(--border);
+      padding-bottom: var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+
+    .chat-header h2 {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--text);
+      margin: 0;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: var(--space-6);
+      max-height: 300px;
+      padding-right: var(--space-2);
+    }
+
+    .chat-message {
+      margin-bottom: var(--space-6);
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .message-user {
+      text-align: right;
+      margin-bottom: var(--space-3);
+    }
+
+    .message-user-text {
+      display: inline-block;
+      background: var(--primary);
+      color: white;
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--radius-lg);
+      border-bottom-right-radius: var(--radius-sm);
+      font-size: var(--font-size-base);
+      line-height: var(--line-height-normal);
+      max-width: 80%;
+      word-wrap: break-word;
+    }
+
+    .message-assistant {
+      text-align: left;
+      margin-bottom: var(--space-3);
+    }
+
+    .message-assistant-text {
+      display: inline-block;
+      background: var(--bg-light);
+      color: var(--text);
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--radius-lg);
+      border-bottom-left-radius: var(--radius-sm);
+      font-size: var(--font-size-base);
+      line-height: var(--line-height-normal);
+      max-width: 80%;
+      word-wrap: break-word;
+      border: 1px solid var(--border);
+    }
+
+    /* 입력 폼 */
+    .chat-input-form {
+      display: flex;
+      gap: var(--space-3);
+    }
+
+    .chat-input-field {
+      flex: 1;
+      padding: var(--space-3) var(--space-4);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-base);
+      font-family: var(--font-family);
+      transition: border-color var(--transition);
+    }
+
+    .chat-input-field:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(230, 0, 18, 0.1);
+    }
+
+    .chat-input-button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: var(--space-3) var(--space-6);
+      border-radius: var(--radius-md);
+      font-weight: var(--font-weight-bold);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-size: var(--font-size-base);
+    }
+
+    .chat-input-button:hover {
+      background: #C70011;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .chat-input-button:active {
+      transform: translateY(0);
+    }
+
+    /* 사이드바 */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+    }
+
+    .sidebar-section {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sidebar-section h3 {
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-bold);
+      color: var(--text);
+      margin-bottom: var(--space-4);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: var(--space-3);
+    }
+
+    .example-question {
+      padding: var(--space-3);
+      background: var(--bg-light);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-3);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+
+    .example-question:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+      border-color: var(--primary);
+      transform: translateX(4px);
+    }
+
+    /* 쿼리 히스토리 */
+    .query-history {
+      list-style: none;
+    }
+
+    .history-item {
+      padding: var(--space-3);
+      background: var(--bg-light);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-3);
+      border-left: 3px solid var(--primary);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+    }
+
+    .history-item:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+      transform: translateX(4px);
+    }
+
+    .history-time {
+      font-size: var(--font-size-xs);
+      opacity: 0.7;
+      display: block;
+      margin-top: var(--space-1);
+    }
+
+    /* 로딩 표시 */
+    .loading {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--primary);
+      margin-right: 4px;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* 반응형 */
+    @media (max-width: 1024px) {
+      .assistant-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        flex-direction: row;
+      }
+
+      .sidebar-section {
+        flex: 1;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: var(--space-4);
+      }
+
+      .navbar-menu {
+        gap: var(--space-3);
+        font-size: var(--font-size-sm);
+      }
+
+      .chat-section {
+        min-height: 400px;
+      }
+
+      .message-user-text,
+      .message-assistant-text {
+        max-width: 100%;
+      }
+
+      .sidebar {
+        flex-direction: column;
+      }
+
+      .sidebar-section {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 네비게이션 -->
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="dashboard.html" class="navbar-logo">🎯 오세훈 플랫폼</a>
+      <ul class="navbar-menu">
+        <li><a href="dashboard.html">통합 분석</a></li>
+        <li><a href="intelligence.html">판세 인텔리전스</a></li>
+        <li><a href="strategy.html">전략 분석</a></li>
+        <li><a href="electionmap.html">일렉션 맵</a></li>
+        <li><a href="winningtrategy.html">당선 전략</a></li>
+        <li><a href="ai-assistant.html" class="active">AI 어시스턴트</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- 페이지 제목 -->
+    <div class="page-header">
+      <h1>AI 어시스턴트</h1>
+      <p>캠프 전략, 정책 분석, 경쟁 분석 실시간 Q&A</p>
+    </div>
+
+    <!-- 채팅 레이아웃 -->
+    <div class="assistant-layout">
+      <!-- 채팅 영역 -->
+      <div class="chat-section">
+        <div class="chat-header">
+          <h2>🤖 AI 전략 어시스턴트</h2>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+          <div class="chat-message">
+            <div class="message-assistant">
+              <div class="message-assistant-text">
+                안녕하세요! 오세훈 캠프 AI 어시스턴트입니다.
+                선거 전략, 정책 분석, 경쟁 후보 정보 등에 대해 언제든 질문해주세요.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 입력 폼 -->
+        <form class="chat-input-form" id="chatForm">
+          <input
+            type="text"
+            class="chat-input-field"
+            id="messageInput"
+            placeholder="질문을 입력하세요..."
+            autocomplete="off"
+          />
+          <button type="submit" class="chat-input-button">전송</button>
+        </form>
+      </div>
+
+      <!-- 사이드바 -->
+      <div class="sidebar">
+        <!-- 예제 질문 -->
+        <div class="sidebar-section">
+          <h3>💡 추천 질문</h3>
+          <div class="example-question" data-question="현재 지지도 현황을 분석해줄 수 있나요?">
+            📊 현재 지지도 분석
+          </div>
+          <div class="example-question" data-question="당선 전략은 어떻게 진행 중인가요?">
+            🎯 당선 전략 진행
+          </div>
+          <div class="example-question" data-question="경쟁 후보의 현황은 어떻게 되나요?">
+            🔍 경쟁 후보 분석
+          </div>
+          <div class="example-question" data-question="지역별 투표 예측을 알 수 있을까요?">
+            🗺️ 지역별 투표 예측
+          </div>
+        </div>
+
+        <!-- 최근 쿼리 -->
+        <div class="sidebar-section">
+          <h3>📝 최근 쿼리</h3>
+          <ul class="query-history" id="queryHistory">
+            <li class="history-item">
+              지난주 여론조사 결과
+              <span class="history-time">오늘 14:30</span>
+            </li>
+            <li class="history-item">
+              강남구 캠프 전략 수정
+              <span class="history-time">어제 09:15</span>
+            </li>
+            <li class="history-item">
+              정책 홍보 방안
+              <span class="history-time">3일 전</span>
+            </li>
+            <li class="history-item">
+              유세 일정 최적화
+              <span class="history-time">4일 전</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ 섹션 -->
+    <div style="background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-8); box-shadow: var(--shadow-sm); margin-bottom: var(--space-8);">
+      <h2 style="font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); margin-bottom: var(--space-6); border-bottom: 2px solid var(--border); padding-bottom: var(--space-4);">
+        ❓ 자주 묻는 질문
+      </h2>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-6);">
+        <div style="padding: var(--space-6); background: var(--bg-light); border-radius: var(--radius-lg); border-left: 4px solid var(--primary);">
+          <div style="font-weight: var(--font-weight-bold); color: var(--text); margin-bottom: var(--space-2);">
+            Q: 현재 지지도는 몇 퍼센트인가요?
+          </div>
+          <div style="font-size: var(--font-size-base); color: var(--text-secondary); line-height: var(--line-height-normal);">
+            A: 최신 여론조사에 따르면 지지도는 45%입니다. 지난주 대비 3.2% 포인트 상승했으며, 특히 40대 남성층과 강북 지역에서 강세를 보이고 있습니다.
+          </div>
+        </div>
+
+        <div style="padding: var(--space-6); background: var(--bg-light); border-radius: var(--radius-lg); border-left: 4px solid var(--primary);">
+          <div style="font-weight: var(--font-weight-bold); color: var(--text); margin-bottom: var(--space-2);">
+            Q: 핵심 캠프 메시지는 무엇인가요?
+          </div>
+          <div style="font-size: var(--font-size-base); color: var(--text-secondary); line-height: var(--line-height-normal);">
+            A: 핵심 메시지는 "함께하는 서울, 성장하는 서울"입니다. 경제 활성화 × 시민 복지 × 도시 혁신을 통해 시민 삶의 질 향상을 약속합니다.
+          </div>
+        </div>
+
+        <div style="padding: var(--space-6); background: var(--bg-light); border-radius: var(--radius-lg); border-left: 4px solid var(--primary);">
+          <div style="font-weight: var(--font-weight-bold); color: var(--text); margin-bottom: var(--space-2);">
+            Q: 당선 목표는 얼마인가요?
+          </div>
+          <div style="font-size: var(--font-size-base); color: var(--text-secondary); line-height: var(--line-height-normal);">
+            A: 당선 목표는 50%+1입니다. 서울시 절대 다수 확보를 위해 모든 캠프 활동을 전개하고 있습니다.
+          </div>
+        </div>
+
+        <div style="padding: var(--space-6); background: var(--bg-light); border-radius: var(--radius-lg); border-left: 4px solid var(--primary);">
+          <div style="font-weight: var(--font-weight-bold); color: var(--text); margin-bottom: var(--space-2);">
+            Q: 강남 지역 전략은 어떻게 되나요?
+          </div>
+          <div style="font-size: var(--font-size-base); color: var(--text-secondary); line-height: var(--line-height-normal);">
+            A: 강남 3구(강남, 서초, 강서)에서 상대적으로 약한 지지도를 보이고 있어, 경제정책과 정책 신뢰도 강화에 집중하고 있습니다.
+          </div>
+        </div>
+
+        <div style="padding: var(--space-6); background: var(--bg-light); border-radius: var(--radius-lg); border-left: 4px solid var(--primary);">
+          <div style="font-weight: var(--font-weight-bold); color: var(--text); margin-bottom: var(--space-2);">
+            Q: 주요 정책은 무엇인가요?
+          </div>
+          <div style="font-size: var(--font-size-base); color: var(--text-secondary); line-height: var(--line-height-normal);">
+            A: 우선순위 1순위는 서울 교통 혁신, 주택 공급 확대, 청년 일자리 창출입니다. 이 3개 분야에 캠프 역량을 집중하고 있습니다.
+          </div>
+        </div>
+
+        <div style="padding: var(--space-6); background: var(--bg-light); border-radius: var(--radius-lg); border-left: 4px solid var(--primary);">
+          <div style="font-weight: var(--font-weight-bold); color: var(--text); margin-bottom: var(--space-2);">
+            Q: 다음 주 유세 일정은?
+          </div>
+          <div style="font-size: var(--font-size-base); color: var(--text-secondary); line-height: var(--line-height-normal);">
+            A: 다음 주는 확대 전략 단계로 지역 간담회 및 여론 강화에 집중합니다. 세부 일정은 담당 스태프에게 문의해주세요.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 현재 페이지 활성화
+    function setActiveMenu() {
+      const currentPage = window.location.pathname.split('/').pop();
+      const menuLinks = document.querySelectorAll('.navbar-menu a');
+      menuLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        if (href === currentPage) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+    }
+
+    setActiveMenu();
+
+    // 채팅 기능
+    const chatForm = document.getElementById('chatForm');
+    const messageInput = document.getElementById('messageInput');
+    const chatMessages = document.getElementById('chatMessages');
+
+    // 예제 질문 클릭
+    document.querySelectorAll('.example-question').forEach(question => {
+      question.addEventListener('click', () => {
+        const text = question.getAttribute('data-question');
+        messageInput.value = text;
+        messageInput.focus();
+      });
+    });
+
+    // 최근 쿼리 클릭
+    document.querySelectorAll('.history-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const text = item.textContent.split('\n')[0];
+        messageInput.value = text;
+        messageInput.focus();
+      });
+    });
+
+    // 메시지 전송
+    chatForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const message = messageInput.value.trim();
+      if (!message) return;
+
+      // 사용자 메시지 표시
+      const userMessageDiv = document.createElement('div');
+      userMessageDiv.className = 'chat-message message-user';
+      userMessageDiv.innerHTML = `<div class="message-user-text">${escapeHtml(message)}</div>`;
+      chatMessages.appendChild(userMessageDiv);
+
+      messageInput.value = '';
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      // 로딩 상태
+      const loadingDiv = document.createElement('div');
+      loadingDiv.className = 'chat-message';
+      loadingDiv.innerHTML = `<div class="message-assistant"><div class="message-assistant-text"><span class="loading"></span>응답 생성 중...</div></div>`;
+      chatMessages.appendChild(loadingDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      // 더미 응답 (실제로는 Gemini API 호출)
+      setTimeout(() => {
+        loadingDiv.remove();
+
+        const response = getResponseForQuestion(message);
+        const assistantMessageDiv = document.createElement('div');
+        assistantMessageDiv.className = 'chat-message';
+        assistantMessageDiv.innerHTML = `<div class="message-assistant"><div class="message-assistant-text">${response}</div></div>`;
+        chatMessages.appendChild(assistantMessageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }, 1000);
+    });
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function getResponseForQuestion(question) {
+      const lowerQuestion = question.toLowerCase();
+
+      if (lowerQuestion.includes('지지도')) {
+        return '현재 지지도는 45%로 지난주 대비 3.2% 포인트 상승했습니다. 특히 40대 남성층과 강북 지역에서 강세를 보이고 있으며, 호의도도 60%로 높은 수준입니다.';
+      } else if (lowerQuestion.includes('당선') || lowerQuestion.includes('목표')) {
+        return '당선 목표는 50%+1입니다. 현재 진행 상황을 보면, 기반 구축 85%, 지역 간담회 75%, 여론조사 60%까지 진행되고 있습니다.';
+      } else if (lowerQuestion.includes('경쟁') || lowerQuestion.includes('후보')) {
+        return '경쟁 후보 A는 38% 지지도로 7% 포인트 차이를 유지 중이며, 후보 B는 32%입니다. 정책 신뢰도와 리더십 평가에서 우리가 우위를 점하고 있습니다.';
+      } else if (lowerQuestion.includes('지역') || lowerQuestion.includes('투표')) {
+        return '서울시 25개 자치구 중 강북 지역(도봉, 노원, 강북)에서 강세이며, 강남 3구(강남, 서초, 강서)에서 약세입니다. 부동층 25%를 대상으로 집중 설득 중입니다.';
+      } else if (lowerQuestion.includes('정책')) {
+        return '우선순위 1순위는 서울 교통 혁신, 주택 공급 확대, 청년 일자리 창출입니다. 이 3개 분야에서 경제 활성화와 시민 복지를 동시에 추진하고 있습니다.';
+      } else {
+        return '알겠습니다. 선거 캠프와 관련된 더 자세한 질문이나 정보가 필요하시면 언제든지 물어봐 주세요. 팀과 협력하여 최선의 답변을 드리겠습니다.';
+      }
+    }
+  </script>
+</body>
+</html>

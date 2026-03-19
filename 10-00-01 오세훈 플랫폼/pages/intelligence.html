@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>오세훈 플랫폼 — 판세 인텔리전스</title>
+  <link rel="stylesheet" href="../styles/design-system.css">
+  <style>
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: var(--space-6);
+    }
+
+    /* 네비게이션 */
+    .navbar {
+      background: white;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: var(--space-4) var(--space-6);
+    }
+
+    .navbar-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .navbar-logo {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .navbar-menu {
+      display: flex;
+      gap: var(--space-6);
+      list-style: none;
+    }
+
+    .navbar-menu a {
+      text-decoration: none;
+      color: var(--text);
+      font-weight: var(--font-weight-medium);
+      transition: color var(--transition);
+      font-size: var(--font-size-base);
+    }
+
+    .navbar-menu a:hover {
+      color: var(--primary);
+    }
+
+    .navbar-menu a.active {
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 4px;
+    }
+
+    /* 페이지 제목 */
+    .page-header {
+      margin-bottom: var(--space-8);
+    }
+
+    .page-header h1 {
+      font-size: var(--font-size-3xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--text);
+      margin-bottom: var(--space-2);
+    }
+
+    .page-header p {
+      font-size: var(--font-size-lg);
+      color: var(--text-secondary);
+    }
+
+    /* 섹션 */
+    .section {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-8);
+      margin-bottom: var(--space-8);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin-bottom: var(--space-6);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: var(--space-4);
+    }
+
+    .section-header h2 {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--text);
+      margin: 0;
+    }
+
+    /* 차트 영역 */
+    .chart-container {
+      height: 300px;
+      background: linear-gradient(135deg, var(--bg-light), white);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      margin-bottom: var(--space-6);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chart-line {
+      position: absolute;
+      bottom: var(--space-6);
+      width: 95%;
+      height: 200px;
+      left: var(--space-3);
+    }
+
+    .trend-info {
+      position: absolute;
+      top: var(--space-6);
+      right: var(--space-6);
+      background: white;
+      padding: var(--space-4);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      z-index: 10;
+    }
+
+    .trend-info-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-2);
+      font-size: var(--font-size-sm);
+    }
+
+    .trend-info-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .trend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .trend-dot.ose {
+      background: var(--primary);
+    }
+
+    .trend-dot.competitor1 {
+      background: #3B82F6;
+    }
+
+    .trend-dot.competitor2 {
+      background: #10B981;
+    }
+
+    /* 트렌드 분석 */
+    .trend-analysis {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--space-6);
+      margin-bottom: var(--space-6);
+    }
+
+    .trend-card {
+      background: var(--bg-light);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      border-left: 4px solid var(--primary);
+    }
+
+    .trend-card.positive {
+      border-left-color: var(--success);
+    }
+
+    .trend-card.negative {
+      border-left-color: var(--danger);
+    }
+
+    .trend-card-title {
+      font-weight: var(--font-weight-semibold);
+      color: var(--text);
+      margin-bottom: var(--space-2);
+    }
+
+    .trend-card-detail {
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      line-height: var(--line-height-normal);
+    }
+
+    /* 비교표 */
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: var(--space-6);
+    }
+
+    .comparison-table thead th {
+      background: var(--bg-lighter);
+      padding: var(--space-4);
+      text-align: left;
+      font-weight: var(--font-weight-bold);
+      border-bottom: 2px solid var(--border);
+      color: var(--text);
+    }
+
+    .comparison-table tbody td {
+      padding: var(--space-4);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .comparison-table tbody tr:hover {
+      background: var(--bg-light);
+    }
+
+    .candidate-name {
+      font-weight: var(--font-weight-semibold);
+      color: var(--text);
+    }
+
+    .score-bar {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      width: 100%;
+    }
+
+    .score-bar-fill {
+      background: linear-gradient(90deg, var(--primary), #C70011);
+      height: 24px;
+      border-radius: var(--radius-sm);
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: var(--space-2);
+      color: white;
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      min-width: 50px;
+    }
+
+    .score-bar-fill.secondary {
+      background: linear-gradient(90deg, #3B82F6, #1E40AF);
+    }
+
+    .score-bar-fill.tertiary {
+      background: linear-gradient(90deg, #10B981, #047857);
+    }
+
+    .score-percentage {
+      font-weight: var(--font-weight-bold);
+      min-width: 40px;
+      text-align: right;
+    }
+
+    /* 반응형 */
+    @media (max-width: 768px) {
+      .container {
+        padding: var(--space-4);
+      }
+
+      .navbar-menu {
+        gap: var(--space-3);
+        font-size: var(--font-size-sm);
+      }
+
+      .chart-container {
+        height: 200px;
+      }
+
+      .trend-analysis {
+        grid-template-columns: 1fr;
+      }
+
+      .comparison-table {
+        font-size: var(--font-size-sm);
+      }
+
+      .comparison-table thead th,
+      .comparison-table tbody td {
+        padding: var(--space-2);
+      }
+
+      .score-bar-fill {
+        font-size: var(--font-size-xs);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 네비게이션 -->
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="dashboard.html" class="navbar-logo">🎯 오세훈 플랫폼</a>
+      <ul class="navbar-menu">
+        <li><a href="dashboard.html">통합 분석</a></li>
+        <li><a href="intelligence.html" class="active">판세 인텔리전스</a></li>
+        <li><a href="strategy.html">전략 분석</a></li>
+        <li><a href="electionmap.html">일렉션 맵</a></li>
+        <li><a href="winningtrategy.html">당선 전략</a></li>
+        <li><a href="ai-assistant.html">AI 어시스턴트</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- 페이지 제목 -->
+    <div class="page-header">
+      <h1>판세 인텔리전스</h1>
+      <p>지지도 추이 및 경쟁 후보 비교 분석</p>
+    </div>
+
+    <!-- 지지도 추이 -->
+    <div class="section">
+      <div class="section-header">
+        <h2>📈 지지도 추이 분석</h2>
+      </div>
+
+      <div class="chart-container">
+        <div class="trend-info">
+          <div class="trend-info-item">
+            <span class="trend-dot ose"></span>
+            <span>오세훈: 45%</span>
+          </div>
+          <div class="trend-info-item">
+            <span class="trend-dot competitor1"></span>
+            <span>후보 A: 38%</span>
+          </div>
+          <div class="trend-info-item">
+            <span class="trend-dot competitor2"></span>
+            <span>후보 B: 32%</span>
+          </div>
+        </div>
+        <!-- 간단한 SVG 차트 -->
+        <svg class="chart-line" viewBox="0 0 500 200" preserveAspectRatio="xMidYMid meet">
+          <!-- 오세훈 라인 -->
+          <polyline points="10,150 100,120 200,80 300,70 400,65 490,45"
+                    fill="none" stroke="#E60012" stroke-width="3" stroke-linecap="round"/>
+          <!-- 후보 A 라인 -->
+          <polyline points="10,160 100,140 200,110 300,95 400,85 490,80"
+                    fill="none" stroke="#3B82F6" stroke-width="3" stroke-linecap="round"/>
+          <!-- 후보 B 라인 -->
+          <polyline points="10,180 100,170 200,140 300,120 400,110 490,100"
+                    fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <div class="trend-analysis">
+        <div class="trend-card positive">
+          <div class="trend-card-title">📊 주간 상승</div>
+          <div class="trend-card-detail">
+            지난주 대비 3.2% 포인트 상승. 정책 발표 이후 긍정 평가 증가.
+          </div>
+        </div>
+        <div class="trend-card positive">
+          <div class="trend-card-title">🎯 경쟁 우위</div>
+          <div class="trend-card-detail">
+            후보 A보다 7% 포인트 앞서고 있으며, 격차 유지 중.
+          </div>
+        </div>
+        <div class="trend-card negative">
+          <div class="trend-card-title">⚠️ 유념 대상</div>
+          <div class="trend-card-detail">
+            부동층 25% 존재. 설득 및 결집 전략 필요.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 경쟁 후보 비교 -->
+    <div class="section">
+      <div class="section-header">
+        <h2>🔍 경쟁 후보 비교 분석</h2>
+      </div>
+
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>평가 항목</th>
+            <th>오세훈</th>
+            <th>후보 A</th>
+            <th>후보 B</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>지지도</td>
+            <td>
+              <div class="score-bar">
+                <div class="score-bar-fill" style="width: 90%">45%</div>
+                <span class="score-percentage">45%</span>
+              </div>
+            </td>
+            <td>
+              <div class="score-bar">
+                <div class="score-bar-fill secondary" style="width: 76%">38%</div>
+                <span class="score-percentage">38%</span>
+              </div>
+            </td>
+            <td>
+              <div class="score-bar">
+                <div class="score-bar-fill tertiary" style="width: 64%">32%</div>
+                <span class="score-percentage">32%</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>호의도</td>
+            <td>
+              <div class="score-bar">
+                <div class="score-bar-fill" style="width: 95%">60%</div>
+                <span class="score-percentage">60%</span>
+              </div>
+            </td>
+            <td>
+              <div class="score-bar">
+                <div class="score-bar-fill secondary" style="width: 75%">48%</div>
+                <span class="score-percentage">48%</span>
+              </div>
+            </td>
+            <td>
+              <div class="score-bar">
+                <div class="score-bar-fill tertiary" style="width: 68%">44%</div>
+                <span class="score-percentage">44%</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>정책 신뢰도</td>
+            <td>
+              <div class="score-bar">
+                <div class="score-bar-fill" style="width: 88%">52%</div>
+                <span class="score-percentage">52%</span>
+              </div>
+            </td>
+            <td>
+              <div class="score-bar">
+                <div class="score-bar-fill secondary" style="width: 72%">42%</div>
+                <span class="score-percentage">42%</span>
+              </div>
+            </td>
+            <td>
+              <div class="score-bar">
+                <div class="score-bar-fill tertiary" style="width: 58%">35%</div>
+                <span class="score-percentage">35%</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>리더십 평가</td>
+            <td>
+              <div class="score-bar">
+                <div class="score-bar-fill" style="width: 92%">58%</div>
+                <span class="score-percentage">58%</span>
+              </div>
+            </td>
+            <td>
+              <div class="score-bar">
+                <div class="score-bar-fill secondary" style="width: 70%">44%</div>
+                <span class="score-percentage">44%</span>
+              </div>
+            </td>
+            <td>
+              <div class="score-bar">
+                <div class="score-bar-fill tertiary" style="width: 62%">39%</div>
+                <span class="score-percentage">39%</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>경제정책 평가</td>
+            <td>
+              <div class="score-bar">
+                <div class="score-bar-fill" style="width: 85%">48%</div>
+                <span class="score-percentage">48%</span>
+              </div>
+            </td>
+            <td>
+              <div class="score-bar">
+                <div class="score-bar-fill secondary" style="width: 74%">41%</div>
+                <span class="score-percentage">41%</span>
+              </div>
+            </td>
+            <td>
+              <div class="score-bar">
+                <div class="score-bar-fill tertiary" style="width: 66%">37%</div>
+                <span class="score-percentage">37%</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 추이 분석 결론 -->
+    <div class="section">
+      <div class="section-header">
+        <h2>💡 인텔리전스 분석 요약</h2>
+      </div>
+
+      <div class="trend-analysis">
+        <div class="trend-card">
+          <div class="trend-card-title">강점 영역</div>
+          <div class="trend-card-detail">
+            정책 신뢰도, 리더십 평가, 호의도 모두 경쟁 후보 대비 우위.
+            이 부분 강화를 통한 지지층 결집 전략 수립.
+          </div>
+        </div>
+        <div class="trend-card">
+          <div class="trend-card-title">개선 영역</div>
+          <div class="trend-card-detail">
+            경제정책 평가가 상대적으로 약함. 일자리, 소상공인 지원 등
+            경제 정책 강조를 통한 보완 필요.
+          </div>
+        </div>
+        <div class="trend-card">
+          <div class="trend-card-title">기회 요소</div>
+          <div class="trend-card-detail">
+            부동층 25%와 후보 A 지지층 일부 전환 가능.
+            이들을 대상으로 한 맞춤형 커뮤니케이션 전략 추진.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 현재 페이지 활성화
+    function setActiveMenu() {
+      const currentPage = window.location.pathname.split('/').pop();
+      const menuLinks = document.querySelectorAll('.navbar-menu a');
+      menuLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        if (href === currentPage) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+    }
+
+    setActiveMenu();
+  </script>
+</body>
+</html>
