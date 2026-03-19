@@ -36,6 +36,8 @@ const locationsRouter = require('./routes/locations');
 const chatRouter = require('./routes/chat');
 const authRouter = require('./routes/auth');
 const mediaRouter = require('./routes/media');
+const statsRouter = require('./routes/stats');
+const tasksRouter = require('./routes/tasks');
 
 // ============================================================================
 // Express 앱 초기화
@@ -143,6 +145,12 @@ app.use('/api/auth', authRouter);
 
 // 파일/미디어
 app.use('/api/media', mediaRouter);
+
+// 통계
+app.use('/api/stats', statsRouter);
+
+// 태스크
+app.use('/api/tasks', tasksRouter);
 
 // ============================================================================
 // 404 에러 핸들러

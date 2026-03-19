@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>태스크 관리판 — 오세훈 캠프</title>
+  <link rel="stylesheet" href="../styles/design-system.css">
+  <script src="../js/auth.js"></script>
+  <style>
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: var(--space-6);
+    }
+
+    /* 네비게이션 */
+    .navbar {
+      background: white;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: var(--space-4) var(--space-6);
+    }
+
+    .navbar-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .navbar-logo {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .navbar-menu {
+      display: flex;
+      gap: var(--space-6);
+      list-style: none;
+    }
+
+    .navbar-menu a {
+      text-decoration: none;
+      color: var(--text);
+      font-weight: var(--font-weight-medium);
+      transition: color var(--transition);
+      font-size: var(--font-size-base);
+    }
+
+    .navbar-menu a:hover {
+      color: var(--primary);
+    }
+
+    .navbar-menu a.active {
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 4px;
+    }
+
+    /* 페이지 헤더 */
+    .page-header {
+      margin-bottom: var(--space-8);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .page-header h1 {
+      font-size: var(--font-size-3xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--text);
+      margin: 0;
+    }
+
+    .page-header p {
+      font-size: var(--font-size-lg);
+      color: var(--text-secondary);
+      margin-bottom: var(--space-2);
+    }
+
+    /* 메인 레이아웃: 폼 + 리스트 */
+    .tasks-layout {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      gap: var(--space-8);
+      margin-bottom: var(--space-10);
+    }
+
+    /* 태스크 생성 폼 */
+    .task-form {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-sm);
+      height: fit-content;
+      position: sticky;
+      top: 80px;
+    }
+
+    .task-form h2 {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--text);
+      margin-bottom: var(--space-4);
+    }
+
+    .form-group {
+      margin-bottom: var(--space-4);
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: var(--font-weight-medium);
+      color: var(--text);
+      margin-bottom: var(--space-2);
+      font-size: var(--font-size-sm);
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: var(--space-3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: var(--font-size-sm);
+      transition: border-color var(--transition);
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(230, 0, 18, 0.1);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: var(--space-4);
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-weight: var(--font-weight-bold);
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+
+    .btn-primary:hover {
+      background: #c70011;
+    }
+
+    /* 태스크 리스트 */
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .task-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition);
+    }
+
+    .task-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary);
+    }
+
+    .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: var(--space-4);
+    }
+
+    .task-title {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--text);
+      margin: 0;
+    }
+
+    .task-status {
+      display: inline-block;
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-bold);
+    }
+
+    .task-status.pending {
+      background: #f0f0f0;
+      color: var(--text-secondary);
+    }
+
+    .task-status.in-progress {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .task-status.completed {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .task-description {
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      margin-bottom: var(--space-4);
+      line-height: 1.6;
+    }
+
+    .task-meta {
+      display: flex;
+      gap: var(--space-4);
+      flex-wrap: wrap;
+      margin-bottom: var(--space-4);
+      font-size: var(--font-size-sm);
+    }
+
+    .task-meta-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      color: var(--text-secondary);
+    }
+
+    .task-meta-item strong {
+      color: var(--text);
+    }
+
+    .priority-high {
+      color: #e60012;
+      font-weight: var(--font-weight-bold);
+    }
+
+    .priority-medium {
+      color: #f39c12;
+      font-weight: var(--font-weight-bold);
+    }
+
+    .priority-low {
+      color: #27ae60;
+      font-weight: var(--font-weight-bold);
+    }
+
+    .task-actions {
+      display: flex;
+      gap: var(--space-3);
+      justify-content: flex-end;
+    }
+
+    .btn-small {
+      padding: var(--space-2) var(--space-4);
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .btn-edit {
+      background: #e8f0f7;
+      color: #0066cc;
+    }
+
+    .btn-edit:hover {
+      background: #d0e0f0;
+    }
+
+    .btn-delete {
+      background: #ffebee;
+      color: #c30019;
+    }
+
+    .btn-delete:hover {
+      background: #ffcdd2;
+    }
+
+    .btn-complete {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .btn-complete:hover {
+      background: #c8e6c9;
+    }
+
+    /* 필터/정렬 */
+    .filter-bar {
+      display: flex;
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+      flex-wrap: wrap;
+    }
+
+    .filter-bar select {
+      padding: var(--space-2) var(--space-4);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-sm);
+      cursor: pointer;
+    }
+
+    /* 상태 알림 */
+    .alert {
+      padding: var(--space-4);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-4);
+      font-size: var(--font-size-sm);
+    }
+
+    .alert-success {
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+    }
+
+    .alert-error {
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+
+    /* 모바일 대응 */
+    @media (max-width: 768px) {
+      .tasks-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .task-form {
+        position: static;
+        margin-bottom: var(--space-6);
+      }
+
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .navbar-menu {
+        gap: var(--space-3);
+        font-size: var(--font-size-sm);
+      }
+
+      .task-actions {
+        flex-direction: column;
+      }
+
+      .btn-small {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 네비게이션 -->
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="dashboard.html" class="navbar-logo">⚡ 오세훈</a>
+      <ul class="navbar-menu">
+        <li><a href="dashboard.html">대시보드</a></li>
+        <li><a href="intelligence.html">판세분석</a></li>
+        <li><a href="strategy.html">전략</a></li>
+        <li><a href="electionmap.html">선거판도</a></li>
+        <li><a href="winningtrategy.html">승리전략</a></li>
+        <li><a href="ai-assistant.html">AI 어시스턴트</a></li>
+        <li><a href="tasks.html" class="active">태스크</a></li>
+        <li><a href="#" onclick="logout(); return false;">로그아웃</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- 페이지 헤더 -->
+    <div class="page-header">
+      <div>
+        <h1>📋 태스크 관리판</h1>
+        <p>캠프 스태프의 협업 및 진행 상황 추적</p>
+      </div>
+    </div>
+
+    <!-- 필터 바 -->
+    <div class="filter-bar">
+      <select id="statusFilter" onchange="filterTasks()">
+        <option value="all">모든 상태</option>
+        <option value="pending">대기 중</option>
+        <option value="in-progress">진행 중</option>
+        <option value="completed">완료</option>
+      </select>
+      <select id="priorityFilter" onchange="filterTasks()">
+        <option value="all">모든 우선순위</option>
+        <option value="high">높음</option>
+        <option value="medium">중간</option>
+        <option value="low">낮음</option>
+      </select>
+    </div>
+
+    <!-- 상태 메시지 -->
+    <div id="alertContainer"></div>
+
+    <!-- 메인 레이아웃 -->
+    <div class="tasks-layout">
+      <!-- 좌측: 태스크 생성 폼 -->
+      <div class="task-form">
+        <h2>새 태스크</h2>
+        <form id="taskForm">
+          <div class="form-group">
+            <label for="title">제목 *</label>
+            <input type="text" id="title" name="title" required placeholder="예: 강남구 캠프 전략 수정">
+          </div>
+
+          <div class="form-group">
+            <label for="description">설명</label>
+            <textarea id="description" name="description" placeholder="태스크 상세 설명"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="assignee">담당자 *</label>
+            <input type="text" id="assignee" name="assignee" required placeholder="담당자 이름">
+          </div>
+
+          <div class="form-group">
+            <label for="dueDate">마감일</label>
+            <input type="date" id="dueDate" name="dueDate">
+          </div>
+
+          <div class="form-group">
+            <label for="priority">우선순위 *</label>
+            <select id="priority" name="priority" required>
+              <option value="low">낮음</option>
+              <option value="medium" selected>중간</option>
+              <option value="high">높음</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn-primary">태스크 생성</button>
+        </form>
+      </div>
+
+      <!-- 우측: 태스크 리스트 -->
+      <div>
+        <div class="task-list" id="taskList">
+          <!-- 태스크가 여기에 동적으로 삽입됨 -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let allTasks = [];
+    const currentUser = getCurrentUser();
+
+    // 페이지 로드 시
+    document.addEventListener('DOMContentLoaded', () => {
+      initAuth();
+      loadTasks();
+
+      document.getElementById('taskForm').addEventListener('submit', createTask);
+    });
+
+    // 태스크 로드
+    async function loadTasks() {
+      try {
+        const response = await fetch('/api/tasks', {
+          method: 'GET',
+          headers: getAuthHeaders({
+            'Content-Type': 'application/json',
+          }),
+        });
+
+        if (response.status === 401 || response.status === 403) {
+          handleAuthError(response);
+          return;
+        }
+
+        const result = await response.json();
+        if (result.success) {
+          allTasks = result.data || [];
+          renderTasks(allTasks);
+        }
+      } catch (error) {
+        console.error('태스크 로드 실패:', error);
+        showAlert('태스크 로드 실패', 'error');
+      }
+    }
+
+    // 태스크 생성
+    async function createTask(e) {
+      e.preventDefault();
+
+      const taskData = {
+        title: document.getElementById('title').value,
+        description: document.getElementById('description').value,
+        assignee: document.getElementById('assignee').value,
+        dueDate: document.getElementById('dueDate').value || null,
+        priority: document.getElementById('priority').value,
+        status: 'pending',
+        createdBy: currentUser.username,
+      };
+
+      try {
+        const response = await fetch('/api/tasks', {
+          method: 'POST',
+          headers: getAuthHeaders({
+            'Content-Type': 'application/json',
+          }),
+          body: JSON.stringify(taskData),
+        });
+
+        if (response.status === 401 || response.status === 403) {
+          handleAuthError(response);
+          return;
+        }
+
+        const result = await response.json();
+        if (result.success) {
+          showAlert('태스크가 생성되었습니다', 'success');
+          document.getElementById('taskForm').reset();
+          await loadTasks();
+        } else {
+          showAlert(result.message || '태스크 생성 실패', 'error');
+        }
+      } catch (error) {
+        console.error('태스크 생성 실패:', error);
+        showAlert('태스크 생성 실패', 'error');
+      }
+    }
+
+    // 태스크 삭제
+    async function deleteTask(taskId) {
+      if (!confirm('이 태스크를 삭제하시겠습니까?')) return;
+
+      try {
+        const response = await fetch(`/api/tasks/${taskId}`, {
+          method: 'DELETE',
+          headers: getAuthHeaders({
+            'Content-Type': 'application/json',
+          }),
+        });
+
+        if (response.status === 401 || response.status === 403) {
+          handleAuthError(response);
+          return;
+        }
+
+        const result = await response.json();
+        if (result.success) {
+          showAlert('태스크가 삭제되었습니다', 'success');
+          await loadTasks();
+        }
+      } catch (error) {
+        console.error('태스크 삭제 실패:', error);
+        showAlert('태스크 삭제 실패', 'error');
+      }
+    }
+
+    // 태스크 상태 업데이트
+    async function updateTaskStatus(taskId, newStatus) {
+      try {
+        const response = await fetch(`/api/tasks/${taskId}`, {
+          method: 'PUT',
+          headers: getAuthHeaders({
+            'Content-Type': 'application/json',
+          }),
+          body: JSON.stringify({ status: newStatus }),
+        });
+
+        if (response.status === 401 || response.status === 403) {
+          handleAuthError(response);
+          return;
+        }
+
+        const result = await response.json();
+        if (result.success) {
+          await loadTasks();
+        }
+      } catch (error) {
+        console.error('태스크 업데이트 실패:', error);
+        showAlert('상태 변경 실패', 'error');
+      }
+    }
+
+    // 태스크 렌더링
+    function renderTasks(tasks) {
+      const taskList = document.getElementById('taskList');
+      if (tasks.length === 0) {
+        taskList.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">생성된 태스크가 없습니다</p>';
+        return;
+      }
+
+      taskList.innerHTML = tasks.map(task => {
+        const dueDate = task.due_date ? new Date(task.due_date).toLocaleDateString('ko-KR') : '미지정';
+        const nextStatus = task.status === 'pending' ? 'in-progress' : (task.status === 'in-progress' ? 'completed' : 'pending');
+        const nextStatusLabel = nextStatus === 'pending' ? '대기' : (nextStatus === 'in-progress' ? '진행중' : '완료');
+
+        return `
+          <div class="task-card">
+            <div class="task-header">
+              <h3 class="task-title">${escapeHtml(task.title)}</h3>
+              <span class="task-status ${task.status}">${task.status === 'pending' ? '대기 중' : (task.status === 'in-progress' ? '진행 중' : '완료')}</span>
+            </div>
+
+            ${task.description ? `<p class="task-description">${escapeHtml(task.description)}</p>` : ''}
+
+            <div class="task-meta">
+              <div class="task-meta-item">
+                <strong>담당:</strong>
+                <span>${escapeHtml(task.assignee)}</span>
+              </div>
+              <div class="task-meta-item">
+                <strong>마감:</strong>
+                <span>${dueDate}</span>
+              </div>
+              <div class="task-meta-item">
+                <strong>우선순위:</strong>
+                <span class="priority-${task.priority}">${task.priority === 'high' ? '높음' : (task.priority === 'medium' ? '중간' : '낮음')}</span>
+              </div>
+            </div>
+
+            <div class="task-actions">
+              <button class="btn-small btn-complete" onclick="updateTaskStatus(${task.id}, '${nextStatus}')">${nextStatusLabel}로 변경</button>
+              <button class="btn-small btn-delete" onclick="deleteTask(${task.id})">삭제</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 태스크 필터링
+    function filterTasks() {
+      const statusFilter = document.getElementById('statusFilter').value;
+      const priorityFilter = document.getElementById('priorityFilter').value;
+
+      let filtered = allTasks;
+
+      if (statusFilter !== 'all') {
+        filtered = filtered.filter(t => t.status === statusFilter);
+      }
+
+      if (priorityFilter !== 'all') {
+        filtered = filtered.filter(t => t.priority === priorityFilter);
+      }
+
+      renderTasks(filtered);
+    }
+
+    // 알림 표시
+    function showAlert(message, type) {
+      const alertContainer = document.getElementById('alertContainer');
+      const alert = document.createElement('div');
+      alert.className = `alert alert-${type}`;
+      alert.textContent = message;
+      alertContainer.innerHTML = '';
+      alertContainer.appendChild(alert);
+
+      setTimeout(() => {
+        alert.remove();
+      }, 4000);
+    }
+
+    // HTML 이스케이프
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
