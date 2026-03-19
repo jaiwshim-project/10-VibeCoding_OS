@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>오세훈 플랫폼 — 스태프 로그인</title>
+  <link rel="stylesheet" href="../styles/design-system.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, var(--primary) 0%, #C70011 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-family);
+    }
+
+    .login-container {
+      background: white;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-xl);
+      max-width: 400px;
+      width: 100%;
+      padding: var(--space-10);
+      margin: var(--space-4);
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: var(--space-8);
+    }
+
+    .login-logo {
+      font-size: 48px;
+      margin-bottom: var(--space-3);
+    }
+
+    .login-title {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--text);
+      margin-bottom: var(--space-2);
+    }
+
+    .login-subtitle {
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .form-label {
+      font-weight: var(--font-weight-medium);
+      color: var(--text);
+      font-size: var(--font-size-base);
+    }
+
+    .form-input {
+      padding: var(--space-3) var(--space-4);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-base);
+      font-family: var(--font-family);
+      transition: border-color var(--transition);
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(230, 0, 18, 0.1);
+    }
+
+    .form-input::placeholder {
+      color: var(--text-secondary);
+    }
+
+    .login-button {
+      background: linear-gradient(135deg, var(--primary), #C70011);
+      color: white;
+      border: none;
+      padding: var(--space-4) var(--space-6);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-bold);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .login-button:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .login-button:active {
+      transform: translateY(0);
+    }
+
+    .login-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .error-message {
+      padding: var(--space-3) var(--space-4);
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+      border-radius: var(--radius-md);
+      border-left: 4px solid var(--danger);
+      font-size: var(--font-size-sm);
+      display: none;
+      animation: slideIn 0.3s ease;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
+    .success-message {
+      padding: var(--space-3) var(--space-4);
+      background: rgba(34, 197, 94, 0.1);
+      color: var(--success);
+      border-radius: var(--radius-md);
+      border-left: 4px solid var(--success);
+      font-size: var(--font-size-sm);
+      display: none;
+      animation: slideIn 0.3s ease;
+    }
+
+    .success-message.show {
+      display: block;
+    }
+
+    .login-footer {
+      text-align: center;
+      margin-top: var(--space-6);
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+    }
+
+    .demo-info {
+      padding: var(--space-4);
+      background: var(--bg-light);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-6);
+      border-left: 4px solid var(--info);
+      font-size: var(--font-size-sm);
+    }
+
+    .demo-info strong {
+      display: block;
+      color: var(--info);
+      margin-bottom: var(--space-2);
+    }
+
+    .loading {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: white;
+      animation: pulse 1.5s infinite;
+      margin-right: 6px;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .login-container {
+        margin: 0;
+        border-radius: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: var(--space-6);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-header">
+      <div class="login-logo">🎯</div>
+      <h1 class="login-title">오세훈 플랫폼</h1>
+      <p class="login-subtitle">캠프 전략 분석 시스템</p>
+    </div>
+
+    <div id="errorMessage" class="error-message"></div>
+    <div id="successMessage" class="success-message"></div>
+
+    <div class="demo-info">
+      <strong>📋 테스트 계정</strong>
+      ID: staff01<br>
+      PW: password123
+    </div>
+
+    <form class="login-form" id="loginForm">
+      <div class="form-group">
+        <label class="form-label">아이디</label>
+        <input
+          type="text"
+          id="username"
+          class="form-input"
+          placeholder="아이디를 입력하세요"
+          required
+          autocomplete="username"
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">비밀번호</label>
+        <input
+          type="password"
+          id="password"
+          class="form-input"
+          placeholder="비밀번호를 입력하세요"
+          required
+          autocomplete="current-password"
+        />
+      </div>
+
+      <button type="submit" class="login-button" id="loginBtn">로그인</button>
+    </form>
+
+    <div class="login-footer">
+      <p>📞 관리자 문의: campaign@osewhoon.kr</p>
+    </div>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById('loginForm');
+    const loginBtn = document.getElementById('loginBtn');
+    const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      // 에러 메시지 초기화
+      errorMessage.classList.remove('show');
+      successMessage.classList.remove('show');
+
+      // 버튼 비활성화
+      loginBtn.disabled = true;
+      const originalText = loginBtn.textContent;
+      loginBtn.innerHTML = '<span class="loading"></span>로그인 중...';
+
+      try {
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || '로그인 실패');
+        }
+
+        // 로그인 성공
+        successMessage.textContent = '✅ 로그인 성공! 리디렉트 중...';
+        successMessage.classList.add('show');
+
+        // JWT 토큰 저장
+        localStorage.setItem('authToken', data.data.token);
+        localStorage.setItem('user', JSON.stringify(data.data.user));
+
+        // 대시보드로 리디렉트
+        setTimeout(() => {
+          window.location.href = 'dashboard.html';
+        }, 1000);
+      } catch (error) {
+        console.error('Login error:', error);
+        errorMessage.textContent = `❌ ${error.message}`;
+        errorMessage.classList.add('show');
+
+        // 버튼 복원
+        loginBtn.disabled = false;
+        loginBtn.textContent = originalText;
+      }
+    });
+  </script>
+</body>
+</html>
