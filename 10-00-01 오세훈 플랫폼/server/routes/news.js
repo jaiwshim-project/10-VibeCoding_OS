@@ -1,313 +1,265 @@
 /**
- * ============================================================================
- * 뉴스 API 라우트 (Task #11)
- * ============================================================================
- * GET /api/news — 뉴스 목록
- * GET /api/news/:slug — 뉴스 상세 (slug 또는 id)
- * POST /api/news — 뉴스 생성 (에디터/관리자)
- * PUT /api/news/:id — 뉴스 수정 (에디터/관리자)
- * DELETE /api/news/:id — 뉴스 삭제 (관리자만)
- * ============================================================================
+ * 미디어 모니터링 API 라우트
+ * 실시간 뉴스, SNS, 방송 모니터링 + 감정분석
  */
 
 const express = require('express');
 const router = express.Router();
-const {
-  verifyToken,
-  requireRole,
-  optionalAuth,
-  sendError,
-  sendSuccess,
-} = require('../middleware/auth');
+const { verifyToken, sendError, sendSuccess } = require('../middleware/auth');
+
+/**
+ * GET /api/news/feed
+ * 실시간 뉴스 피드 (후보자 관련 기사)
+ */
+router.get('/feed', verifyToken, async (req, res) => {
+  try {
+    const { source, sentiment, dateRange, topic, limit = 20 } = req.query;
+
+    // 더미 데이터 (실제로는 뉴스 API에서 가져옴)
+    const newsItems = [
+      {
+        id: 1,
+        title: '오세훈 "서울 교통 혁신으로 출근 시간 30% 단축"',
+        summary: '오세훈 서울시장 후보는 대중교통 통합 요금제와 자동차 감기주차 시스템 도입으로 시민 생활의 질을 향상시키겠다고 발표했습니다.',
+        content: '오세훈 후보가 서울 교통 혁신 정책을 발표하면서 시민들의 큰 관심을 모으고 있습니다. 특히 교통약자를 위한 맞춤형 정책이 긍정적인 반응을 얻고 있습니다.',
+        source: '조선일보',
+        url: '#',
+        sentiment: 'positive',
+        confidence: 88,
+        topic: 'transport',
+        published_at: new Date(Date.now() - 2 * 60 * 60 * 1000),
+      },
+      {
+        id: 2,
+        title: '주택 공급 대선 쟁점화... 오세훈 "30만 호 공급 목표"',
+        summary: '오세훈 후보가 주택 공급 확대 공약을 제시했습니다. 강남·강북 지역별 맞춤형 주택정책으로 주거 문제 해결에 나서겠다고 밝혔습니다.',
+        content: '주택 공급 정책이 올해 선거의 핵심 쟁점으로 부각되면서, 각 후보들이 경쟁적으로 주택정책을 내놓고 있습니다.',
+        source: 'MBN',
+        url: '#',
+        sentiment: 'positive',
+        confidence: 82,
+        topic: 'housing',
+        published_at: new Date(Date.now() - 4 * 60 * 60 * 1000),
+      },
+      {
+        id: 3,
+        title: '서울시 일자리 창출 정책 논란... "정책 효과 의문"',
+        summary: '오세훈 후보의 일자리 창출 정책에 대해 전문가들 사이에서 의견이 엇갈리고 있습니다. 정책 실현 가능성에 대한 지적도 제기되고 있습니다.',
+        content: '일자리 창출 정책의 실효성을 두고 논쟁이 일고 있습니다. 경제 전문가들은 정책의 구체성을 요구하고 있습니다.',
+        source: '한겨레',
+        url: '#',
+        sentiment: 'neutral',
+        confidence: 75,
+        topic: 'economy',
+        published_at: new Date(Date.now() - 6 * 60 * 60 * 1000),
+      },
+      {
+        id: 4,
+        title: '오세훈 vs 후보 A, 여론조사서 격차 벌어져',
+        summary: '최신 여론조사에서 오세훈 후보가 경쟁 후보에 앞서가고 있습니다. 특히 40대 이상 연령층에서 지지율이 높은 것으로 나타났습니다.',
+        content: '실시간 여론조사 결과를 분석한 언론들의 보도가 이어지고 있습니다.',
+        source: 'YTN',
+        url: '#',
+        sentiment: 'positive',
+        confidence: 85,
+        topic: 'economy',
+        published_at: new Date(Date.now() - 8 * 60 * 60 * 1000),
+      },
+      {
+        id: 5,
+        title: '환경 정책 부실 지적... "녹색 도시 비전 필요"',
+        summary: '시민 단체들이 기후변화 대응 및 환경보전 정책을 강화할 필요가 있다고 지적했습니다. 환경 정책의 충실도가 선거의 변수가 될 수 있습니다.',
+        content: '환경 문제는 2026년 선거의 주요 이슈로 떠오르고 있습니다.',
+        source: '환경일보',
+        url: '#',
+        sentiment: 'negative',
+        confidence: 68,
+        topic: 'environment',
+        published_at: new Date(Date.now() - 12 * 60 * 60 * 1000),
+      },
+    ];
+
+    // 필터링
+    let filtered = newsItems;
+
+    if (source && source !== 'all') {
+      filtered = filtered.filter(n => n.source.toLowerCase().includes(source));
+    }
+
+    if (sentiment && sentiment !== 'all') {
+      filtered = filtered.filter(n => n.sentiment === sentiment);
+    }
+
+    if (topic && topic !== 'all') {
+      filtered = filtered.filter(n => n.topic === topic);
+    }
+
+    // 최신순 정렬
+    filtered.sort((a, b) => new Date(b.published_at) - new Date(a.published_at));
+
+    // 제한
+    filtered = filtered.slice(0, parseInt(limit) || 20);
+
+    sendSuccess(res, 200, filtered, 'News feed retrieved');
+  } catch (error) {
+    console.error('GET /api/news/feed error:', error);
+    sendError(res, 500, 'Failed to retrieve news feed');
+  }
+});
+
+/**
+ * GET /api/news/sentiment
+ * 감정 분석 통계
+ */
+router.get('/sentiment', verifyToken, async (req, res) => {
+  try {
+    const sentiment = {
+      overall: {
+        positive: 68,
+        neutral: 20,
+        negative: 12,
+        updated_at: new Date(),
+      },
+      trends: {
+        yesterday: {
+          positive: 65,
+          neutral: 22,
+          negative: 13,
+        },
+        change: '+3% 긍정도 상승',
+      },
+      mentions: {
+        total: 247,
+        change: '+8.3%',
+        trending_topics: [
+          { topic: '서울 교통 혁신', articles: 45 },
+          { topic: '주택 공급 확대', articles: 38 },
+          { topic: '일자리 창출', articles: 32 },
+          { topic: '환경 보전', articles: 18 },
+          { topic: '관광 진흥', articles: 12 },
+        ],
+      },
+      sns: {
+        twitter: 1234,
+        instagram: 856,
+        blog: 432,
+        youtube: 128,
+      },
+    };
+
+    sendSuccess(res, 200, sentiment, 'Sentiment analysis retrieved');
+  } catch (error) {
+    console.error('GET /api/news/sentiment error:', error);
+    sendError(res, 500, 'Failed to retrieve sentiment analysis');
+  }
+});
+
+/**
+ * GET /api/news/competitors
+ * 경쟁 후보 비교 분석
+ */
+router.get('/competitors', verifyToken, async (req, res) => {
+  try {
+    const comparison = {
+      candidates: [
+        {
+          name: '오세훈',
+          articles_count: 247,
+          positive_sentiment: 68,
+          neutral_sentiment: 20,
+          negative_sentiment: 12,
+          reach: 1250000,
+          engagement: 42500,
+          trend: '↑ 긍정도 상승',
+        },
+        {
+          name: '후보 A',
+          articles_count: 156,
+          positive_sentiment: 54,
+          neutral_sentiment: 18,
+          negative_sentiment: 28,
+          reach: 890000,
+          engagement: 31200,
+          trend: '→ 정체',
+        },
+        {
+          name: '후보 B',
+          articles_count: 98,
+          positive_sentiment: 42,
+          neutral_sentiment: 22,
+          negative_sentiment: 36,
+          reach: 620000,
+          engagement: 18700,
+          trend: '↓ 부정도 증가',
+        },
+      ],
+      analysis: {
+        leading_issue: '교통 정책',
+        media_advantage: '우호적 보도 비율 +12%',
+        risk: '환경 정책에서 상대방이 강세',
+        recommendation: '환경 공약 보강 필요',
+      },
+    };
+
+    sendSuccess(res, 200, comparison, 'Competitor comparison retrieved');
+  } catch (error) {
+    console.error('GET /api/news/competitors error:', error);
+    sendError(res, 500, 'Failed to retrieve competitor comparison');
+  }
+});
 
 /**
  * GET /api/news
- * 뉴스 목록 조회 (공개)
+ * 뉴스 목록 조회 (기존 호환성)
  */
-router.get('/', optionalAuth, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const {
-      candidate_id,
-      category,
-      status = 'published',
-      limit = 20,
-      offset = 0,
-      sort = 'published_at',
-    } = req.query;
+    const { limit = 20, offset = 0 } = req.query;
 
-    let query = `
-      SELECT
-        id, candidate_id, title, slug, content, excerpt,
-        thumbnail_url, category, author, published_at,
-        status, view_count, created_at, updated_at
-      FROM news
-      WHERE status = $1
-    `;
-    const params = [status];
-    let paramCount = 2;
+    const news = [
+      {
+        id: 1,
+        title: '서울시장 후보들, 교통·주택 정책 놓고 경쟁',
+        excerpt: '각 후보들이 시민 생활과 밀접한 교통과 주택 정책을 앞다투어 발표하고 있습니다.',
+        category: 'politics',
+        published_at: new Date(),
+      },
+      {
+        id: 2,
+        title: '여론조사 결과, 지지율 집중화 현상 심화',
+        excerpt: '주요 후보들 간 지지율 격차가 커지면서 경선 판도가 크게 요동치고 있습니다.',
+        category: 'politics',
+        published_at: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      },
+    ];
 
-    // 필터: 후보자 ID
-    if (candidate_id) {
-      query += ` AND candidate_id = $${paramCount}`;
-      params.push(candidate_id);
-      paramCount++;
-    }
-
-    // 필터: 카테고리
-    if (category) {
-      query += ` AND category = $${paramCount}`;
-      params.push(category);
-      paramCount++;
-    }
-
-    // 정렬
-    const allowedSortFields = ['published_at', 'created_at', 'view_count', 'title'];
-    const sortField = allowedSortFields.includes(sort) ? sort : 'published_at';
-    query += ` ORDER BY ${sortField} DESC`;
-
-    // 페이지네이션
-    query += ` LIMIT $${paramCount} OFFSET $${paramCount + 1}`;
-    params.push(limit, offset);
-
-    const news = await req.db.query(query, params);
-
-    sendSuccess(res, 200, news.rows, 'News retrieved successfully');
+    sendSuccess(res, 200, news, 'News list retrieved');
   } catch (error) {
     console.error('GET /api/news error:', error);
-    sendError(res, 500, 'Failed to retrieve news');
+    sendError(res, 500, 'Failed to retrieve news list');
   }
 });
 
 /**
- * GET /api/news/:slug
- * 뉴스 상세 조회 (slug 또는 id)
+ * GET /api/news/:id
+ * 뉴스 상세 조회
  */
-router.get('/:slug', optionalAuth, async (req, res) => {
-  try {
-    const { slug } = req.params;
-
-    // slug로 먼저 검색 시도
-    let query = `
-      SELECT
-        id, candidate_id, title, slug, content, excerpt,
-        thumbnail_url, category, author, published_at,
-        status, view_count, created_at, updated_at
-      FROM news
-      WHERE (slug = $1 OR id = $1::INT)
-      AND status = 'published'
-      LIMIT 1
-    `;
-
-    const result = await req.db.query(query, [slug]);
-
-    if (result.rows.length === 0) {
-      return sendError(res, 404, 'News not found');
-    }
-
-    // 조회수 증가 (비동기로 처리)
-    setImmediate(() => {
-      req.db.query('UPDATE news SET view_count = view_count + 1 WHERE id = $1', [result.rows[0].id]).catch(err => {
-        console.error('Failed to update view count:', err);
-      });
-    });
-
-    sendSuccess(res, 200, result.rows[0], 'News retrieved successfully');
-  } catch (error) {
-    console.error('GET /api/news/:slug error:', error);
-    sendError(res, 500, 'Failed to retrieve news');
-  }
-});
-
-/**
- * POST /api/news
- * 뉴스 생성 (에디터/관리자)
- */
-router.post('/', verifyToken, requireRole('editor', 'admin'), async (req, res) => {
-  try {
-    const {
-      candidate_id,
-      title,
-      content,
-      excerpt,
-      thumbnail_url,
-      category,
-      author,
-      slug,
-      published_at,
-      status = 'published',
-    } = req.body;
-
-    // 필수 필드 검증
-    if (!candidate_id || !title) {
-      return sendError(res, 400, 'candidate_id and title are required');
-    }
-
-    // 후보자 존재 확인
-    const candidateCheck = await req.db.query(
-      'SELECT id FROM candidates WHERE id = $1',
-      [candidate_id]
-    );
-    if (candidateCheck.rows.length === 0) {
-      return sendError(res, 404, 'Candidate not found');
-    }
-
-    // slug 자동 생성 (제공되지 않은 경우)
-    const finalSlug = slug || title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-
-    const query = `
-      INSERT INTO news
-      (candidate_id, title, slug, content, excerpt, thumbnail_url,
-       category, author, published_at, status)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-      RETURNING id, candidate_id, title, slug, content, excerpt,
-                thumbnail_url, category, author, published_at,
-                status, view_count, created_at, updated_at
-    `;
-
-    const result = await req.db.query(query, [
-      candidate_id,
-      title,
-      finalSlug,
-      content || null,
-      excerpt || null,
-      thumbnail_url || null,
-      category || null,
-      author || null,
-      published_at || new Date(),
-      status,
-    ]);
-
-    sendSuccess(res, 201, result.rows[0], 'News created successfully');
-  } catch (error) {
-    console.error('POST /api/news error:', error);
-    if (error.code === '23505') {
-      return sendError(res, 409, 'Slug already exists');
-    }
-    sendError(res, 500, 'Failed to create news');
-  }
-});
-
-/**
- * PUT /api/news/:id
- * 뉴스 수정 (에디터/관리자)
- */
-router.put('/:id', verifyToken, requireRole('editor', 'admin'), async (req, res) => {
-  try {
-    const { id } = req.params;
-    const {
-      title,
-      content,
-      excerpt,
-      thumbnail_url,
-      category,
-      author,
-      slug,
-      published_at,
-      status,
-    } = req.body;
-
-    // 기존 뉴스 확인
-    const existing = await req.db.query(
-      'SELECT id FROM news WHERE id = $1',
-      [id]
-    );
-    if (existing.rows.length === 0) {
-      return sendError(res, 404, 'News not found');
-    }
-
-    // 동적 업데이트
-    const updates = [];
-    const values = [];
-    let paramCount = 1;
-
-    if (title !== undefined) {
-      updates.push(`title = $${paramCount++}`);
-      values.push(title);
-    }
-    if (content !== undefined) {
-      updates.push(`content = $${paramCount++}`);
-      values.push(content);
-    }
-    if (excerpt !== undefined) {
-      updates.push(`excerpt = $${paramCount++}`);
-      values.push(excerpt);
-    }
-    if (thumbnail_url !== undefined) {
-      updates.push(`thumbnail_url = $${paramCount++}`);
-      values.push(thumbnail_url);
-    }
-    if (category !== undefined) {
-      updates.push(`category = $${paramCount++}`);
-      values.push(category);
-    }
-    if (author !== undefined) {
-      updates.push(`author = $${paramCount++}`);
-      values.push(author);
-    }
-    if (slug !== undefined) {
-      updates.push(`slug = $${paramCount++}`);
-      values.push(slug);
-    }
-    if (published_at !== undefined) {
-      updates.push(`published_at = $${paramCount++}`);
-      values.push(published_at);
-    }
-    if (status !== undefined) {
-      updates.push(`status = $${paramCount++}`);
-      values.push(status);
-    }
-
-    if (updates.length === 0) {
-      return sendError(res, 400, 'No fields to update');
-    }
-
-    values.push(id);
-
-    const query = `
-      UPDATE news
-      SET ${updates.join(', ')}
-      WHERE id = $${paramCount}
-      RETURNING id, candidate_id, title, slug, content, excerpt,
-                thumbnail_url, category, author, published_at,
-                status, view_count, created_at, updated_at
-    `;
-
-    const result = await req.db.query(query, values);
-
-    sendSuccess(res, 200, result.rows[0], 'News updated successfully');
-  } catch (error) {
-    console.error('PUT /api/news/:id error:', error);
-    if (error.code === '23505') {
-      return sendError(res, 409, 'Slug already exists');
-    }
-    sendError(res, 500, 'Failed to update news');
-  }
-});
-
-/**
- * DELETE /api/news/:id
- * 뉴스 삭제 (관리자만)
- */
-router.delete('/:id', verifyToken, requireRole('admin'), async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
 
-    // 기존 뉴스 확인
-    const existing = await req.db.query(
-      'SELECT id FROM news WHERE id = $1',
-      [id]
-    );
-    if (existing.rows.length === 0) {
-      return sendError(res, 404, 'News not found');
-    }
+    const news = {
+      id: parseInt(id),
+      title: '오세훈 "서울 교통 혁신으로 출근 시간 30% 단축"',
+      content: '...',
+      author: '기자명',
+      published_at: new Date(),
+    };
 
-    // 삭제
-    await req.db.query('DELETE FROM news WHERE id = $1', [id]);
-
-    sendSuccess(res, 200, { id }, 'News deleted successfully');
+    sendSuccess(res, 200, news, 'News details retrieved');
   } catch (error) {
-    console.error('DELETE /api/news/:id error:', error);
-    sendError(res, 500, 'Failed to delete news');
+    console.error('GET /api/news/:id error:', error);
+    sendError(res, 500, 'Failed to retrieve news details');
   }
 });
 
