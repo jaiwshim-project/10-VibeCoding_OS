@@ -13,6 +13,36 @@
   box-shadow:var(--shadow-md);padding:20px 10px;
 }
 svg { display:block;margin:0 auto; }
+
+.phase-cards {
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:32px;
+}
+.phase-card {
+  border-radius:16px;padding:28px;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.12);
+  transition:transform .3s ease,box-shadow .3s ease;
+}
+.phase-card:hover { transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.16) }
+.phase-card.p1 { background:linear-gradient(135deg,#2563eb 0%,#3b82f6 100%) }
+.phase-card.p2 { background:linear-gradient(135deg,#9333ea 0%,#a855f7 100%) }
+.phase-card.p3 { background:linear-gradient(135deg,#dc2626 0%,#f87171 100%) }
+.phase-card.p4 { background:linear-gradient(135deg,#059669 0%,#34d399 100%) }
+
+.phase-card-header {
+  display:flex;align-items:center;gap:12px;margin-bottom:12px;
+}
+.phase-card-icon { font-size:36px;line-height:1 }
+.phase-card-label { font-size:12px;font-weight:600;opacity:.9;letter-spacing:.05em }
+.phase-card-title { font-size:24px;font-weight:800;margin-bottom:8px }
+.phase-card-desc { font-size:13px;line-height:1.6;opacity:.95;margin-bottom:20px }
+.phase-card-items {
+  display:flex;flex-direction:column;gap:8px;
+}
+.phase-card-item {
+  display:flex;align-items:center;gap:8px;font-size:13px;opacity:.9;
+}
+.phase-card-item::before {
+  content:'◆';font-size:8px;
+}
 </style>
 </head>
 <body>
@@ -372,6 +402,92 @@ svg { display:block;margin:0 auto; }
   <text x="666" y="860" font-family="Inter,sans-serif" font-size="10" fill="#4b5563">• 최고 품질의 결과물 배포</text>
 
 </svg>
+</div>
+
+<!-- ── Phase 카드 섹션 ── -->
+<div style="margin-top:40px">
+  <h3 style="font-size:18px;font-weight:700;margin-bottom:20px;color:#0a0f1e">VCOS 4단계 개발 프로세스</h3>
+  <div class="phase-cards">
+    <!-- P1: 빌드 -->
+    <div class="phase-card p1">
+      <div class="phase-card-header">
+        <div class="phase-card-icon">⚙️</div>
+        <div>
+          <div class="phase-card-label">PHASE 1</div>
+          <div style="font-size:16px;font-weight:700">빌드</div>
+        </div>
+      </div>
+      <div class="phase-card-desc">소프트웨어 개발의 첫 단계, 14개 스킬로 기초 구축</div>
+      <div class="phase-card-items">
+        <div class="phase-card-item">인텐트 정의</div>
+        <div class="phase-card-item">AI 협업 설계</div>
+        <div class="phase-card-item">복잡도 분석</div>
+        <div class="phase-card-item">분대 편성 (66명)</div>
+        <div class="phase-card-item">25스킬 선택</div>
+        <div class="phase-card-item">토큰 최적화</div>
+      </div>
+    </div>
+
+    <!-- P2: SAL-Grid -->
+    <div class="phase-card p2">
+      <div class="phase-card-header">
+        <div class="phase-card-icon">📐</div>
+        <div>
+          <div class="phase-card-label">PHASE 2</div>
+          <div style="font-size:16px;font-weight:700">SAL-Grid</div>
+        </div>
+      </div>
+      <div class="phase-card-desc">설계 고도화 변화, 70점→97점까지 제자적 고도화</div>
+      <div class="phase-card-items">
+        <div class="phase-card-item">품질 지정</div>
+        <div class="phase-card-item">/review-evaluate 검책</div>
+        <div class="phase-card-item">5가지 평가 기준</div>
+        <div class="phase-card-item">V1→V4 진화</div>
+        <div class="phase-card-item">최소 3회 루프</div>
+        <div class="phase-card-item">97점 달성</div>
+      </div>
+    </div>
+
+    <!-- P3: 디버그 루프 -->
+    <div class="phase-card p3">
+      <div class="phase-card-header">
+        <div class="phase-card-icon">🔁</div>
+        <div>
+          <div class="phase-card-label">PHASE 3</div>
+          <div style="font-size:16px;font-weight:700">디버그 루프</div>
+        </div>
+      </div>
+      <div class="phase-card-desc">문제 해결 & 반복 개선, 버그 근절과 성능 최적화</div>
+      <div class="phase-card-items">
+        <div class="phase-card-item">문제점 파악</div>
+        <div class="phase-card-item">근본 원인 분석</div>
+        <div class="phase-card-item">피드백 루프</div>
+        <div class="phase-card-item">테스트 강화</div>
+        <div class="phase-card-item">성능 검증</div>
+        <div class="phase-card-item">안정성 보증</div>
+      </div>
+    </div>
+
+    <!-- P4: 고도화 -->
+    <div class="phase-card p4">
+      <div class="phase-card-header">
+        <div class="phase-card-icon">✨</div>
+        <div>
+          <div class="phase-card-label">PHASE 4</div>
+          <div style="font-size:16px;font-weight:700">고도화</div>
+        </div>
+      </div>
+      <div class="phase-card-desc">97점 품질 달성 및 최종 배포, 완벽한 솔루션 전달</div>
+      <div class="phase-card-items">
+        <div class="phase-card-item">최고 품질 평가</div>
+        <div class="phase-card-item">보안 강화</div>
+        <div class="phase-card-item">성능 최적화</div>
+        <div class="phase-card-item">사용성 개선</div>
+        <div class="phase-card-item">문서화 완성</div>
+        <div class="phase-card-item">배포 준비</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="page-nav" style="margin-top:16px">
