@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VCOS — 사용 매뉴얼</title>
+<meta name="author" content="심재우(Shim Jaewoo)"><meta name="description" content="VCOS 사용 매뉴얼"><meta name="copyright" content="Copyright 2026 심재우. All rights reserved.">
 <link rel="stylesheet" href="../vcos.css">
 <style>
 /* ── 매뉴얼 페이지 ── */
@@ -205,6 +206,81 @@
 }
 .feature-chip:hover { border-color:var(--accent);color:var(--accent);background:var(--accent-light) }
 .feature-chip-icon { font-size:18px }
+
+/* PDF 다운로드 버튼 */
+.pdf-download-btn {
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 20px;border-radius:var(--r-full);
+  background:linear-gradient(135deg,#dc2626,#b91c1c);
+  color:#fff;font-size:14px;font-weight:700;
+  border:none;cursor:pointer;transition:all .2s;
+  box-shadow:0 2px 8px rgba(220,38,38,.3);
+}
+.pdf-download-btn:hover { transform:translateY(-2px);box-shadow:0 4px 16px rgba(220,38,38,.4) }
+.pdf-download-btn svg { width:18px;height:18px;fill:currentColor }
+
+/* ── @media print ── */
+@media print {
+  /* 기본 초기화 */
+  * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; color-adjust:exact !important }
+  html, body { margin:0; padding:0; font-size:11pt; background:#fff !important; color:#000 !important }
+
+  /* 숨길 요소 */
+  .vcos-header, #footerArea, .page-nav,
+  .pdf-download-btn, .wf-step-box:hover,
+  .faq-toggle { display:none !important }
+
+  /* 레이아웃 */
+  .container, .page-body { max-width:100% !important; padding:0 !important; margin:0 !important }
+  .grid-2 { display:block !important }
+  .grid-2 > * { margin-bottom:16px }
+
+  /* 히어로 */
+  .manual-hero { background:#1e293b !important; color:#fff !important; padding:24px 20px !important; border-radius:0 !important; margin-bottom:16px !important; page-break-after:avoid }
+  .hero-title { font-size:22pt !important; color:#fff !important }
+  .hero-title span { color:#93c5fd !important }
+  .hero-desc { color:rgba(255,255,255,.7) !important; font-size:10pt !important }
+  .hero-badge { color:#93c5fd !important; border-color:rgba(147,197,253,.4) !important; background:rgba(147,197,253,.15) !important }
+  .hero-stat-val { color:#60a5fa !important }
+  .hero-stat-lbl { color:rgba(255,255,255,.6) !important }
+
+  /* 워크플로우 */
+  .workflow-visual { border:1px solid #ddd !important; padding:16px !important; page-break-inside:avoid }
+  .wf-steps { flex-wrap:wrap !important }
+  .wf-step-box { border-width:1.5px !important }
+
+  /* 섹션 제목 */
+  .manual-section-title { page-break-after:avoid; margin-top:20px !important }
+
+  /* 단계 카드 */
+  .step-card { page-break-inside:avoid; margin-bottom:12px !important; border:1px solid #ccc !important }
+  .step-card-header { padding:10px 14px !important }
+  .step-card-header .btn { display:none !important }
+  .step-card-body { padding:12px 14px !important }
+
+  /* 카드 */
+  .card { page-break-inside:avoid; border:1px solid #ddd !important; margin-bottom:12px !important }
+
+  /* 스킬 목록 */
+  #skillGrid > div { page-break-inside:avoid }
+
+  /* 점수 트랙 */
+  .score-track { page-break-inside:avoid }
+  .score-step-val { font-size:20pt !important }
+
+  /* FAQ — 인쇄 시 모두 열기 */
+  .faq-a { display:block !important; border-top:1px solid #ddd !important }
+  .faq-item { page-break-inside:avoid }
+
+  /* 팁 박스 */
+  .tip-box { page-break-inside:avoid }
+
+  /* 링크 URL 표시 안 함 */
+  a[href]::after { content:none !important }
+
+  /* 페이지 설정 */
+  @page { margin:15mm 12mm; size:A4 }
+}
 </style>
 </head>
 <body>
@@ -220,11 +296,17 @@
     AI 분대 편성 → 스킬 전략 → Claude Code 명령어까지 자동 생성합니다.<br>
     Phase 1으로 명령어를 만들고, Phase 2로 완성된 결과물을 97점으로 고도화하세요.
   </div>
-  <div class="hero-stats">
-    <div class="hero-stat"><div class="hero-stat-val">7</div><div class="hero-stat-lbl">Phase 1 단계</div></div>
-    <div class="hero-stat"><div class="hero-stat-val">25</div><div class="hero-stat-lbl">내장 스킬</div></div>
-    <div class="hero-stat"><div class="hero-stat-val">66</div><div class="hero-stat-lbl">AI 에이전트</div></div>
-    <div class="hero-stat"><div class="hero-stat-val">97+</div><div class="hero-stat-lbl">목표 품질 점수</div></div>
+  <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-val">7</div><div class="hero-stat-lbl">Phase 1 단계</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">25</div><div class="hero-stat-lbl">내장 스킬</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">66</div><div class="hero-stat-lbl">AI 에이전트</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">97+</div><div class="hero-stat-lbl">목표 품질 점수</div></div>
+    </div>
+    <button class="pdf-download-btn" onclick="downloadPDF()" style="margin-left:auto">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2l5 5h-5V4zm-1 13l-4-4h3V9h2v4h3l-4 4z"/></svg>
+      PDF 다운로드
+    </button>
   </div>
 </div>
 
@@ -760,6 +842,14 @@ document.getElementById('faqList').innerHTML = faqs.map((f, i) => `
 function toggleFaq(i) {
   const el = document.getElementById('faq' + i);
   el.classList.toggle('open');
+}
+
+/* ── PDF 다운로드 (window.print) ── */
+function downloadPDF() {
+  const origTitle = document.title;
+  document.title = 'VCOS_사용매뉴얼';
+  window.print();
+  document.title = origTitle;
 }
 </script>
 </body>

@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VCOS 프로그램 명세서 — 저작권 등록용</title>
+<meta name="author" content="심재우(Shim Jaewoo)">
+<meta name="description" content="VCOS 바이브코딩 운영체제 AI 개발 플랫폼 — 한국저작권위원회 저작권 등록용 프로그램 명세서">
+<meta name="copyright" content="Copyright 2026 심재우. All rights reserved.">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════
+   VCOS Copyright Spec — Premium White Design
+   Clean · Elevated · High-contrast · Apple-inspired
+═══════════════════════════════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans KR','Inter',-apple-system,sans-serif;background:#ffffff;color:#0a0f1e;line-height:1.75;min-height:100vh}
+a{color:#2563eb;text-decoration:none}
+a:hover{color:#1d4ed8}
+
+/* ── Header ── */
+.cr-header{
+  background:linear-gradient(135deg,#ffffff 0%,#f8fafc 50%,#eff6ff 100%);
+  padding:48px 24px 28px;text-align:center;
+  border-bottom:1px solid #e2e8f0;
+  position:relative;overflow:hidden;
+}
+.cr-header::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#2563eb,#7c3aed,#2563eb)}
+.cr-logo{font-size:2.6rem;font-weight:900;letter-spacing:-.04em;color:#0a0f1e;margin-bottom:2px}
+.cr-logo span{color:#2563eb}
+.cr-subtitle{font-size:1.05rem;color:#475569;margin-bottom:8px;font-weight:500}
+.cr-badge{display:inline-block;background:#eff6ff;border:1.5px solid #bfdbfe;color:#1d4ed8;font-size:.78rem;font-weight:700;padding:4px 16px;border-radius:20px;margin-top:8px}
+.cr-doc-id{font-size:.72rem;color:#94a3b8;margin-top:10px;letter-spacing:.5px}
+
+/* ── Tabs ── */
+.cr-tabs{
+  display:flex;justify-content:center;flex-wrap:wrap;gap:6px;
+  padding:14px 16px;background:#fff;
+  border-bottom:1px solid #e2e8f0;
+  position:sticky;top:0;z-index:10;
+  box-shadow:0 1px 3px rgba(15,23,42,.06);
+}
+.tab-btn{
+  background:linear-gradient(135deg,#fff,#f8fafc);border:1.5px solid #dbeafe;color:#475569;
+  font-size:.82rem;font-weight:700;padding:8px 20px;border-radius:24px;
+  cursor:pointer;transition:all .25s;white-space:nowrap;
+  box-shadow:0 1px 2px rgba(37,99,235,.04);
+}
+.tab-btn:hover{border-color:#60a5fa;color:#1d4ed8;background:linear-gradient(135deg,#eff6ff,#fff);box-shadow:0 2px 6px rgba(37,99,235,.1)}
+.tab-btn.active{background:linear-gradient(135deg,#2563eb,#1d4ed8);border-color:#1d4ed8;color:#fff;box-shadow:0 3px 12px rgba(37,99,235,.3)}
+.tab-btn[data-tab="tab1"]{border-left:3px solid #2563eb}
+.tab-btn[data-tab="tab2"]{border-left:3px solid #7c3aed}
+.tab-btn[data-tab="tab3"]{border-left:3px solid #ea580c}
+.tab-btn[data-tab="tab4"]{border-left:3px solid #d97706}
+.tab-btn[data-tab="tab5"]{border-left:3px solid #16a34a}
+.tab-btn[data-tab="tab6"]{border-left:3px solid #dc2626}
+.tab-btn[data-tab="tab7"]{border-left:3px solid #0891b2}
+.tab-btn.active{border-left-color:transparent}
+
+/* ── Content ── */
+.cr-body{max-width:1100px;margin:0 auto;padding:28px 24px 80px}
+.tab-content{display:none}
+.tab-content.active{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── Cards ── */
+.info-card{
+  background:linear-gradient(135deg,#fff 0%,#fafbff 100%);border:1.5px solid #dbeafe;border-radius:16px;
+  padding:28px;margin-bottom:20px;border-left:4px solid #2563eb;
+  box-shadow:0 2px 8px rgba(37,99,235,.06),0 1px 3px rgba(15,23,42,.04);
+  transition:all .25s;
+}
+.info-card:hover{box-shadow:0 6px 20px rgba(37,99,235,.1),0 2px 6px rgba(15,23,42,.05);border-color:#93c5fd;transform:translateY(-1px)}
+.info-card h3{font-size:1.1rem;color:#1e3a8a;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid #eff6ff;display:flex;align-items:center;gap:10px}
+.info-card h3 .emoji{font-size:1.2rem}
+.info-card p{color:#334155;font-size:.92rem}
+
+/* Card color variants */
+#tab2 .info-card:nth-child(1){border-left-color:#2563eb;background:linear-gradient(135deg,#fff 0%,#eff6ff 100%)}
+#tab2 .info-card:nth-child(2){border-left-color:#7c3aed;background:linear-gradient(135deg,#fff 0%,#f5f3ff 100%)}
+#tab2 .info-card:nth-child(3){border-left-color:#16a34a;background:linear-gradient(135deg,#fff 0%,#f0fdf4 100%)}
+#tab2 .info-card:nth-child(4){border-left-color:#ea580c;background:linear-gradient(135deg,#fff 0%,#fff7ed 100%)}
+#tab3 .info-card:nth-child(2){border-left-color:#7c3aed;background:linear-gradient(135deg,#fff 0%,#f5f3ff 100%)}
+#tab4 .info-card:nth-child(1){border-left-color:#d97706;background:linear-gradient(135deg,#fff 0%,#fffbeb 100%)}
+#tab4 .info-card:nth-child(3){border-left-color:#dc2626;background:linear-gradient(135deg,#fff 0%,#fef2f2 100%)}
+#tab5 .info-card:nth-child(2){border-left-color:#7c3aed;background:linear-gradient(135deg,#fff 0%,#f5f3ff 100%)}
+#tab5 .info-card:nth-child(4){border-left-color:#16a34a;background:linear-gradient(135deg,#fff 0%,#f0fdf4 100%)}
+#tab6 .info-card:nth-child(2){border-left-color:#1e3a8a;background:linear-gradient(135deg,#fff 0%,#eef2ff 100%)}
+#tab6 .info-card:nth-child(3){border-left-color:#dc2626;background:linear-gradient(135deg,#fff 0%,#fef2f2 100%)}
+#tab6 .info-card:nth-child(4){border-left-color:#0891b2;background:linear-gradient(135deg,#fff 0%,#ecfeff 100%)}
+#tab6 .info-card:nth-child(5){border-left-color:#16a34a;background:linear-gradient(135deg,#fff 0%,#f0fdf4 100%)}
+
+/* ── Tables ── */
+.cr-table{width:100%;border-collapse:separate;border-spacing:0;margin:12px 0 16px;font-size:.88rem;border-radius:12px;overflow:hidden;border:1.5px solid #dbeafe}
+.cr-table th{background:linear-gradient(135deg,#eff6ff,#eef2ff);color:#1e3a8a;text-align:left;padding:12px 16px;border-bottom:1.5px solid #dbeafe;font-weight:700;white-space:nowrap;font-size:.82rem;text-transform:uppercase;letter-spacing:.3px}
+.cr-table td{padding:10px 16px;border-bottom:1px solid #f1f5f9;color:#334155}
+.cr-table tr:last-child td{border-bottom:none}
+.cr-table tr:hover td{background:linear-gradient(90deg,#eff6ff,#fff)}
+.cr-table .label{color:#1d4ed8;font-weight:700;white-space:nowrap;width:140px;background:rgba(37,99,235,.03)}
+
+/* ── Section Title ── */
+.section-title{font-size:1.1rem;font-weight:800;color:#1e293b;margin:28px 0 14px;padding-left:14px;border-left:4px solid #2563eb}
+
+/* ── Code / Tree ── */
+.code-block{
+  background:linear-gradient(135deg,#f8fafc,#eef2ff);border:1.5px solid #dbeafe;border-left:4px solid #7c3aed;border-radius:12px;
+  padding:20px 22px;font-family:'Fira Code','Consolas','Monaco',monospace;
+  font-size:.82rem;line-height:1.85;color:#1e293b;
+  overflow-x:auto;margin:14px 0 20px;white-space:pre;
+}
+
+/* ── Tags ── */
+.tag{display:inline-block;background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;font-size:.75rem;font-weight:600;padding:3px 11px;border-radius:12px;margin:3px 3px}
+.tag-green{background:#f0fdf4;border-color:#bbf7d0;color:#15803d}
+.tag-purple{background:#f5f3ff;border-color:#ddd6fe;color:#7c3aed}
+.tag-amber{background:#fffbeb;border-color:#fde68a;color:#b45309}
+.tag-red{background:#fef2f2;border-color:#fecaca;color:#dc2626}
+.tag-teal{background:#ecfeff;border-color:#a5f3fc;color:#0e7490}
+
+/* ── Timeline ── */
+.timeline{position:relative;padding-left:32px;margin:18px 0}
+.timeline::before{content:'';position:absolute;left:10px;top:4px;bottom:4px;width:2px;background:linear-gradient(180deg,#bfdbfe,#ddd6fe)}
+.timeline-item{position:relative;margin-bottom:18px;padding:14px 18px;background:linear-gradient(135deg,#fff,#f8fafc);border:1.5px solid #dbeafe;border-left:3px solid #2563eb;border-radius:12px;transition:all .25s}
+.timeline-item:hover{box-shadow:0 4px 12px rgba(37,99,235,.08);border-color:#93c5fd;transform:translateX(4px)}
+.timeline-item::before{content:'';position:absolute;left:-26px;top:18px;width:12px;height:12px;border-radius:50%;background:#2563eb;border:3px solid #fff;box-shadow:0 0 0 2px #bfdbfe}
+.timeline-date{font-size:.8rem;color:#2563eb;font-weight:800}
+.timeline-text{font-size:.88rem;color:#334155;margin-top:4px}
+
+/* ── Feature Grid ── */
+.feature-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px;margin:18px 0}
+.feature-item{
+  background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:20px;
+  box-shadow:0 1px 3px rgba(15,23,42,.05);transition:all .2s;position:relative;overflow:hidden;
+}
+.feature-item::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.feature-item:nth-child(1)::before{background:#2563eb}
+.feature-item:nth-child(2)::before{background:#16a34a}
+.feature-item:nth-child(3)::before{background:#7c3aed}
+.feature-item:nth-child(4)::before{background:#ea580c}
+.feature-item:nth-child(5)::before{background:#d97706}
+.feature-item:nth-child(6)::before{background:#0891b2}
+.feature-item:hover{box-shadow:0 4px 16px rgba(15,23,42,.1);transform:translateY(-2px)}
+.feature-item h4{color:#1e293b;font-size:.95rem;margin-bottom:8px;font-weight:800}
+.feature-item p{font-size:.84rem;color:#475569;line-height:1.65}
+
+/* ── Declaration ── */
+.declaration{
+  background:linear-gradient(135deg,#f8fafc,#eff6ff,#f5f3ff);
+  border:2px solid #e2e8f0;border-radius:20px;padding:40px 32px;
+  margin:24px 0;text-align:center;position:relative;overflow:hidden;
+}
+.declaration::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#2563eb,#7c3aed)}
+.declaration h2{font-size:1.5rem;color:#0a0f1e;margin-bottom:8px;font-weight:900}
+.declaration .seal{font-size:3.5rem;margin:12px 0;filter:drop-shadow(0 2px 4px rgba(37,99,235,.15))}
+.declaration .author-name{font-size:1.4rem;font-weight:900;color:#2563eb;margin:8px 0}
+.declaration p{font-size:.95rem;color:#475569;margin:6px 0}
+
+/* ── Stat Cards ── */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin:16px 0}
+.stat-card{background:linear-gradient(135deg,#fff,#f8fafc);border:1.5px solid #dbeafe;border-radius:14px;padding:18px 16px;text-align:center;transition:all .25s;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:#2563eb}
+.stat-card:nth-child(2)::before{background:#7c3aed}
+.stat-card:nth-child(3)::before{background:#16a34a}
+.stat-card:nth-child(4)::before{background:#ea580c}
+.stat-card:nth-child(5)::before{background:#d97706}
+.stat-card:nth-child(6)::before{background:#0891b2}
+.stat-card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(37,99,235,.1)}
+.stat-card .num{font-size:1.8rem;font-weight:900;color:#1e3a8a;line-height:1.2}
+.stat-card .unit{font-size:.78rem;color:#64748b;margin-top:4px;font-weight:600}
+
+/* ── Phase Bar ── */
+.phase-bar{display:flex;gap:2px;margin:12px 0 20px;border-radius:8px;overflow:hidden}
+.phase-seg{flex:1;padding:8px 4px;text-align:center;font-size:.72rem;font-weight:700;color:#fff}
+.phase-seg:nth-child(1){background:#2563eb}
+.phase-seg:nth-child(2){background:#7c3aed}
+.phase-seg:nth-child(3){background:#dc2626}
+.phase-seg:nth-child(4){background:#ea580c}
+.phase-seg:nth-child(5){background:#16a34a}
+.phase-seg:nth-child(6){background:#0891b2}
+
+/* ── Squad Diagram ── */
+.squad-diagram{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:16px 0}
+.squad-box{background:linear-gradient(135deg,#fff,#f8fafc);border:1.5px solid #e2e8f0;border-radius:12px;padding:14px 10px;text-align:center;font-size:.78rem;transition:all .25s;position:relative;overflow:hidden}
+.squad-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.squad-box:nth-child(1){border-color:#1e3a8a;background:linear-gradient(135deg,#fff,#eef2ff)}.squad-box:nth-child(1)::before{background:#1e3a8a}
+.squad-box:nth-child(2){border-color:#bfdbfe;background:linear-gradient(135deg,#fff,#eff6ff)}.squad-box:nth-child(2)::before{background:#2563eb}
+.squad-box:nth-child(3){border-color:#ddd6fe;background:linear-gradient(135deg,#fff,#f5f3ff)}.squad-box:nth-child(3)::before{background:#7c3aed}
+.squad-box:nth-child(4){border-color:#fecaca;background:linear-gradient(135deg,#fff,#fef2f2)}.squad-box:nth-child(4)::before{background:#dc2626}
+.squad-box:nth-child(5){border-color:#fed7aa;background:linear-gradient(135deg,#fff,#fff7ed)}.squad-box:nth-child(5)::before{background:#ea580c}
+.squad-box:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(15,23,42,.08)}
+.squad-box .sq-icon{font-size:1.5rem;margin-bottom:6px}
+.squad-box .sq-name{font-weight:800;color:#1e293b;font-size:.85rem}
+.squad-box .sq-role{color:#64748b;font-size:.72rem;margin-top:2px}
+.squad-box .sq-count{color:#1d4ed8;font-weight:700;font-size:.75rem;margin-top:4px}
+
+/* ── Comparison ── */
+.compare-highlight{background:linear-gradient(135deg,#eff6ff,#f5f3ff);border:1.5px solid #bfdbfe;border-left:4px solid #2563eb;border-radius:12px;padding:16px 20px;margin:12px 0;box-shadow:0 2px 6px rgba(37,99,235,.06)}
+.compare-highlight p{color:#1e293b;font-weight:600;font-size:.9rem}
+
+/* ── Footer ── */
+.cr-footer{text-align:center;padding:24px;border-top:1px solid #e2e8f0;color:#94a3b8;font-size:.78rem;margin-top:40px}
+
+/* ── Print ── */
+/* ── PDF Download Button ── */
+.pdf-btn-wrap{position:fixed;bottom:24px;right:24px;z-index:100}
+.pdf-btn{
+  background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;border:none;
+  padding:14px 28px;border-radius:14px;font-size:.9rem;font-weight:800;
+  cursor:pointer;box-shadow:0 4px 16px rgba(37,99,235,.3);
+  display:flex;align-items:center;gap:8px;transition:all .25s;
+  font-family:inherit;
+}
+.pdf-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(37,99,235,.4)}
+.pdf-btn:active{transform:translateY(0)}
+.pdf-btn svg{flex-shrink:0}
+
+@media print{
+  /* Base */
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
+  body{background:#fff!important;font-size:10pt;line-height:1.6;color:#0a0f1e}
+
+  /* Hide interactive elements */
+  .cr-tabs,.pdf-btn-wrap,.cr-footer{display:none!important}
+
+  /* Show ALL tabs */
+  .tab-content{display:block!important;margin-bottom:8px;padding-top:12px;border-top:none}
+  .tab-content::before{content:attr(data-print-title);display:block;font-size:15pt;font-weight:900;color:#1e3a8a;margin:16px 0 10px;padding:8px 0 6px;border-bottom:3px solid #2563eb}
+
+  /* Header */
+  .cr-header{padding:28px 20px 16px;background:#fff!important;border-bottom:2px solid #2563eb}
+  .cr-header::before{height:5px;background:linear-gradient(90deg,#2563eb,#7c3aed,#2563eb)}
+  .cr-logo{font-size:2rem}
+  .cr-badge{background:#eff6ff;border-color:#2563eb}
+
+  /* Body */
+  .cr-body{max-width:100%;padding:12px 16px}
+
+  /* Cards */
+  .info-card{box-shadow:none!important;border:1.5px solid #d1d5db;border-left:4px solid #2563eb;page-break-inside:avoid;margin-bottom:12px;padding:16px 20px;background:#fff!important}
+  .info-card h3{font-size:11pt;color:#1e3a8a;border-bottom:2px solid #e2e8f0}
+
+  /* Tables */
+  .cr-table{border:1.5px solid #d1d5db;font-size:9pt}
+  .cr-table th{background:#eff6ff!important;color:#1e3a8a;border:1px solid #d1d5db;padding:8px 10px}
+  .cr-table td{border:1px solid #e5e7eb;padding:7px 10px}
+  .cr-table .label{color:#1d4ed8;background:rgba(37,99,235,.04)!important}
+
+  /* Feature grid */
+  .feature-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .feature-item{box-shadow:none!important;border:1.5px solid #d1d5db;page-break-inside:avoid}
+  .feature-item::before{height:3px}
+
+  /* Stats */
+  .stat-grid{grid-template-columns:repeat(6,1fr);gap:8px}
+  .stat-card{border:1px solid #d1d5db;padding:10px 8px;background:#fff!important}
+  .stat-card::before{height:3px}
+  .stat-card .num{font-size:1.4rem;color:#1e3a8a}
+
+  /* Phase bar */
+  .phase-bar .phase-seg{padding:6px 2px;font-size:7pt}
+
+  /* Squad diagram */
+  .squad-diagram{gap:6px}
+  .squad-box{border:1px solid #d1d5db;padding:8px 6px;background:#fff!important}
+  .squad-box::before{height:3px}
+
+  /* Timeline */
+  .timeline-item{border:1px solid #d1d5db;border-left:3px solid #2563eb;page-break-inside:avoid;padding:10px 14px;background:#fff!important}
+  .timeline::before{background:#2563eb}
+
+  /* Code blocks */
+  .code-block{border:1.5px solid #d1d5db;border-left:4px solid #7c3aed;font-size:8pt;line-height:1.6;padding:12px 14px;background:#f8fafc!important}
+
+  /* Tags */
+  .tag,.tag-green,.tag-purple,.tag-amber,.tag-red,.tag-teal{font-size:7pt;padding:2px 6px;border:1px solid #d1d5db}
+
+  /* Declaration */
+  .declaration{border:2px solid #2563eb;page-break-inside:avoid;background:#fff!important}
+  .declaration::before{height:4px;background:linear-gradient(90deg,#2563eb,#7c3aed)}
+
+  /* Compare highlight */
+  .compare-highlight{border:1.5px solid #bfdbfe;background:#eff6ff!important}
+
+  /* SVG in tab7 */
+  #tab7 svg{width:100%!important;max-width:100%!important;height:auto!important;min-width:0!important}
+  #tab7 .info-card>div{overflow:hidden!important}
+
+  /* Page breaks */
+  #tab1{page-break-after:always}
+  #tab2{page-break-after:always}
+  #tab3{page-break-after:always}
+  #tab4{page-break-after:always}
+  #tab5{page-break-after:always}
+  #tab6{page-break-after:always}
+
+  /* Page margins */
+  @page{size:A4;margin:12mm 14mm 12mm 14mm}
+
+  /* Print footer */
+  .cr-body::after{content:'© 2026 심재우(Shim Jaewoo). VCOS v1.0.0 — 한국저작권위원회 저작권 등록용 프로그램 명세서';display:block;text-align:center;font-size:8pt;color:#94a3b8;margin-top:20px;padding-top:12px;border-top:1px solid #e2e8f0}
+}
+
+@media(max-width:640px){
+  .cr-header{padding:32px 16px 20px}
+  .cr-logo{font-size:1.8rem}
+  .tab-btn{font-size:.72rem;padding:6px 12px}
+  .cr-body{padding:16px 14px 40px}
+  .feature-grid{grid-template-columns:1fr}
+  .stat-grid{grid-template-columns:repeat(2,1fr)}
+  .squad-diagram{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ Header ═══ -->
+<header class="cr-header">
+  <div class="cr-logo">V<span>C</span>OS</div>
+  <div class="cr-subtitle">Vibe Coding Operating System — 프로그램 명세서</div>
+  <div class="cr-badge">한국저작권위원회 저작권 등록용</div>
+  <div class="cr-doc-id">DOC-VCOS-CR-2026-001 &nbsp;|&nbsp; v1.0.0 &nbsp;|&nbsp; 2026.03.27</div>
+</header>
+
+<!-- ═══ Tabs ═══ -->
+<nav class="cr-tabs">
+  <button class="tab-btn active" data-tab="tab1">1. 프로그램 개요</button>
+  <button class="tab-btn" data-tab="tab2">2. 기능 명세</button>
+  <button class="tab-btn" data-tab="tab3">3. 시스템 구조</button>
+  <button class="tab-btn" data-tab="tab4">4. 독창적 요소</button>
+  <button class="tab-btn" data-tab="tab5">5. 창작 이력</button>
+  <button class="tab-btn" data-tab="tab6">6. 저작권 선언</button>
+  <button class="tab-btn" data-tab="tab7">7. 시스템 구조도</button>
+</nav>
+
+<!-- ═══ Body ═══ -->
+<main class="cr-body">
+
+<!-- ── TAB 1: 프로그램 개요 ── -->
+<div class="tab-content active" id="tab1" data-print-title="1. 프로그램 개요">
+
+  <div class="info-card">
+    <h3><span class="emoji">📋</span> 기본 정보</h3>
+    <table class="cr-table">
+      <tr><td class="label">프로그램명</td><td><strong>VCOS</strong> (Vibe Coding Operating System)</td></tr>
+      <tr><td class="label">부제</td><td>아이디어를 AI 개발 명령어로 변환하는 바이브 코딩 운영체계</td></tr>
+      <tr><td class="label">버전</td><td>v1.0.0</td></tr>
+      <tr><td class="label">저작물 종류</td><td>편집저작물</td></tr>
+      <tr><td class="label">저작자</td><td>심재우 (Shim Jaewoo)</td></tr>
+      <tr><td class="label">이메일</td><td>jaiwshim@gmail.com</td></tr>
+      <tr><td class="label">창작연월일</td><td>2026년 3월 13일</td></tr>
+      <tr><td class="label">최종수정일</td><td>2026년 3월 21일</td></tr>
+      <tr><td class="label">등록 유형</td><td>일반저작권 등록 (저작자성명, 창작연월일)</td></tr>
+    </table>
+  </div>
+
+  <div class="info-card">
+    <h3><span class="emoji">🎯</span> 프로그램 목적</h3>
+    <p>VCOS는 비개발자도 AI와 협업하여 소프트웨어를 개발할 수 있도록 지원하는 웹 기반 바이브 코딩 운영체계입니다. 프로젝트 기획부터 AI 명령어 생성, 코드 리뷰, 디버깅, 고도화까지 전체 소프트웨어 개발 라이프사이클을 6단계 Phase로 체계화하여 제공합니다.</p>
+    <p style="margin-top:12px">25개의 전문 스킬(Skill)과 5개 분대(Squad) 66명 편제의 AI 에이전트 팀을 활용하여 복잡한 개발 프로젝트를 효율적으로 수행합니다. 사용자는 자연어로 프로젝트 의도를 입력하면, VCOS가 자동으로 복잡도를 분석하고 최적의 AI 팀을 편성하여 실행 가능한 개발 명령어를 생성합니다.</p>
+  </div>
+
+  <div class="info-card">
+    <h3><span class="emoji">📊</span> 프로그램 규모</h3>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="num">67</div><div class="unit">소스 파일</div></div>
+      <div class="stat-card"><div class="num">23,327</div><div class="unit">소스코드 줄</div></div>
+      <div class="stat-card"><div class="num">17</div><div class="unit">HTML 페이지</div></div>
+      <div class="stat-card"><div class="num">25</div><div class="unit">AI 스킬</div></div>
+      <div class="stat-card"><div class="num">69</div><div class="unit">Git 커밋</div></div>
+      <div class="stat-card"><div class="num">9일</div><div class="unit">개발 기간</div></div>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <h3><span class="emoji">🔄</span> 개발 라이프사이클 (6 Phase)</h3>
+    <div class="phase-bar">
+      <div class="phase-seg">P1 설계</div>
+      <div class="phase-seg">P2 개발</div>
+      <div class="phase-seg">P3 디버그</div>
+      <div class="phase-seg">P4 고도화</div>
+      <div class="phase-seg">P5 발표</div>
+      <div class="phase-seg">P6 배포</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── TAB 2: 기능 명세 ── -->
+<div class="tab-content" id="tab2" data-print-title="2. 기능 명세">
+
+  <div class="info-card">
+    <h3><span class="emoji">🔷</span> Phase 1 — 프로젝트 설계 (6단계)</h3>
+    <table class="cr-table">
+      <tr><th>#</th><th>페이지</th><th>기능</th></tr>
+      <tr><td>1</td><td>01-intent.html</td><td>프로젝트 인텐트(의도) 입력 — 목적, 대상, 기능, 기술스택을 구조화하여 입력</td></tr>
+      <tr><td>2</td><td>02-ai-collab.html</td><td>AI 협업 준비 — 사전검토 질문 기반 맥락 설계, AI와의 효율적 소통 준비</td></tr>
+      <tr><td>3</td><td>03-complexity.html</td><td>복잡도 자동 분석 — 기능 수 기반 v1~v4 복잡도 자동 산출 알고리즘</td></tr>
+      <tr><td>4</td><td>04-squad.html</td><td>AI 에이전트 분대 편성 — 5개 Squad, 66명 규모 자동 편제 시스템</td></tr>
+      <tr><td>5</td><td>05-skills.html</td><td>스킬 전략 수립 — 25개 스킬 중 프로젝트에 최적인 조합 선택</td></tr>
+      <tr><td>6</td><td>06-token.html</td><td>토큰 최적화 전략 — 비용 효율적 AI 모델 배분 전략 수립</td></tr>
+    </table>
+  </div>
+
+  <div class="info-card">
+    <h3><span class="emoji">🔶</span> Phase 2~6 — 실행 및 고도화</h3>
+    <table class="cr-table">
+      <tr><th>Phase</th><th>페이지</th><th>기능</th></tr>
+      <tr><td><span class="tag-purple" style="display:inline-block;background:#f5f3ff;border:1px solid #ddd6fe;color:#7c3aed;font-size:.72rem;padding:1px 8px;border-radius:8px">P2</span></td><td>07-command.html</td><td>Claude Code 명령어 자동 생성 — Phase 1 결과 기반 실행 명령어 출력</td></tr>
+      <tr><td><span class="tag-purple" style="display:inline-block;background:#f5f3ff;border:1px solid #ddd6fe;color:#7c3aed;font-size:.72rem;padding:1px 8px;border-radius:8px">P2</span></td><td>08-sal-grid.html</td><td>SAL-Grid Dev Suite — 체계적 개발 프로세스 9-PART 시스템</td></tr>
+      <tr><td><span style="display:inline-block;background:#fef2f2;border:1px solid #fecaca;color:#dc2626;font-size:.72rem;padding:1px 8px;border-radius:8px">P3</span></td><td>09-debug-loop.html</td><td>5times Debug Loop — 5회 반복 디버깅 및 품질 개선 시스템</td></tr>
+      <tr><td><span style="display:inline-block;background:#fff7ed;border:1px solid #fed7aa;color:#ea580c;font-size:.72rem;padding:1px 8px;border-radius:8px">P4</span></td><td>07-refinement.html</td><td>결과물 고도화 엔진 — AI 기반 코드 리뷰 및 개선 자동화</td></tr>
+      <tr><td><span style="display:inline-block;background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d;font-size:.72rem;padding:1px 8px;border-radius:8px">P5</span></td><td>10-slideshow.html</td><td>Slideshow Web — 프로젝트 프레젠테이션 자동 생성</td></tr>
+      <tr><td><span style="display:inline-block;background:#ecfeff;border:1px solid #a5f3fc;color:#0e7490;font-size:.72rem;padding:1px 8px;border-radius:8px">P6</span></td><td>11-youtube.html</td><td>YouTube 올인원 — 소재→대본→재료→블로그 영상 제작 자동화</td></tr>
+    </table>
+  </div>
+
+  <div class="info-card">
+    <h3><span class="emoji">📚</span> 부가 기능 페이지</h3>
+    <table class="cr-table">
+      <tr><th>페이지</th><th>기능</th></tr>
+      <tr><td>manual.html</td><td>전체 시스템 사용 가이드 — FAQ, 기능 설명, 워크플로우 안내</td></tr>
+      <tr><td>sitemap.html</td><td>시스템 아키텍처 시각화 — 전체 구조도 인터랙티브 뷰</td></tr>
+      <tr><td>skills-map.html</td><td>25 Skills 구조도 — 스킬 체계 시각화 및 Phase별 분류</td></tr>
+    </table>
+  </div>
+
+  <div class="info-card">
+    <h3><span class="emoji">⚡</span> 25 Skills 체계</h3>
+    <div class="section-title">Phase 1 — 프로젝트 설계 스킬 (6개)</div>
+    <div style="margin:8px 0 16px"><span class="tag">intent-planner</span><span class="tag">ai-collab-core</span><span class="tag">complexity-analyzer</span><span class="tag">squad-formation</span><span class="tag">skill-selector</span><span class="tag">token-optimizer</span></div>
+    <div class="section-title">Phase 2 — 개발 실행 스킬 (7개)</div>
+    <div style="margin:8px 0 16px"><span class="tag tag-purple">command-generator</span><span class="tag tag-purple">sal-grid-dev</span><span class="tag tag-purple">api-builder</span><span class="tag tag-purple">ui-ux-builder</span><span class="tag tag-purple">db-schema</span><span class="tag tag-purple">chat-ui-builder</span><span class="tag tag-purple">theme-color-design</span></div>
+    <div class="section-title">Phase 3 — 디버그 및 검증 스킬 (5개)</div>
+    <div style="margin:8px 0 16px"><span class="tag tag-red">debug-loop</span><span class="tag tag-red">troubleshoot</span><span class="tag tag-red">test-runner</span><span class="tag tag-red">security-audit</span><span class="tag tag-red">performance-check</span></div>
+    <div class="section-title">Phase 4 — 고도화 스킬 (3개)</div>
+    <div style="margin:8px 0 16px"><span class="tag tag-amber">review-evaluate</span><span class="tag tag-amber">code-refiner</span><span class="tag tag-amber">doc-generator</span></div>
+    <div class="section-title">Phase 5 — 발표 자료 스킬 (2개)</div>
+    <div style="margin:8px 0 16px"><span class="tag tag-green">slideshow-web</span><span class="tag tag-green">create-image</span></div>
+    <div class="section-title">Phase 6 — 배포 및 콘텐츠 스킬 (2개)</div>
+    <div style="margin:8px 0 16px"><span class="tag tag-teal">youtube-generate</span><span class="tag tag-teal">deploy-publish</span></div>
+  </div>
+
+</div>
+
+<!-- ── TAB 3: 시스템 구조 ── -->
+<div class="tab-content" id="tab3" data-print-title="3. 시스템 구조">
+
+  <div class="info-card">
+    <h3><span class="emoji">🛠</span> 기술 스택</h3>
+    <table class="cr-table">
+      <tr><td class="label">Frontend</td><td>HTML5, CSS3, Vanilla JavaScript (SPA-like 아키텍처)</td></tr>
+      <tr><td class="label">AI Engine</td><td>Claude (Anthropic) — Sonnet / Opus 모델</td></tr>
+      <tr><td class="label">Database</td><td>Supabase (PostgreSQL)</td></tr>
+      <tr><td class="label">Design System</td><td>Custom CSS Design System (vcos.css, 898줄)</td></tr>
+      <tr><td class="label">Architecture</td><td>25 Custom Skills, 5 Squads, 66-member Formation</td></tr>
+      <tr><td class="label">Storage</td><td>localStorage (클라이언트) + Supabase (서버)</td></tr>
+      <tr><td class="label">Fonts</td><td>Noto Sans KR + Inter (Google Fonts)</td></tr>
+    </table>
+  </div>
+
+  <div class="info-card">
+    <h3><span class="emoji">👥</span> 5 Squads 편제 구조</h3>
+    <div class="squad-diagram">
+      <div class="squad-box"><div class="sq-icon">🎖</div><div class="sq-name">HQ</div><div class="sq-role">소대장 + 연락병</div><div class="sq-count">2명 (Opus)</div></div>
+      <div class="squad-box"><div class="sq-icon">🔵</div><div class="sq-name">Alpha</div><div class="sq-role">1분대</div><div class="sq-count">12명 (Sonnet)</div></div>
+      <div class="squad-box"><div class="sq-icon">🟢</div><div class="sq-name">Bravo</div><div class="sq-role">2분대</div><div class="sq-count">12명 (Sonnet)</div></div>
+      <div class="squad-box"><div class="sq-icon">🔴</div><div class="sq-name">Charlie</div><div class="sq-role">3분대</div><div class="sq-count">12명 (Sonnet)</div></div>
+      <div class="squad-box"><div class="sq-icon">⚔</div><div class="sq-name">용병</div><div class="sq-role">외부 AI</div><div class="sq-count">4명 (공유)</div></div>
+    </div>
+    <div class="compare-highlight"><p>편제 공식: HQ(2) + 3 Squads × 12(Leader+11) + 4 Mercenaries = <strong>42명</strong> (확장 시 66명)</p></div>
+  </div>
+
+  <div class="info-card">
+    <h3><span class="emoji">📁</span> 파일 구조</h3>
+    <div class="code-block">VCOS/
+├── index.html            (662줄)  — 메인 대시보드
+├── vcos.js               (483줄)  — 핵심 앱 로직 (Nav, Footer, Complexity)
+├── vcos.css              (898줄)  — 통합 디자인 시스템
+├── vcos-skills.js      (12,053줄) — 25 Skills 전체 데이터
+├── supabase.js           (209줄)  — Supabase DB 연동
+├── vcos-cco-architecture.svg      — CCO 아키텍처 다이어그램
+├── vcos-sitemap.svg               — 사이트맵 다이어그램
+│
+├── pages/
+│   ├── 01-intent.html    (461줄)  — 인텐트 입력
+│   ├── 02-ai-collab.html (568줄)  — AI 협업 준비
+│   ├── 03-complexity.html(159줄)  — 복잡도 분석
+│   ├── 04-squad.html     (205줄)  — 분대 편성
+│   ├── 05-skills.html    (214줄)  — 스킬 전략
+│   ├── 06-token.html     (264줄)  — 토큰 최적화
+│   ├── 07-command.html   (743줄)  — 명령어 생성
+│   ├── 07-refinement.html(354줄)  — 고도화 엔진
+│   ├── 08-command.html   (349줄)  — 명령어 리다이렉트
+│   ├── 08-sal-grid.html  (513줄)  — SAL-Grid Dev Suite
+│   ├── 09-debug-loop.html(647줄)  — 5times Debug Loop
+│   ├── 10-slideshow.html (525줄)  — Slideshow Web
+│   ├── 11-youtube.html   (433줄)  — YouTube 올인원
+│   ├── manual.html       (766줄)  — 사용 매뉴얼
+│   ├── sitemap.html      (419줄)  — 구조도
+│   └── skills-map.html   (507줄)  — 25 Skills 구조도
+│
+└── scripts/
+    ├── setup-hooks.js              — 개발 환경 설정
+    ├── sync-to-root.js             — 루트 동기화 스크립트
+    └── update-skill-content.js     — 스킬 콘텐츠 업데이트</div>
+  </div>
+
+  <div class="info-card">
+    <h3><span class="emoji">📊</span> 소스코드 통계</h3>
+    <table class="cr-table">
+      <tr><th>항목</th><th>수치</th><th>비고</th></tr>
+      <tr><td>총 소스 파일 수</td><td><strong>67개</strong></td><td>HTML, JS, CSS, SVG</td></tr>
+      <tr><td>총 소스코드 줄 수</td><td><strong>23,327줄</strong></td><td>빈 줄 포함</td></tr>
+      <tr><td>HTML 페이지</td><td><strong>17개</strong></td><td>index + 16 서브페이지</td></tr>
+      <tr><td>JavaScript 파일</td><td><strong>5개</strong></td><td>핵심 로직 파일</td></tr>
+      <tr><td>CSS 파일</td><td><strong>1개</strong></td><td>통합 디자인 시스템 (898줄)</td></tr>
+      <tr><td>SVG 다이어그램</td><td><strong>2개</strong></td><td>아키텍처 + 사이트맵</td></tr>
+      <tr><td>Git 커밋 수</td><td><strong>69회</strong></td><td>전체 개발 이력</td></tr>
+      <tr><td>핵심 파일 (vcos-skills.js)</td><td><strong>12,053줄</strong></td><td>25 Skills 전체 데이터</td></tr>
+    </table>
+  </div>
+
+  <div class="info-card">
+    <h3><span class="emoji">🔗</span> 핵심 모듈 구조</h3>
+    <table class="cr-table">
+      <tr><th>모듈</th><th>파일</th><th>주요 함수</th></tr>
+      <tr><td>네비게이션</td><td>vcos.js</td><td>buildNav() — 전 페이지 통합 네비게이션 동적 생성</td></tr>
+      <tr><td>진행률 관리</td><td>vcos.js</td><td>buildProgress() — 프로젝트 진행 상태 시각화</td></tr>
+      <tr><td>Footer</td><td>vcos.js</td><td>buildFooter() — 저작권 표기 포함 동적 Footer</td></tr>
+      <tr><td>복잡도 분석</td><td>vcos.js</td><td>calcComplexity() — 기능 수 기반 v1~v4 복잡도 산출</td></tr>
+      <tr><td>프로젝트 저장</td><td>vcos.js</td><td>loadProject() / saveProject() — localStorage 상태 관리</td></tr>
+      <tr><td>스킬 데이터</td><td>vcos-skills.js</td><td>25개 스킬의 전체 정의, 프롬프트, 설정값</td></tr>
+      <tr><td>DB 연동</td><td>supabase.js</td><td>Supabase 클라이언트 초기화 및 CRUD 함수</td></tr>
+    </table>
+  </div>
+
+</div>
+
+<!-- ── TAB 4: 독창적 요소 ── -->
+<div class="tab-content" id="tab4" data-print-title="4. 독창적 요소">
+
+  <div class="info-card">
+    <h3><span class="emoji">💡</span> 핵심 독창성</h3>
+    <p style="color:#1e293b">VCOS는 다음과 같은 독창적 개념과 시스템을 최초로 설계하고 구현한 소프트웨어입니다. 각 요소는 기존에 존재하지 않던 새로운 방법론과 아키텍처를 포함합니다.</p>
+  </div>
+
+  <div class="feature-grid">
+    <div class="feature-item">
+      <h4>1. 바이브 코딩 OS 개념</h4>
+      <p>"바이브 코딩(Vibe Coding)"이라는 자연어 기반 소프트웨어 개발 방식을 운영체제(OS) 형태로 체계화한 최초의 플랫폼. 비개발자도 AI와 대화하듯 소프트웨어를 만들 수 있는 6단계 워크플로우를 설계.</p>
+    </div>
+    <div class="feature-item">
+      <h4>2. 25 Skills 체계</h4>
+      <p>소프트웨어 개발에 필요한 25개 전문 스킬을 6개 Phase로 분류하고 캡슐화. 각 스킬은 독립적으로 호출 가능하며, 프로젝트 특성에 따라 최적 조합을 자동 추천하는 시스템.</p>
+    </div>
+    <div class="feature-item">
+      <h4>3. 5 Squads 66명 편제 시스템</h4>
+      <p>군사 조직 편제 개념을 AI 에이전트 팀 구성에 적용. 소대장(Opus) → 분대장(Sonnet) → 정규병(Haiku/Sonnet) → 용병(외부 AI)의 4단계 계층 구조로 AI 팀을 자동 편성.</p>
+    </div>
+    <div class="feature-item">
+      <h4>4. SAL-Grid Dev Suite</h4>
+      <p>SAL(Structured Agile Loop) 방법론 기반 9-PART 개발 프로세스. Scope → Architecture → Logic → Grid의 체계적 개발 흐름을 시각적으로 가이드하는 독자적 프레임워크.</p>
+    </div>
+    <div class="feature-item">
+      <h4>5. 복잡도 자동 분석 알고리즘</h4>
+      <p>프로젝트 기능 수를 입력받아 v1~v4 단계의 복잡도를 자동 산출하는 독자 알고리즘. 각 버전별 점수(55~98점 범위)를 계산하여 최적의 개발 전략을 제시.</p>
+    </div>
+    <div class="feature-item">
+      <h4>6. 5times Debug Loop</h4>
+      <p>동일 문제를 5회 반복 디버깅하여 근본 원인을 찾아내는 체계적 디버깅 방법론. 코드 → 로직 → 환경 → 의존성 → 아키텍처 순으로 관점을 달리하여 점검.</p>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <h3><span class="emoji">🏗</span> 아키텍처 독창성</h3>
+    <table class="cr-table">
+      <tr><th>요소</th><th>설명</th></tr>
+      <tr><td>단일 CSS 디자인 시스템</td><td>898줄의 통합 CSS(vcos.css)로 17개 전체 페이지의 일관된 디자인 구현. CSS 변수 기반 테마 시스템.</td></tr>
+      <tr><td>동적 UI 인젝션</td><td>buildNav(), buildFooter() 함수로 모든 페이지에 동일한 네비게이션/푸터를 JavaScript로 동적 생성.</td></tr>
+      <tr><td>클라이언트 사이드 상태 관리</td><td>localStorage 기반 프로젝트 상태 저장/복원으로 서버 없이도 작업 연속성 보장.</td></tr>
+      <tr><td>12,053줄 스킬 데이터베이스</td><td>25개 스킬의 프롬프트, 설정, 실행 로직을 단일 JS 파일에 캡슐화한 독자적 데이터 구조.</td></tr>
+    </table>
+  </div>
+
+  <div class="info-card">
+    <h3><span class="emoji">🔬</span> 기존 솔루션과의 차별점</h3>
+    <table class="cr-table">
+      <tr><th>비교 항목</th><th>기존 AI 코딩 도구</th><th>VCOS</th></tr>
+      <tr><td>개발 방식</td><td>단일 프롬프트 → 단일 결과</td><td>6단계 Phase 체계적 워크플로우</td></tr>
+      <tr><td>AI 활용</td><td>1개 AI 모델 단독</td><td>5 Squads 66명 멀티 에이전트</td></tr>
+      <tr><td>스킬 관리</td><td>범용 프롬프트</td><td>25개 전문 스킬 캡슐화</td></tr>
+      <tr><td>디버깅</td><td>수동 또는 1회성</td><td>5times Debug Loop 체계적 반복</td></tr>
+      <tr><td>품질 관리</td><td>개발자 수동 검토</td><td>SAL-Grid 9-PART 자동 프로세스</td></tr>
+      <tr><td>대상 사용자</td><td>개발자 전용</td><td>비개발자도 사용 가능</td></tr>
+    </table>
+  </div>
+
+</div>
+
+<!-- ── TAB 5: 창작 이력 ── -->
+<div class="tab-content" id="tab5" data-print-title="5. 창작 이력">
+
+  <div class="info-card">
+    <h3><span class="emoji">📅</span> 개발 타임라인</h3>
+    <table class="cr-table">
+      <tr><td class="label">창작 시작일</td><td>2026년 3월 13일</td></tr>
+      <tr><td class="label">최종 수정일</td><td>2026년 3월 21일</td></tr>
+      <tr><td class="label">총 개발 기간</td><td>9일</td></tr>
+      <tr><td class="label">총 커밋 수</td><td>69회</td></tr>
+      <tr><td class="label">저작자</td><td>심재우 (jaiwshim@gmail.com)</td></tr>
+      <tr><td class="label">개발 환경</td><td>Claude Code CLI + VS Code + Git</td></tr>
+    </table>
+  </div>
+
+  <div class="info-card">
+    <h3><span class="emoji">🔄</span> Git 커밋 이력 (주요 마일스톤)</h3>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-date">2026-03-13 (Day 1) — 프로젝트 탄생</div>
+        <div class="timeline-text">프로젝트 초기 구조 설정. 파일 재구조화 및 리포지토리 루트 정리.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">2026-03-14 (Day 2) — 핵심 기능 폭발적 구현</div>
+        <div class="timeline-text">14건 커밋. 20→25 Skills 확장, 7단계 워크플로우 전면 업데이트, Skills-Map SVG 다이어그램 생성, 매뉴얼 페이지 완성, RAG/Chatbot 통합.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">2026-03-15 (Day 3) — 페이지 확장</div>
+        <div class="timeline-text">NKCL 제안 페이지 추가, 네비게이션/푸터 표준화, 리소스 경로 통일, Pages 03~07 복원.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">2026-03-16 (Day 4) — Phase 2 고도화</div>
+        <div class="timeline-text">Gemini AI 통합, 통계 대시보드, 로그인 시스템, 태스크 관리, 모바일 최적화, KPI 시스템 구현.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">2026-03-17 (Day 5) — 문서화 완성</div>
+        <div class="timeline-text">20건 커밋. Phase 1~6 소급 저널링 및 개발 문서화 시스템 완성. 실시간 미디어 모니터링 페이지 구축.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">2026-03-19 (Day 7) — 저널링 시스템</div>
+        <div class="timeline-text">Phase 3 저널링 시스템 추가. 매뉴얼 및 스킬 구조도 업데이트.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">2026-03-21 (Day 9) — 최종 완성</div>
+        <div class="timeline-text">VCOS P1~P4 카드 섹션 추가, P3(디버그 루프)+P4(고도화) 구조도 완성, Skills-Map VCOS 전용화. v1.0.0 확정.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <h3><span class="emoji">📈</span> 일별 개발 진행 통계</h3>
+    <table class="cr-table">
+      <tr><th>날짜</th><th>커밋 수</th><th>주요 작업</th></tr>
+      <tr><td>2026-03-13</td><td>1</td><td>프로젝트 초기화</td></tr>
+      <tr><td>2026-03-14</td><td><strong>14</strong></td><td>핵심 기능 구현 (최대 집중일)</td></tr>
+      <tr><td>2026-03-15</td><td>5</td><td>페이지 확장 및 표준화</td></tr>
+      <tr><td>2026-03-16</td><td>10</td><td>Phase 2 고도화</td></tr>
+      <tr><td>2026-03-17</td><td><strong>20</strong></td><td>전체 Phase 문서화 (최다 커밋일)</td></tr>
+      <tr><td>2026-03-19</td><td>4</td><td>저널링 시스템</td></tr>
+      <tr><td>2026-03-21</td><td>15</td><td>최종 완성 및 구조도</td></tr>
+      <tr style="background:#f8fafc"><td><strong>합계</strong></td><td><strong>69</strong></td><td></td></tr>
+    </table>
+  </div>
+
+  <div class="info-card">
+    <h3><span class="emoji">🔐</span> 창작 사실 증명</h3>
+    <p>본 저작물의 창작 사실은 다음과 같은 방법으로 증명됩니다:</p>
+    <table class="cr-table">
+      <tr><td class="label">Git 이력</td><td>69건의 커밋 로그에 저작자(심재우), 날짜, 변경 내용이 기록됨</td></tr>
+      <tr><td class="label">Git 설정</td><td>user.name: 심재우, user.email: jaiwshim@gmail.com</td></tr>
+      <tr><td class="label">타임스탬프</td><td>최초 커밋 2026-03-13 23:27:13 +0900 (KST)</td></tr>
+      <tr><td class="label">파일 해시</td><td>Git SHA-1 해시로 각 파일의 무결성 검증 가능</td></tr>
+      <tr><td class="label">코드 원본</td><td>로컬 저장소 + 원격 저장소에 전체 이력 보존</td></tr>
+    </table>
+  </div>
+
+</div>
+
+<!-- ── TAB 6: 저작권 선언 ── -->
+<div class="tab-content" id="tab6" data-print-title="6. 저작권 선언">
+
+  <div class="declaration">
+    <div class="seal">©</div>
+    <h2>저작권 등록 선언문</h2>
+    <div class="author-name">심재우 (Shim Jaewoo)</div>
+    <p>본 저작물은 대한민국 저작권법에 의해 보호됩니다.</p>
+    <p style="font-size:.82rem;color:#94a3b8;margin-top:12px">한국저작권위원회 등록 신청일: 2026년 3월</p>
+  </div>
+
+  <div class="info-card">
+    <h3><span class="emoji">📜</span> 저작물 정보</h3>
+    <table class="cr-table">
+      <tr><td class="label">저작물 제호</td><td><strong>VCOS (Vibe Coding Operating System) — 바이브코딩 운영체제 AI 개발 플랫폼</strong></td></tr>
+      <tr><td class="label">저작물 종류</td><td>편집저작물</td></tr>
+      <tr><td class="label">저작자 성명</td><td>심재우 (Shim Jaewoo)</td></tr>
+      <tr><td class="label">국적</td><td>대한민국</td></tr>
+      <tr><td class="label">창작연월일</td><td>2026년 3월 13일</td></tr>
+      <tr><td class="label">최초 공표일</td><td>2026년 3월 13일 (Git 최초 커밋)</td></tr>
+      <tr><td class="label">등록 유형</td><td>일반저작권 등록 (저작자성명, 창작연월일)</td></tr>
+      <tr><td class="label">등록 부문</td><td>일반저작물</td></tr>
+    </table>
+  </div>
+
+  <div class="info-card">
+    <h3><span class="emoji">⚖</span> 권리 선언</h3>
+    <p>본 프로그램 <strong>"VCOS (Vibe Coding Operating System)"</strong>의 모든 소스코드, 디자인 시스템, UI/UX 구조, 스킬 데이터, 알고리즘, 콘텐츠에 대한 저작권은 <strong>심재우</strong>에게 귀속됩니다.</p>
+    <p style="margin-top:12px">본 소프트웨어의 무단 복제, 수정, 배포, 재라이선스, 판매는 저작권법에 의해 금지됩니다. 사용을 위해서는 저작자의 사전 서면 동의가 필요합니다.</p>
+    <p style="margin-top:12px">본 저작물은 대한민국 저작권법 제2조 제18호에 의한 편집저작물로서, 소재의 선택 또는 배열에 창작성이 있는 저작물에 해당합니다.</p>
+  </div>
+
+  <div class="info-card">
+    <h3><span class="emoji">🔒</span> 라이선스 조건</h3>
+    <div class="code-block">Copyright (c) 2026 심재우 (Shim Jaewoo). All rights reserved.
+
+본 소프트웨어 및 관련 문서 파일(이하 "소프트웨어")의 저작권은
+심재우에게 있습니다.
+
+소프트웨어의 복제, 수정, 병합, 게시, 배포, 재라이선스 또는
+판매를 위해서는 저작자의 사전 서면 동의가 필요합니다.
+
+이 소프트웨어는 대한민국 저작권법 및 관련 국제 조약에 의해
+보호됩니다.
+
+저작자: 심재우 (Shim Jaewoo)
+연락처: jaiwshim@gmail.com</div>
+  </div>
+
+  <div class="info-card">
+    <h3><span class="emoji">✅</span> 저작권 등록 체크리스트</h3>
+    <table class="cr-table">
+      <tr><th>항목</th><th>상태</th><th>비고</th></tr>
+      <tr><td>프로그램 명세서</td><td>✅ 완료</td><td>본 문서 (탭 1~5)</td></tr>
+      <tr><td>저작자 정보</td><td>✅ 완료</td><td>심재우 (Shim Jaewoo)</td></tr>
+      <tr><td>창작연월일 확인</td><td>✅ 완료</td><td>2026.03.13 (Git 이력 증빙)</td></tr>
+      <tr><td>소스코드 복제물</td><td>✅ 준비</td><td>Git 저장소 전체 (23,327줄)</td></tr>
+      <tr><td>저작권 표기</td><td>✅ 완료</td><td>Footer © 표기 + 메타태그 전 페이지</td></tr>
+      <tr><td>독창적 요소 설명</td><td>✅ 완료</td><td>6대 독창성 + 아키텍처 독창성 + 차별점</td></tr>
+      <tr><td>창작 사실 증명</td><td>✅ 완료</td><td>Git 69건 커밋 이력 + SHA-1 해시</td></tr>
+      <tr><td>권리 선언</td><td>✅ 완료</td><td>저작권법 제2조 제18호 편집저작물</td></tr>
+    </table>
+  </div>
+
+</div>
+
+<!-- ── TAB 7: 시스템 구조도 ── -->
+<div class="tab-content" id="tab7" data-print-title="7. 시스템 구조도">
+
+  <div class="info-card" style="border-left-color:#0891b2;background:linear-gradient(135deg,#fff 0%,#ecfeff 100%)">
+    <h3><span class="emoji">🗺</span> VCOS 시스템 아키텍처 구조도</h3>
+    <p style="margin-bottom:16px">User → VCOS Core → 6 Phases → 25 Skills → 5 Squads → Data Layer의 전체 시스템 흐름을 시각화한 아키텍처 다이어그램입니다.</p>
+    <div style="border:1.5px solid #dbeafe;border-radius:14px;overflow:hidden;background:#fff;overflow-x:auto">
+<svg viewBox="0 0 1600 1200" xmlns="http://www.w3.org/2000/svg" font-family="'Noto Sans KR','Segoe UI',Arial,sans-serif" style="width:100%;height:auto;display:block">
+<defs>
+  <linearGradient id="a-bgG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f8fafc"/><stop offset="100%" stop-color="#eff6ff"/></linearGradient>
+  <linearGradient id="a-topG" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#1e3a8a"/><stop offset="50%" stop-color="#2563eb"/><stop offset="100%" stop-color="#1e3a8a"/></linearGradient>
+  <linearGradient id="a-blueG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2563eb"/><stop offset="100%" stop-color="#1d4ed8"/></linearGradient>
+  <linearGradient id="a-purpleG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#6d28d9"/></linearGradient>
+  <linearGradient id="a-redG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#dc2626"/><stop offset="100%" stop-color="#b91c1c"/></linearGradient>
+  <linearGradient id="a-orangeG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ea580c"/><stop offset="100%" stop-color="#c2410c"/></linearGradient>
+  <linearGradient id="a-greenG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#16a34a"/><stop offset="100%" stop-color="#15803d"/></linearGradient>
+  <linearGradient id="a-tealG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0891b2"/><stop offset="100%" stop-color="#0e7490"/></linearGradient>
+  <filter id="a-sh1"><feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#94a3b8" flood-opacity="0.2"/></filter>
+  <filter id="a-sh2"><feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#94a3b8" flood-opacity="0.15"/></filter>
+  <marker id="a-arB" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#2563eb"/></marker>
+  <marker id="a-arP" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#7c3aed"/></marker>
+  <marker id="a-arG" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#64748b"/></marker>
+  <pattern id="a-dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r=".8" fill="#cbd5e1" opacity="0.5"/></pattern>
+</defs>
+<rect width="1600" height="1200" fill="url(#a-bgG)"/><rect width="1600" height="1200" fill="url(#a-dots)"/>
+<!-- Top Bar -->
+<rect width="1600" height="72" fill="url(#a-topG)"/><rect y="70" width="1600" height="2" fill="#3b82f6" opacity="0.6"/>
+<text x="800" y="36" text-anchor="middle" fill="#fff" font-size="22" font-weight="900" letter-spacing="2">VCOS &#8212; SYSTEM ARCHITECTURE</text>
+<text x="800" y="56" text-anchor="middle" fill="#93c5fd" font-size="12" font-weight="600">Vibe Coding Operating System v1.0.0 &#160;|&#160; 25 Skills &#160;|&#160; 5 Squads &#160;|&#160; 6 Phases &#160;|&#160; 23,327 Lines</text>
+<!-- Layer 1: User -->
+<rect x="580" y="94" width="440" height="64" rx="32" fill="#fff" stroke="#e2e8f0" stroke-width="1.5" filter="url(#a-sh2)"/>
+<text x="800" y="122" text-anchor="middle" fill="#1e293b" font-size="14" font-weight="800">&#128100; &#49324;&#50857;&#51088; (User)</text>
+<text x="800" y="142" text-anchor="middle" fill="#64748b" font-size="11">&#51088;&#50672;&#50612; &#54532;&#47196;&#51229;&#53944; &#51032;&#46020; &#51077;&#47141;</text>
+<line x1="800" y1="158" x2="800" y2="186" stroke="#2563eb" stroke-width="2" marker-end="url(#a-arB)"/>
+<!-- Layer 2: Core -->
+<rect x="280" y="188" width="1040" height="80" rx="16" fill="#fff" stroke="#bfdbfe" stroke-width="2" filter="url(#a-sh1)"/>
+<rect x="280" y="188" width="1040" height="4" rx="2" fill="url(#a-blueG)"/>
+<text x="800" y="224" text-anchor="middle" fill="#1e293b" font-size="18" font-weight="900">VCOS Core Engine</text>
+<text x="800" y="248" text-anchor="middle" fill="#475569" font-size="12" font-weight="600">index.html (662) + vcos.js (483) + vcos.css (898) + vcos-skills.js (12,053)</text>
+<line x1="800" y1="268" x2="800" y2="298" stroke="#2563eb" stroke-width="2" marker-end="url(#a-arB)"/>
+<!-- Layer 3: Phases -->
+<rect x="40" y="300" width="1520" height="160" rx="14" fill="#fff" stroke="#e2e8f0" stroke-width="1" filter="url(#a-sh2)"/>
+<text x="60" y="324" fill="#94a3b8" font-size="11" font-weight="700" letter-spacing="1">6-PHASE DEVELOPMENT LIFECYCLE</text>
+<rect x="60" y="336" width="220" height="106" rx="12" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.5"/><rect x="60" y="336" width="220" height="3" rx="1.5" fill="url(#a-blueG)"/>
+<text x="170" y="362" text-anchor="middle" fill="#1d4ed8" font-size="13" font-weight="800">Phase 1 &#8212; &#49444;&#44228;</text>
+<text x="170" y="382" text-anchor="middle" fill="#475569" font-size="10">01-intent / 02-ai-collab</text>
+<text x="170" y="396" text-anchor="middle" fill="#475569" font-size="10">03-complexity / 04-squad</text>
+<text x="170" y="410" text-anchor="middle" fill="#475569" font-size="10">05-skills / 06-token</text>
+<rect x="300" y="336" width="220" height="106" rx="12" fill="#f5f3ff" stroke="#ddd6fe" stroke-width="1.5"/><rect x="300" y="336" width="220" height="3" rx="1.5" fill="url(#a-purpleG)"/>
+<text x="410" y="362" text-anchor="middle" fill="#7c3aed" font-size="13" font-weight="800">Phase 2 &#8212; &#44060;&#48156;</text>
+<text x="410" y="382" text-anchor="middle" fill="#475569" font-size="10">07-command</text>
+<text x="410" y="396" text-anchor="middle" fill="#475569" font-size="10">08-sal-grid (9-PART)</text>
+<text x="410" y="416" text-anchor="middle" fill="#7c3aed" font-size="9" font-weight="700">7 Skills</text>
+<rect x="540" y="336" width="220" height="106" rx="12" fill="#fef2f2" stroke="#fecaca" stroke-width="1.5"/><rect x="540" y="336" width="220" height="3" rx="1.5" fill="url(#a-redG)"/>
+<text x="650" y="362" text-anchor="middle" fill="#dc2626" font-size="13" font-weight="800">Phase 3 &#8212; &#46356;&#48260;&#44536;</text>
+<text x="650" y="382" text-anchor="middle" fill="#475569" font-size="10">09-debug-loop</text>
+<text x="650" y="400" text-anchor="middle" fill="#dc2626" font-size="9" font-weight="700">5 Skills</text>
+<rect x="780" y="336" width="220" height="106" rx="12" fill="#fff7ed" stroke="#fed7aa" stroke-width="1.5"/><rect x="780" y="336" width="220" height="3" rx="1.5" fill="url(#a-orangeG)"/>
+<text x="890" y="362" text-anchor="middle" fill="#ea580c" font-size="13" font-weight="800">Phase 4 &#8212; &#44256;&#46020;&#54868;</text>
+<text x="890" y="382" text-anchor="middle" fill="#475569" font-size="10">07-refinement</text>
+<text x="890" y="400" text-anchor="middle" fill="#ea580c" font-size="9" font-weight="700">3 Skills</text>
+<rect x="1020" y="336" width="220" height="106" rx="12" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1.5"/><rect x="1020" y="336" width="220" height="3" rx="1.5" fill="url(#a-greenG)"/>
+<text x="1130" y="362" text-anchor="middle" fill="#16a34a" font-size="13" font-weight="800">Phase 5 &#8212; &#48156;&#54364;</text>
+<text x="1130" y="382" text-anchor="middle" fill="#475569" font-size="10">10-slideshow</text>
+<text x="1130" y="400" text-anchor="middle" fill="#16a34a" font-size="9" font-weight="700">2 Skills</text>
+<rect x="1260" y="336" width="220" height="106" rx="12" fill="#ecfeff" stroke="#a5f3fc" stroke-width="1.5"/><rect x="1260" y="336" width="220" height="3" rx="1.5" fill="url(#a-tealG)"/>
+<text x="1370" y="362" text-anchor="middle" fill="#0891b2" font-size="13" font-weight="800">Phase 6 &#8212; &#48176;&#54252;</text>
+<text x="1370" y="382" text-anchor="middle" fill="#475569" font-size="10">11-youtube</text>
+<text x="1370" y="400" text-anchor="middle" fill="#0891b2" font-size="9" font-weight="700">2 Skills</text>
+<!-- Phase arrows -->
+<line x1="280" y1="389" x2="300" y2="389" stroke="#64748b" stroke-width="1.5" marker-end="url(#a-arG)"/>
+<line x1="520" y1="389" x2="540" y2="389" stroke="#64748b" stroke-width="1.5" marker-end="url(#a-arG)"/>
+<line x1="760" y1="389" x2="780" y2="389" stroke="#64748b" stroke-width="1.5" marker-end="url(#a-arG)"/>
+<line x1="1000" y1="389" x2="1020" y2="389" stroke="#64748b" stroke-width="1.5" marker-end="url(#a-arG)"/>
+<line x1="1240" y1="389" x2="1260" y2="389" stroke="#64748b" stroke-width="1.5" marker-end="url(#a-arG)"/>
+<!-- Layer 4: Skills -->
+<line x1="800" y1="460" x2="800" y2="488" stroke="#7c3aed" stroke-width="2" marker-end="url(#a-arP)"/>
+<rect x="40" y="490" width="1520" height="120" rx="14" fill="#fff" stroke="#e2e8f0" stroke-width="1" filter="url(#a-sh2)"/>
+<text x="60" y="514" fill="#94a3b8" font-size="11" font-weight="700" letter-spacing="1">25 SKILLS DATABASE &#8212; vcos-skills.js (12,053&#51460;)</text>
+<rect x="60" y="524" width="140" height="70" rx="8" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/><text x="130" y="548" text-anchor="middle" fill="#1d4ed8" font-size="11" font-weight="800">P1 6 Skills</text><text x="130" y="568" text-anchor="middle" fill="#64748b" font-size="8">intent, collab, complexity...</text>
+<rect x="218" y="524" width="140" height="70" rx="8" fill="#f5f3ff" stroke="#ddd6fe" stroke-width="1"/><text x="288" y="548" text-anchor="middle" fill="#7c3aed" font-size="11" font-weight="800">P2 7 Skills</text><text x="288" y="568" text-anchor="middle" fill="#64748b" font-size="8">command, sal-grid, api...</text>
+<rect x="376" y="524" width="140" height="70" rx="8" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/><text x="446" y="548" text-anchor="middle" fill="#dc2626" font-size="11" font-weight="800">P3 5 Skills</text><text x="446" y="568" text-anchor="middle" fill="#64748b" font-size="8">debug, troubleshoot, test...</text>
+<rect x="534" y="524" width="140" height="70" rx="8" fill="#fff7ed" stroke="#fed7aa" stroke-width="1"/><text x="604" y="548" text-anchor="middle" fill="#ea580c" font-size="11" font-weight="800">P4 3 Skills</text><text x="604" y="568" text-anchor="middle" fill="#64748b" font-size="8">review, refine, doc</text>
+<rect x="692" y="524" width="140" height="70" rx="8" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/><text x="762" y="548" text-anchor="middle" fill="#16a34a" font-size="11" font-weight="800">P5 2 Skills</text><text x="762" y="568" text-anchor="middle" fill="#64748b" font-size="8">slideshow, image</text>
+<rect x="850" y="524" width="140" height="70" rx="8" fill="#ecfeff" stroke="#a5f3fc" stroke-width="1"/><text x="920" y="548" text-anchor="middle" fill="#0891b2" font-size="11" font-weight="800">P6 2 Skills</text><text x="920" y="568" text-anchor="middle" fill="#64748b" font-size="8">youtube, deploy</text>
+<rect x="1020" y="524" width="220" height="70" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/><text x="1130" y="548" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="800">Utility Pages</text><text x="1130" y="568" text-anchor="middle" fill="#475569" font-size="9">manual / sitemap / skills-map</text>
+<rect x="1260" y="524" width="280" height="70" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/><text x="1400" y="548" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="800">Design System</text><text x="1400" y="568" text-anchor="middle" fill="#475569" font-size="9">vcos.css (898) &#8212; Premium White</text>
+<!-- Layer 5: Squads -->
+<line x1="800" y1="610" x2="800" y2="638" stroke="#7c3aed" stroke-width="2" marker-end="url(#a-arP)"/>
+<rect x="40" y="640" width="1520" height="200" rx="14" fill="#fff" stroke="#e2e8f0" stroke-width="1" filter="url(#a-sh2)"/>
+<text x="60" y="664" fill="#94a3b8" font-size="11" font-weight="700" letter-spacing="1">5 SQUADS &#8212; 42 AI AGENT FORMATION</text>
+<rect x="610" y="680" width="380" height="64" rx="12" fill="#1e3a8a" filter="url(#a-sh2)"/>
+<text x="800" y="706" text-anchor="middle" fill="#fff" font-size="14" font-weight="900">HQ (&#48376;&#48512;)</text>
+<text x="800" y="726" text-anchor="middle" fill="#93c5fd" font-size="11">&#49548;&#45824;&#51109; (Opus) + &#50672;&#46973;&#48337; (Chatbot) = 2</text>
+<line x1="680" y1="744" x2="200" y2="770" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3"/>
+<line x1="760" y1="744" x2="560" y2="770" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3"/>
+<line x1="840" y1="744" x2="920" y2="770" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3"/>
+<line x1="920" y1="744" x2="1280" y2="770" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3"/>
+<rect x="60" y="772" width="280" height="52" rx="10" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.5"/>
+<text x="200" y="794" text-anchor="middle" fill="#1d4ed8" font-size="13" font-weight="800">Alpha (1&#48516;&#45824;)</text>
+<text x="200" y="812" text-anchor="middle" fill="#475569" font-size="10">Sonnet + 11 = 12</text>
+<rect x="380" y="772" width="280" height="52" rx="10" fill="#f5f3ff" stroke="#ddd6fe" stroke-width="1.5"/>
+<text x="520" y="794" text-anchor="middle" fill="#7c3aed" font-size="13" font-weight="800">Bravo (2&#48516;&#45824;)</text>
+<text x="520" y="812" text-anchor="middle" fill="#475569" font-size="10">Sonnet + 11 = 12</text>
+<rect x="700" y="772" width="280" height="52" rx="10" fill="#fef2f2" stroke="#fecaca" stroke-width="1.5"/>
+<text x="840" y="794" text-anchor="middle" fill="#dc2626" font-size="13" font-weight="800">Charlie (3&#48516;&#45824;)</text>
+<text x="840" y="812" text-anchor="middle" fill="#475569" font-size="10">Sonnet + 11 = 12</text>
+<rect x="1020" y="772" width="520" height="52" rx="10" fill="#fff7ed" stroke="#fed7aa" stroke-width="1.5"/>
+<text x="1280" y="794" text-anchor="middle" fill="#ea580c" font-size="13" font-weight="800">Mercenaries (&#50857;&#48337;) &#8212; 4</text>
+<text x="1280" y="812" text-anchor="middle" fill="#475569" font-size="10">Codex | Gemini | Grok | Perplexity</text>
+<!-- Layer 6: Data -->
+<line x1="800" y1="840" x2="800" y2="870" stroke="#2563eb" stroke-width="2" marker-end="url(#a-arB)"/>
+<rect x="40" y="872" width="1520" height="100" rx="14" fill="#fff" stroke="#e2e8f0" stroke-width="1" filter="url(#a-sh2)"/>
+<text x="60" y="896" fill="#94a3b8" font-size="11" font-weight="700" letter-spacing="1">DATA &#38; INFRASTRUCTURE LAYER</text>
+<rect x="60" y="908" width="300" height="48" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/><text x="210" y="932" text-anchor="middle" fill="#1e293b" font-size="12" font-weight="800">localStorage</text><text x="210" y="948" text-anchor="middle" fill="#64748b" font-size="10">Client State</text>
+<rect x="400" y="908" width="300" height="48" rx="10" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1.5"/><text x="550" y="932" text-anchor="middle" fill="#15803d" font-size="12" font-weight="800">Supabase (PostgreSQL)</text><text x="550" y="948" text-anchor="middle" fill="#64748b" font-size="10">supabase.js (209)</text>
+<rect x="740" y="908" width="300" height="48" rx="10" fill="#f5f3ff" stroke="#ddd6fe" stroke-width="1.5"/><text x="890" y="932" text-anchor="middle" fill="#7c3aed" font-size="12" font-weight="800">Claude AI (Anthropic)</text><text x="890" y="948" text-anchor="middle" fill="#64748b" font-size="10">Opus / Sonnet / Haiku</text>
+<rect x="1080" y="908" width="220" height="48" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/><text x="1190" y="932" text-anchor="middle" fill="#1e293b" font-size="12" font-weight="800">Git Repository</text><text x="1190" y="948" text-anchor="middle" fill="#64748b" font-size="10">69 commits, 67 files</text>
+<rect x="1340" y="908" width="200" height="48" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/><text x="1440" y="932" text-anchor="middle" fill="#1e293b" font-size="12" font-weight="800">Google Fonts</text><text x="1440" y="948" text-anchor="middle" fill="#64748b" font-size="10">Noto Sans KR + Inter</text>
+<!-- Bottom -->
+<rect y="1000" width="1600" height="4" fill="url(#a-topG)"/>
+<rect x="40" y="1024" width="1520" height="150" rx="14" fill="#fff" stroke="#e2e8f0" stroke-width="1" filter="url(#a-sh2)"/>
+<text x="60" y="1050" fill="#94a3b8" font-size="11" font-weight="700" letter-spacing="1">LEGEND</text>
+<rect x="60" y="1062" width="200" height="42" rx="8" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/><text x="160" y="1082" text-anchor="middle" fill="#1d4ed8" font-size="20" font-weight="900">67</text><text x="160" y="1098" text-anchor="middle" fill="#64748b" font-size="9">Files</text>
+<rect x="280" y="1062" width="200" height="42" rx="8" fill="#f5f3ff" stroke="#ddd6fe" stroke-width="1"/><text x="380" y="1082" text-anchor="middle" fill="#7c3aed" font-size="20" font-weight="900">23,327</text><text x="380" y="1098" text-anchor="middle" fill="#64748b" font-size="9">Lines</text>
+<rect x="500" y="1062" width="200" height="42" rx="8" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/><text x="600" y="1082" text-anchor="middle" fill="#dc2626" font-size="20" font-weight="900">25</text><text x="600" y="1098" text-anchor="middle" fill="#64748b" font-size="9">Skills</text>
+<rect x="720" y="1062" width="200" height="42" rx="8" fill="#fff7ed" stroke="#fed7aa" stroke-width="1"/><text x="820" y="1082" text-anchor="middle" fill="#ea580c" font-size="20" font-weight="900">42</text><text x="820" y="1098" text-anchor="middle" fill="#64748b" font-size="9">Agents</text>
+<rect x="940" y="1062" width="200" height="42" rx="8" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/><text x="1040" y="1082" text-anchor="middle" fill="#16a34a" font-size="20" font-weight="900">6</text><text x="1040" y="1098" text-anchor="middle" fill="#64748b" font-size="9">Phases</text>
+<rect x="1160" y="1062" width="200" height="42" rx="8" fill="#ecfeff" stroke="#a5f3fc" stroke-width="1"/><text x="1260" y="1082" text-anchor="middle" fill="#0891b2" font-size="20" font-weight="900">17</text><text x="1260" y="1098" text-anchor="middle" fill="#64748b" font-size="9">Pages</text>
+<text x="800" y="1140" text-anchor="middle" fill="#94a3b8" font-size="10">&#169; 2026 &#49900;&#51116;&#50864;(Shim Jaewoo). VCOS v1.0.0. All rights reserved.</text>
+<text x="800" y="1158" text-anchor="middle" fill="#cbd5e1" font-size="9">&#51200;&#51089;&#44428; &#46321;&#47197;&#50857; &#49884;&#49828;&#53596; &#50500;&#53412;&#53581;&#52376; &#44396;&#51312;&#46020;</text>
+</svg>
+    </div>
+  </div>
+
+  <div class="info-card" style="border-left-color:#7c3aed;background:linear-gradient(135deg,#fff 0%,#f5f3ff 100%)">
+    <h3><span class="emoji">📐</span> 구조도 레이어 설명</h3>
+    <table class="cr-table">
+      <tr><th>레이어</th><th>구성 요소</th><th>설명</th></tr>
+      <tr><td><strong>Layer 1</strong></td><td>User Input</td><td>사용자가 자연어로 프로젝트 의도를 입력하는 진입점</td></tr>
+      <tr><td><strong>Layer 2</strong></td><td>VCOS Core Engine</td><td>index.html + vcos.js + vcos.css + vcos-skills.js 핵심 4개 파일</td></tr>
+      <tr><td><strong>Layer 3</strong></td><td>6 Phases</td><td>설계→개발→디버그→고도화→발표→배포 6단계 라이프사이클</td></tr>
+      <tr><td><strong>Layer 4</strong></td><td>25 Skills Database</td><td>Phase별 전문 스킬 12,053줄 데이터베이스</td></tr>
+      <tr><td><strong>Layer 5</strong></td><td>5 Squads Formation</td><td>HQ + Alpha/Bravo/Charlie + 용병 = 42명 AI 에이전트</td></tr>
+      <tr><td><strong>Layer 6</strong></td><td>Data &amp; Infrastructure</td><td>localStorage, Supabase, Claude AI, Git, Google Fonts</td></tr>
+    </table>
+  </div>
+
+</div>
+
+</main>
+
+<!-- ═══ Footer ═══ -->
+<footer class="cr-footer">
+  <p>VCOS v1.0.0 — Vibe Coding Operating System &nbsp;|&nbsp; Copyright &copy; 2026 심재우(Shim Jaewoo). All rights reserved.</p>
+  <p style="margin-top:4px">본 문서는 한국저작권위원회 저작권 등록 신청을 위해 작성되었습니다.</p>
+</footer>
+
+<!-- ═══ PDF Download Button ═══ -->
+<div class="pdf-btn-wrap">
+  <button class="pdf-btn" onclick="window.print()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    PDF 다운로드
+  </button>
+</div>
+
+<!-- ═══ JavaScript ═══ -->
+<script>
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+});
+</script>
+
+</body>
+</html>

@@ -3,6 +3,7 @@
    buildNav · buildProgress · buildFooter · calcComplexity
 ═══════════════════════════════════════════════════════════ */
 
+const VCOS_VERSION = 'v1.0.0';
 const STORAGE_KEY = 'vcos_project';
 
 /* ── Clipboard Helper ────────────────────────────────────── */
@@ -468,7 +469,7 @@ function buildFooter(isHome) {
 
     </div>
     <div class="footer-bottom">
-      <div class="footer-copy">© 2026 VCOS — Vibe Coding Operating System. Powered by Claude.</div>
+      <div class="footer-copy">© 2026 심재우(Shim Jaewoo). VCOS ${VCOS_VERSION} — Vibe Coding Operating System. All rights reserved.</div>
       <div class="footer-chips">
         <span class="footer-chip">Claude Sonnet</span>
         <span class="footer-chip">25 Skills</span>

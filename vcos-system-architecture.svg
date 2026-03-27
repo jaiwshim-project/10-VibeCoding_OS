@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1600" height="1200" viewBox="0 0 1600 1200" xmlns="http://www.w3.org/2000/svg"
+     font-family="'Noto Sans KR','Segoe UI',Arial,sans-serif">
+<defs>
+  <!-- Gradients -->
+  <linearGradient id="bgG" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#f8fafc"/><stop offset="100%" stop-color="#eff6ff"/>
+  </linearGradient>
+  <linearGradient id="topG" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" stop-color="#1e3a8a"/><stop offset="50%" stop-color="#2563eb"/><stop offset="100%" stop-color="#1e3a8a"/>
+  </linearGradient>
+  <linearGradient id="blueG" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#2563eb"/><stop offset="100%" stop-color="#1d4ed8"/>
+  </linearGradient>
+  <linearGradient id="purpleG" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#6d28d9"/>
+  </linearGradient>
+  <linearGradient id="redG" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#dc2626"/><stop offset="100%" stop-color="#b91c1c"/>
+  </linearGradient>
+  <linearGradient id="orangeG" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#ea580c"/><stop offset="100%" stop-color="#c2410c"/>
+  </linearGradient>
+  <linearGradient id="greenG" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#16a34a"/><stop offset="100%" stop-color="#15803d"/>
+  </linearGradient>
+  <linearGradient id="tealG" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#0891b2"/><stop offset="100%" stop-color="#0e7490"/>
+  </linearGradient>
+  <!-- Shadows -->
+  <filter id="sh1"><feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#94a3b8" flood-opacity="0.2"/></filter>
+  <filter id="sh2"><feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#94a3b8" flood-opacity="0.15"/></filter>
+  <!-- Arrow Marker -->
+  <marker id="arrowB" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#2563eb"/></marker>
+  <marker id="arrowP" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#7c3aed"/></marker>
+  <marker id="arrowG" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#64748b"/></marker>
+  <!-- Dot Pattern -->
+  <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse">
+    <circle cx="10" cy="10" r=".8" fill="#cbd5e1" opacity="0.5"/>
+  </pattern>
+</defs>
+
+<!-- ═══ Background ═══ -->
+<rect width="1600" height="1200" fill="url(#bgG)"/>
+<rect width="1600" height="1200" fill="url(#dots)"/>
+
+<!-- ═══ Top Bar ═══ -->
+<rect width="1600" height="72" fill="url(#topG)"/>
+<rect y="70" width="1600" height="2" fill="#3b82f6" opacity="0.6"/>
+<text x="800" y="36" text-anchor="middle" fill="#fff" font-size="22" font-weight="900" letter-spacing="2">VCOS — SYSTEM ARCHITECTURE</text>
+<text x="800" y="56" text-anchor="middle" fill="#93c5fd" font-size="12" font-weight="600">Vibe Coding Operating System v1.0.0 &#160;|&#160; 25 Skills &#160;|&#160; 5 Squads &#160;|&#160; 6 Phases &#160;|&#160; 23,327 Lines</text>
+
+<!-- ═══ Layer 1: User Input ═══ -->
+<rect x="580" y="94" width="440" height="64" rx="32" fill="#fff" stroke="#e2e8f0" stroke-width="1.5" filter="url(#sh2)"/>
+<text x="800" y="122" text-anchor="middle" fill="#1e293b" font-size="14" font-weight="800">👤 사용자 (User)</text>
+<text x="800" y="142" text-anchor="middle" fill="#64748b" font-size="11">자연어 프로젝트 의도 입력</text>
+
+<!-- Arrow down -->
+<line x1="800" y1="158" x2="800" y2="186" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowB)"/>
+
+<!-- ═══ Layer 2: VCOS Core ═══ -->
+<rect x="280" y="188" width="1040" height="80" rx="16" fill="#fff" stroke="#bfdbfe" stroke-width="2" filter="url(#sh1)"/>
+<rect x="280" y="188" width="1040" height="4" rx="2" fill="url(#blueG)"/>
+<text x="800" y="224" text-anchor="middle" fill="#1e293b" font-size="18" font-weight="900">VCOS Core Engine</text>
+<text x="800" y="248" text-anchor="middle" fill="#475569" font-size="12" font-weight="600">index.html (662줄) + vcos.js (483줄) + vcos.css (898줄) + vcos-skills.js (12,053줄)</text>
+
+<!-- Arrow down split -->
+<line x1="800" y1="268" x2="800" y2="298" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowB)"/>
+
+<!-- ═══ Layer 3: 6 Phases ═══ -->
+<!-- Phase Container -->
+<rect x="40" y="300" width="1520" height="160" rx="14" fill="#fff" stroke="#e2e8f0" stroke-width="1" filter="url(#sh2)"/>
+<text x="60" y="324" fill="#94a3b8" font-size="11" font-weight="700" letter-spacing="1">6-PHASE DEVELOPMENT LIFECYCLE</text>
+
+<!-- P1 -->
+<rect x="60" y="336" width="220" height="106" rx="12" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.5"/>
+<rect x="60" y="336" width="220" height="3" rx="1.5" fill="url(#blueG)"/>
+<text x="170" y="362" text-anchor="middle" fill="#1d4ed8" font-size="13" font-weight="800">Phase 1 — 설계</text>
+<text x="170" y="382" text-anchor="middle" fill="#475569" font-size="10">01-intent (인텐트 입력)</text>
+<text x="170" y="396" text-anchor="middle" fill="#475569" font-size="10">02-ai-collab (AI 협업)</text>
+<text x="170" y="410" text-anchor="middle" fill="#475569" font-size="10">03-complexity (복잡도)</text>
+<text x="170" y="424" text-anchor="middle" fill="#475569" font-size="10">04-squad | 05-skills | 06-token</text>
+
+<!-- P2 -->
+<rect x="300" y="336" width="220" height="106" rx="12" fill="#f5f3ff" stroke="#ddd6fe" stroke-width="1.5"/>
+<rect x="300" y="336" width="220" height="3" rx="1.5" fill="url(#purpleG)"/>
+<text x="410" y="362" text-anchor="middle" fill="#7c3aed" font-size="13" font-weight="800">Phase 2 — 개발</text>
+<text x="410" y="382" text-anchor="middle" fill="#475569" font-size="10">07-command (명령어 생성)</text>
+<text x="410" y="396" text-anchor="middle" fill="#475569" font-size="10">08-sal-grid (SAL-Grid Suite)</text>
+<text x="410" y="416" text-anchor="middle" fill="#7c3aed" font-size="9" font-weight="700">7 Skills: api-builder, ui-ux, db...</text>
+
+<!-- P3 -->
+<rect x="540" y="336" width="220" height="106" rx="12" fill="#fef2f2" stroke="#fecaca" stroke-width="1.5"/>
+<rect x="540" y="336" width="220" height="3" rx="1.5" fill="url(#redG)"/>
+<text x="650" y="362" text-anchor="middle" fill="#dc2626" font-size="13" font-weight="800">Phase 3 — 디버그</text>
+<text x="650" y="382" text-anchor="middle" fill="#475569" font-size="10">09-debug-loop (5times Loop)</text>
+<text x="650" y="400" text-anchor="middle" fill="#dc2626" font-size="9" font-weight="700">5 Skills: debug, troubleshoot,</text>
+<text x="650" y="414" text-anchor="middle" fill="#dc2626" font-size="9" font-weight="700">test, security, performance</text>
+
+<!-- P4 -->
+<rect x="780" y="336" width="220" height="106" rx="12" fill="#fff7ed" stroke="#fed7aa" stroke-width="1.5"/>
+<rect x="780" y="336" width="220" height="3" rx="1.5" fill="url(#orangeG)"/>
+<text x="890" y="362" text-anchor="middle" fill="#ea580c" font-size="13" font-weight="800">Phase 4 — 고도화</text>
+<text x="890" y="382" text-anchor="middle" fill="#475569" font-size="10">07-refinement (고도화 엔진)</text>
+<text x="890" y="400" text-anchor="middle" fill="#ea580c" font-size="9" font-weight="700">3 Skills: review-evaluate,</text>
+<text x="890" y="414" text-anchor="middle" fill="#ea580c" font-size="9" font-weight="700">code-refiner, doc-generator</text>
+
+<!-- P5 -->
+<rect x="1020" y="336" width="220" height="106" rx="12" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1.5"/>
+<rect x="1020" y="336" width="220" height="3" rx="1.5" fill="url(#greenG)"/>
+<text x="1130" y="362" text-anchor="middle" fill="#16a34a" font-size="13" font-weight="800">Phase 5 — 발표</text>
+<text x="1130" y="382" text-anchor="middle" fill="#475569" font-size="10">10-slideshow (슬라이드)</text>
+<text x="1130" y="400" text-anchor="middle" fill="#16a34a" font-size="9" font-weight="700">2 Skills: slideshow-web,</text>
+<text x="1130" y="414" text-anchor="middle" fill="#16a34a" font-size="9" font-weight="700">create-image</text>
+
+<!-- P6 -->
+<rect x="1260" y="336" width="220" height="106" rx="12" fill="#ecfeff" stroke="#a5f3fc" stroke-width="1.5"/>
+<rect x="1260" y="336" width="220" height="3" rx="1.5" fill="url(#tealG)"/>
+<text x="1370" y="362" text-anchor="middle" fill="#0891b2" font-size="13" font-weight="800">Phase 6 — 배포</text>
+<text x="1370" y="382" text-anchor="middle" fill="#475569" font-size="10">11-youtube (영상 제작)</text>
+<text x="1370" y="400" text-anchor="middle" fill="#0891b2" font-size="9" font-weight="700">2 Skills: youtube-generate,</text>
+<text x="1370" y="414" text-anchor="middle" fill="#0891b2" font-size="9" font-weight="700">deploy-publish</text>
+
+<!-- Phase arrows -->
+<line x1="280" y1="389" x2="300" y2="389" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowG)"/>
+<line x1="520" y1="389" x2="540" y2="389" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowG)"/>
+<line x1="760" y1="389" x2="780" y2="389" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowG)"/>
+<line x1="1000" y1="389" x2="1020" y2="389" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowG)"/>
+<line x1="1240" y1="389" x2="1260" y2="389" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowG)"/>
+
+<!-- ═══ Layer 4: 25 Skills ═══ -->
+<line x1="800" y1="460" x2="800" y2="488" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrowP)"/>
+
+<rect x="40" y="490" width="1520" height="120" rx="14" fill="#fff" stroke="#e2e8f0" stroke-width="1" filter="url(#sh2)"/>
+<text x="60" y="514" fill="#94a3b8" font-size="11" font-weight="700" letter-spacing="1">25 SKILLS DATABASE — vcos-skills.js (12,053줄)</text>
+
+<!-- Skills Grid -->
+<rect x="60" y="524" width="140" height="70" rx="8" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+<text x="130" y="546" text-anchor="middle" fill="#1d4ed8" font-size="11" font-weight="800">P1 설계</text>
+<text x="130" y="562" text-anchor="middle" fill="#475569" font-size="9">6 Skills</text>
+<text x="130" y="578" text-anchor="middle" fill="#64748b" font-size="8">intent, collab, complexity...</text>
+
+<rect x="218" y="524" width="140" height="70" rx="8" fill="#f5f3ff" stroke="#ddd6fe" stroke-width="1"/>
+<text x="288" y="546" text-anchor="middle" fill="#7c3aed" font-size="11" font-weight="800">P2 개발</text>
+<text x="288" y="562" text-anchor="middle" fill="#475569" font-size="9">7 Skills</text>
+<text x="288" y="578" text-anchor="middle" fill="#64748b" font-size="8">command, sal-grid, api...</text>
+
+<rect x="376" y="524" width="140" height="70" rx="8" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/>
+<text x="446" y="546" text-anchor="middle" fill="#dc2626" font-size="11" font-weight="800">P3 디버그</text>
+<text x="446" y="562" text-anchor="middle" fill="#475569" font-size="9">5 Skills</text>
+<text x="446" y="578" text-anchor="middle" fill="#64748b" font-size="8">debug, troubleshoot, test...</text>
+
+<rect x="534" y="524" width="140" height="70" rx="8" fill="#fff7ed" stroke="#fed7aa" stroke-width="1"/>
+<text x="604" y="546" text-anchor="middle" fill="#ea580c" font-size="11" font-weight="800">P4 고도화</text>
+<text x="604" y="562" text-anchor="middle" fill="#475569" font-size="9">3 Skills</text>
+<text x="604" y="578" text-anchor="middle" fill="#64748b" font-size="8">review, refine, doc</text>
+
+<rect x="692" y="524" width="140" height="70" rx="8" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+<text x="762" y="546" text-anchor="middle" fill="#16a34a" font-size="11" font-weight="800">P5 발표</text>
+<text x="762" y="562" text-anchor="middle" fill="#475569" font-size="9">2 Skills</text>
+<text x="762" y="578" text-anchor="middle" fill="#64748b" font-size="8">slideshow, image</text>
+
+<rect x="850" y="524" width="140" height="70" rx="8" fill="#ecfeff" stroke="#a5f3fc" stroke-width="1"/>
+<text x="920" y="546" text-anchor="middle" fill="#0891b2" font-size="11" font-weight="800">P6 배포</text>
+<text x="920" y="562" text-anchor="middle" fill="#475569" font-size="9">2 Skills</text>
+<text x="920" y="578" text-anchor="middle" fill="#64748b" font-size="8">youtube, deploy</text>
+
+<!-- Utility Pages -->
+<rect x="1020" y="524" width="220" height="70" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+<text x="1130" y="546" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="800">📚 부가 페이지</text>
+<text x="1130" y="562" text-anchor="middle" fill="#475569" font-size="9">manual.html — 사용 가이드</text>
+<text x="1130" y="578" text-anchor="middle" fill="#475569" font-size="9">sitemap.html | skills-map.html</text>
+
+<!-- Design System -->
+<rect x="1260" y="524" width="280" height="70" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+<text x="1400" y="546" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="800">🎨 Design System</text>
+<text x="1400" y="562" text-anchor="middle" fill="#475569" font-size="9">vcos.css (898줄) — Premium White</text>
+<text x="1400" y="578" text-anchor="middle" fill="#475569" font-size="9">CSS Variables, Responsive, Dark/Light</text>
+
+<!-- ═══ Layer 5: Squad Formation ═══ -->
+<line x1="800" y1="610" x2="800" y2="638" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrowP)"/>
+
+<rect x="40" y="640" width="1520" height="200" rx="14" fill="#fff" stroke="#e2e8f0" stroke-width="1" filter="url(#sh2)"/>
+<text x="60" y="664" fill="#94a3b8" font-size="11" font-weight="700" letter-spacing="1">5 SQUADS — 42명 AI AGENT FORMATION</text>
+
+<!-- HQ -->
+<rect x="610" y="680" width="380" height="64" rx="12" fill="#1e3a8a" filter="url(#sh2)"/>
+<text x="800" y="706" text-anchor="middle" fill="#fff" font-size="14" font-weight="900">🎖 HQ (본부)</text>
+<text x="800" y="726" text-anchor="middle" fill="#93c5fd" font-size="11">소대장 (Opus) + 연락병 (Chatbot) = 2명</text>
+
+<!-- Lines from HQ to squads -->
+<line x1="680" y1="744" x2="200" y2="770" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3"/>
+<line x1="760" y1="744" x2="560" y2="770" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3"/>
+<line x1="840" y1="744" x2="920" y2="770" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3"/>
+<line x1="920" y1="744" x2="1280" y2="770" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+<!-- Alpha -->
+<rect x="60" y="772" width="280" height="52" rx="10" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.5"/>
+<text x="200" y="794" text-anchor="middle" fill="#1d4ed8" font-size="13" font-weight="800">🔵 Alpha (1분대)</text>
+<text x="200" y="812" text-anchor="middle" fill="#475569" font-size="10">분대장(Sonnet) + 정규병 11명 = 12명</text>
+
+<!-- Bravo -->
+<rect x="380" y="772" width="280" height="52" rx="10" fill="#f5f3ff" stroke="#ddd6fe" stroke-width="1.5"/>
+<text x="520" y="794" text-anchor="middle" fill="#7c3aed" font-size="13" font-weight="800">🟢 Bravo (2분대)</text>
+<text x="520" y="812" text-anchor="middle" fill="#475569" font-size="10">분대장(Sonnet) + 정규병 11명 = 12명</text>
+
+<!-- Charlie -->
+<rect x="700" y="772" width="280" height="52" rx="10" fill="#fef2f2" stroke="#fecaca" stroke-width="1.5"/>
+<text x="840" y="794" text-anchor="middle" fill="#dc2626" font-size="13" font-weight="800">🔴 Charlie (3분대)</text>
+<text x="840" y="812" text-anchor="middle" fill="#475569" font-size="10">분대장(Sonnet) + 정규병 11명 = 12명</text>
+
+<!-- Mercenaries -->
+<rect x="1020" y="772" width="520" height="52" rx="10" fill="#fff7ed" stroke="#fed7aa" stroke-width="1.5"/>
+<text x="1280" y="794" text-anchor="middle" fill="#ea580c" font-size="13" font-weight="800">⚔ 용병 풀 (공유 자산) — 4명</text>
+<text x="1280" y="812" text-anchor="middle" fill="#475569" font-size="10">Codex (코드생성) | Gemini (대용량분석) | Grok (실시간검색) | Perplexity (리서치)</text>
+
+<!-- ═══ Layer 6: Data / Infrastructure ═══ -->
+<line x1="800" y1="840" x2="800" y2="870" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowB)"/>
+
+<rect x="40" y="872" width="1520" height="100" rx="14" fill="#fff" stroke="#e2e8f0" stroke-width="1" filter="url(#sh2)"/>
+<text x="60" y="896" fill="#94a3b8" font-size="11" font-weight="700" letter-spacing="1">DATA &#38; INFRASTRUCTURE LAYER</text>
+
+<!-- localStorage -->
+<rect x="60" y="908" width="300" height="48" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+<text x="210" y="930" text-anchor="middle" fill="#1e293b" font-size="12" font-weight="800">💾 localStorage</text>
+<text x="210" y="946" text-anchor="middle" fill="#64748b" font-size="10">프로젝트 상태 저장/복원 (클라이언트)</text>
+
+<!-- Supabase -->
+<rect x="400" y="908" width="300" height="48" rx="10" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1.5"/>
+<text x="550" y="930" text-anchor="middle" fill="#15803d" font-size="12" font-weight="800">🗄 Supabase (PostgreSQL)</text>
+<text x="550" y="946" text-anchor="middle" fill="#64748b" font-size="10">supabase.js (209줄) — 서버 데이터</text>
+
+<!-- Claude AI -->
+<rect x="740" y="908" width="300" height="48" rx="10" fill="#f5f3ff" stroke="#ddd6fe" stroke-width="1.5"/>
+<text x="890" y="930" text-anchor="middle" fill="#7c3aed" font-size="12" font-weight="800">🤖 Claude AI (Anthropic)</text>
+<text x="890" y="946" text-anchor="middle" fill="#64748b" font-size="10">Opus / Sonnet / Haiku 모델</text>
+
+<!-- Git -->
+<rect x="1080" y="908" width="220" height="48" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+<text x="1190" y="930" text-anchor="middle" fill="#1e293b" font-size="12" font-weight="800">📂 Git Repository</text>
+<text x="1190" y="946" text-anchor="middle" fill="#64748b" font-size="10">69 commits, 67 files</text>
+
+<!-- Google Fonts -->
+<rect x="1340" y="908" width="200" height="48" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+<text x="1440" y="930" text-anchor="middle" fill="#1e293b" font-size="12" font-weight="800">🔤 Google Fonts</text>
+<text x="1440" y="946" text-anchor="middle" fill="#64748b" font-size="10">Noto Sans KR + Inter</text>
+
+<!-- ═══ Bottom Bar ═══ -->
+<rect y="1000" width="1600" height="4" fill="url(#topG)"/>
+
+<!-- ═══ Legend ═══ -->
+<rect x="40" y="1024" width="1520" height="150" rx="14" fill="#fff" stroke="#e2e8f0" stroke-width="1" filter="url(#sh2)"/>
+<text x="60" y="1050" fill="#94a3b8" font-size="11" font-weight="700" letter-spacing="1">LEGEND</text>
+
+<!-- Stats -->
+<rect x="60" y="1062" width="200" height="42" rx="8" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+<text x="160" y="1080" text-anchor="middle" fill="#1d4ed8" font-size="20" font-weight="900">67</text>
+<text x="160" y="1096" text-anchor="middle" fill="#64748b" font-size="9">소스 파일</text>
+
+<rect x="280" y="1062" width="200" height="42" rx="8" fill="#f5f3ff" stroke="#ddd6fe" stroke-width="1"/>
+<text x="380" y="1080" text-anchor="middle" fill="#7c3aed" font-size="20" font-weight="900">23,327</text>
+<text x="380" y="1096" text-anchor="middle" fill="#64748b" font-size="9">소스코드 줄</text>
+
+<rect x="500" y="1062" width="200" height="42" rx="8" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/>
+<text x="600" y="1080" text-anchor="middle" fill="#dc2626" font-size="20" font-weight="900">25</text>
+<text x="600" y="1096" text-anchor="middle" fill="#64748b" font-size="9">AI Skills</text>
+
+<rect x="720" y="1062" width="200" height="42" rx="8" fill="#fff7ed" stroke="#fed7aa" stroke-width="1"/>
+<text x="820" y="1080" text-anchor="middle" fill="#ea580c" font-size="20" font-weight="900">42</text>
+<text x="820" y="1096" text-anchor="middle" fill="#64748b" font-size="9">AI Agents (5 Squads)</text>
+
+<rect x="940" y="1062" width="200" height="42" rx="8" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+<text x="1040" y="1080" text-anchor="middle" fill="#16a34a" font-size="20" font-weight="900">6</text>
+<text x="1040" y="1096" text-anchor="middle" fill="#64748b" font-size="9">Phases</text>
+
+<rect x="1160" y="1062" width="200" height="42" rx="8" fill="#ecfeff" stroke="#a5f3fc" stroke-width="1"/>
+<text x="1260" y="1080" text-anchor="middle" fill="#0891b2" font-size="20" font-weight="900">17</text>
+<text x="1260" y="1096" text-anchor="middle" fill="#64748b" font-size="9">HTML Pages</text>
+
+<!-- Copyright -->
+<text x="800" y="1140" text-anchor="middle" fill="#94a3b8" font-size="10">© 2026 심재우(Shim Jaewoo). VCOS v1.0.0 — Vibe Coding Operating System. All rights reserved.</text>
+<text x="800" y="1158" text-anchor="middle" fill="#cbd5e1" font-size="9">한국저작권위원회 저작권 등록용 시스템 아키텍처 구조도</text>
+
+<!-- ═══ Watermark ═══ -->
+<text x="1520" y="1190" text-anchor="end" fill="#e2e8f0" font-size="9" font-weight="600">DOC-VCOS-ARCH-2026-001</text>
+
+</svg>
