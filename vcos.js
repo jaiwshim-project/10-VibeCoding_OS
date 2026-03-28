@@ -40,9 +40,89 @@ const FEATURE_LABELS = {
   color_theme:     '🎨 컬러 색상과 배경',
   mobile_optimize: '📲 모바일 화면 최적화',
   opacity_optimize:'👁️ 투명도 최적화',
-  manual:       '📖 매뉴얼 페이지',
+  manual:       '📖 매뉴얼 페이지 (프리미엄 디자인)',
+  copyright:    '📜 저작권 등록 자료 생성',
   svg_sitemap:  '🗺️ SVG 구조도',
   chatbot:      '💬 챗봇 인터페이스(RAG)'
+};
+
+/* ── Feature Commands (기본 포함 기능 상세 명령어) ────────── */
+const FEATURE_COMMANDS = {
+  manual: `사용자 매뉴얼 버튼을 푸터에 만들고 상세한 매뉴얼 페이지(manual.html)를 만들어.
+
+아래 디자인 규칙을 반드시 적용해:
+
+### 1. 프리미엄 화이트 테마
+- body 배경: bg-gradient-to-b from-slate-50 via-white to-slate-50
+- 모든 카드/섹션: 흰색 기반에 은은한 색상 그라데이션 배경
+- 전체적으로 밝고 깨끗한 화이트 톤 유지
+
+### 2. 테두리 색상 + 배경색 (섹션별 컬러 코딩)
+- 모든 페이지 섹션 카드에 해당 섹션 테마 색상의 테두리(border)를 적용
+- 배경은 해당 색상의 아주 연한 그라데이션 (예: linear-gradient(135deg, #eff6ff 0%, #ffffff 40%))
+- RQTDW 5단계 카드: 각 단계별 브랜드 컬러 좌측 5px 보더 + 상/우/하 연한 색상 보더 + 그라데이션 배경
+  - R(Read): 블루 계열 (#2563eb / #bfdbfe / #eff6ff)
+  - Q(Question): 오렌지 계열 (#ea580c / #fed7aa / #fff7ed)
+  - T(Think): 그린 계열 (#16a34a / #bbf7d0 / #f0fdf4)
+  - D(Discussion): 퍼플 계열 (#9333ea / #d8b4fe / #faf5ff)
+  - W(Write): 틸 계열 (#0d9488 / #99f6e4 / #f0fdfa)
+- AI 기능 카드: 좌측 3px 색상 보더 + 호버 시 전체 보더 색상 전환 + 4px 상승 애니메이션
+- FAQ 카드: 호버 시 블루 보더 + 그라데이션 배경 + 컬러 쉐도우
+- 시작하기 Step 카드: 각 스텝별 좌측 4px 컬러 보더 (R→Q→T→D 순서 색상)
+- 대시보드 카드: 골드/앰버 테두리 + 아이보리 그라데이션
+
+### 3. 사이드바 메뉴 프리미엄 디자인
+- 데스크톱 사이드바: 아이콘 배지 + 컬러 보더 + 활성 상태 그라데이션 + RQTDW 하위 메뉴
+- 모바일 TOC: 동일한 아이콘+테두리 디자인 + 하단 RQTDW 5색 바
+
+### 4. 글자 가독성 최대화
+- 모든 텍스트 opacity: 100% (투명도 없음)
+- 본문 텍스트: text-gray-800 이상 (밝은 회색 사용 금지)
+- 제목/헤더: text-gray-900, font-weight: 700+
+- 절대 text-gray-400 이하의 본문 텍스트 사용 금지
+
+### 5. PDF 다운로드 기능
+- PDF 다운로드는 반드시 window.print() + @media print CSS 방식으로 구현
+- html2pdf, html2canvas 방식은 절대 사용하지 않음
+- 헤더에 "인쇄/PDF" 버튼 배치
+- @media print CSS: 사이드바/FAB 숨김, 본문 전체 너비, page-break-inside: avoid, 컬러 보존
+
+### 6. 추가 프리미엄 요소
+- 히어로 섹션: 블루/퍼플 그라데이션 오버레이
+- 카드 호버 효과: translateY(-2~4px) + box-shadow 강화
+- 반응형: 모바일 최적화 (목차 FAB 버튼 + 오버레이 TOC)
+- 스크롤 스파이: IntersectionObserver로 사이드바 활성 메뉴 자동 추적
+- FAQ: 아코디언 애니메이션 (max-height 트랜지션)
+- 푸터에 매뉴얼 버튼: 앰버/옐로우 색상 테마, 책 아이콘, 새 탭 열기`,
+
+  copyright: `/copyright 실행 — 저작권 등록용 프로그램 명세서(copyright.html) 자동 생성
+
+Phase 1. 프로젝트 분석 (데이터 수집)
+- Git 이력 (첫 커밋 날짜, 최종 커밋, 총 커밋 수, 마일스톤)
+- 소스 파일 수, 총 줄 수, 파일별 줄 수 통계
+- 프로젝트 구조 파악 (index.html, JS, CSS, 서브페이지)
+
+Phase 1.5. 분대 편성 및 병렬 실행
+- Alpha: copyright.html 골격 + 탭 1~3 (개요, 기능명세, 시스템구조)
+- Bravo: 탭 4~7 (독창적요소, 창작이력, 저작권선언, 구조도)
+- Charlie: 메타태그 전 페이지 + footer 저작권 표기 + README.md + SVG 구조도
+
+Phase 2. copyright.html 7탭 구조 생성
+- Premium White Theme (배경 #fff, 브랜드 #2563eb/#7c3aed)
+- 탭 1: 프로그램 개요 | 탭 2: 기능 명세 | 탭 3: 시스템 구조
+- 탭 4: 독창적 요소 | 탭 5: 창작 이력 | 탭 6: 저작권 선언 | 탭 7: 구조도
+- PDF 다운로드: window.print() + @media print + A4 최적화
+
+Phase 3. 프로젝트 저작권 표기 보강
+- 버전 상수 추가 + Footer 저작권 표기
+- 전 페이지 meta author/description/copyright 태그 일괄 추가
+- README.md 생성
+
+Phase 4. SVG 아키텍처 구조도 생성
+- viewBox 1600x1200, Premium White Theme
+- 6개 레이어 수직 구조 (User Input → Core → Phases → Skills → Team → Data)
+
+Phase 5. 검증 (7탭 전환, PDF, 메타태그, Footer, README 확인)`
 };
 
 /* ── LocalStorage ────────────────────────────────────────── */
