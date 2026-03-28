@@ -42,6 +42,7 @@ const FEATURE_LABELS = {
   opacity_optimize:'👁️ 투명도 최적화',
   manual:       '📖 매뉴얼 페이지 (프리미엄 디자인)',
   copyright:    '📜 저작권 등록 자료 생성',
+  patent:       '📋 특허명세서 작성',
   svg_sitemap:  '🗺️ SVG 구조도',
   chatbot:      '💬 챗봇 인터페이스(RAG)'
 };
@@ -122,7 +123,47 @@ Phase 4. SVG 아키텍처 구조도 생성
 - viewBox 1600x1200, Premium White Theme
 - 6개 레이어 수직 구조 (User Input → Core → Phases → Skills → Team → Data)
 
-Phase 5. 검증 (7탭 전환, PDF, 메타태그, Footer, README 확인)`
+Phase 5. 검증 (7탭 전환, PDF, 메타태그, Footer, README 확인)`,
+
+  patent: `/patent 실행 — 특허출원용 명세서(patent.html) 자동 생성
+
+Phase 1. 프로젝트 분석 (데이터 수집)
+- Git 이력 (첫 커밋 날짜, 최종 커밋, 총 커밋 수, 마일스톤)
+- 소스 파일 수, 총 줄 수, 파일별 줄 수 통계
+- HTML 파일 전체 스캔 + title 추출 + 링크 그래프 생성
+- 메뉴 구조 분석 + 기능 그룹 분류
+- 발명 요소 분석 (기술적 과제, 해결수단, 효과 도출)
+
+Phase 1.5. 분대 편성 및 병렬 실행
+- Alpha: patent.html 골격 + 탭 1~5 (표지, 기술분야/배경기술, 해결과제, 과제해결수단, 발명의효과)
+- Bravo: 탭 6~10 (도면설명, 실시예, 청구범위, 요약서, 부속서류)
+- Charlie: 파일 구조도 SVG + 메뉴 구조도 SVG + 메타태그 + README.md
+
+Phase 2. patent.html 10탭 구조 생성
+- Premium White Theme (가독성 최대화, 모든 텍스트 opacity 100%)
+- 모든 카드/버튼/섹션에 테두리 + 배경색 (고급스러운 전문적 디자인)
+- 탭 1: 표지 | 탭 2: 기술분야/배경기술 | 탭 3: 해결과제
+- 탭 4: 과제해결수단 | 탭 5: 발명의 효과 | 탭 6: 도면의 설명
+- 탭 7: 발명의 실시예 | 탭 8: 청구범위 | 탭 9: 요약서 | 탭 10: 부속서류
+- PDF 다운로드: window.print() + @media print + A4 최적화
+
+Phase 3. 파일 구조도 SVG ([폴더명]-diagram.svg)
+- HTML 파일 노드 (파일명 + title) + 링크 관계 화살표
+- 공통 JS/CSS 하단 레이어 + 범례
+- viewBox 1200x800, 배경 #fff, HTML=#1F6BFF, JS=#F59E0B, CSS=#10B981
+- 모든 텍스트 opacity 100%, font-weight 700+
+
+Phase 4. 메뉴 구조도 SVG ([폴더명]-menu.svg)
+- 5개 그룹 영역 (개발전/개발중/개발후/모니터링/Resources)
+- 메뉴 트리 + 사용자 흐름 화살표 + 범례
+- viewBox 1000x700, 그룹별 컬러 배경
+- 모든 텍스트 opacity 100%, font-weight 700+
+
+Phase 5. 프로젝트 표기 보강
+- 전 페이지 meta author/description/copyright 태그 일괄 추가
+- README.md 생성 (특허 정보 포함)
+
+Phase 6. 검증 (10탭 전환, PDF, SVG 2종, 메타태그, README 확인)`
 };
 
 /* ── LocalStorage ────────────────────────────────────────── */

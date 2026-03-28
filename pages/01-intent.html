@@ -239,6 +239,7 @@
         <label class="cb-item cb-default"><input type="checkbox" value="env_setup" checked><span class="cb-box"></span><span class="cb-label">⚙️ 환경 설정 & 배포 준비</span></label>
         <label class="cb-item cb-default"><input type="checkbox" value="manual" checked><span class="cb-box"></span><span class="cb-label">📖 매뉴얼 페이지 (프리미엄 디자인)</span></label>
         <label class="cb-item cb-default"><input type="checkbox" value="copyright" checked><span class="cb-box"></span><span class="cb-label">📜 저작권 등록 자료 생성</span></label>
+        <label class="cb-item cb-default"><input type="checkbox" value="patent" checked><span class="cb-box"></span><span class="cb-label">📋 특허명세서 작성</span></label>
         <label class="cb-item cb-default"><input type="checkbox" value="svg_sitemap" checked><span class="cb-box"></span><span class="cb-label">🗺️ SVG 구조도</span></label>
         <label class="cb-item cb-default"><input type="checkbox" value="chatbot" checked><span class="cb-box"></span><span class="cb-label">💬 챗봇 인터페이스(RAG)</span></label>
       </div>
@@ -275,7 +276,7 @@
       </div>
 
       <div style="margin-top:12px;font-size:11px;color:var(--text2);display:flex;gap:14px;flex-wrap:wrap">
-        <span>🔒 기본 포함: <span id="defaultFeatCount" style="color:#16a34a;font-weight:700">9</span>개</span>
+        <span>🔒 기본 포함: <span id="defaultFeatCount" style="color:#16a34a;font-weight:700">10</span>개</span>
         <span>➕ 추가 선택: <span id="featCount" style="color:var(--accent);font-weight:700">0</span>개</span>
       </div>
     </div>
@@ -442,7 +443,7 @@ function loadSaved() {
     cb.checked = savedDefault ? savedDefault.includes(cb.value) : true;
   });
   // 추가 기능: features에서 기본 기능 값 제외
-  const defaultVals = ['project_setup','routing','responsive_layout','error_handling','env_setup','manual','copyright','svg_sitemap','chatbot'];
+  const defaultVals = ['project_setup','routing','responsive_layout','error_handling','env_setup','manual','copyright','patent','svg_sitemap','chatbot'];
   document.querySelectorAll('#extraFeatArea input').forEach(cb => {
     cb.checked = (p.features || []).includes(cb.value);
   });

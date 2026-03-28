@@ -78,7 +78,9 @@
       "Bash(else)",
       "Bash(sed -i 's|</body>|  <script src=\"\"../js/nav.js\"\"></script>\\\\n</body>|' \"$file\")",
       "Bash(echo \"$file updated\")",
-      "Bash(while read:*)"
+      "Bash(while read:*)",
+      "Bash(curl -s \"https://jaiwshim-project.github.io/10-VibeCoding_OS/pages/manual.html\" -o /tmp/manual_live.html)",
+      "Read(//tmp/**)"
     ]
   }
 }
