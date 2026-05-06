@@ -80,7 +80,12 @@
       "Bash(echo \"$file updated\")",
       "Bash(while read:*)",
       "Bash(curl -s \"https://jaiwshim-project.github.io/10-VibeCoding_OS/pages/manual.html\" -o /tmp/manual_live.html)",
-      "Read(//tmp/**)"
+      "Read(//tmp/**)",
+      "Bash(git rm *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(git pull *)",
+      "Bash(git stash *)"
     ]
   }
 }
