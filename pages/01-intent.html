@@ -242,6 +242,8 @@
         <label class="cb-item cb-default"><input type="checkbox" value="patent" checked><span class="cb-box"></span><span class="cb-label">📋 특허명세서 작성</span></label>
         <label class="cb-item cb-default"><input type="checkbox" value="svg_sitemap" checked><span class="cb-box"></span><span class="cb-label">🗺️ SVG 구조도</span></label>
         <label class="cb-item cb-default"><input type="checkbox" value="chatbot" checked><span class="cb-box"></span><span class="cb-label">💬 챗봇 인터페이스(RAG)</span></label>
+        <label class="cb-item cb-default"><input type="checkbox" value="white_premium_theme" checked><span class="cb-box"></span><span class="cb-label">🎨 화이트 프리미엄 테마</span></label>
+        <label class="cb-item cb-default"><input type="checkbox" value="ontology_methodology" checked><span class="cb-box"></span><span class="cb-label">🧩 온톨로지 방법론</span></label>
       </div>
 
       <!-- 추가 기능 선택 -->
@@ -443,7 +445,7 @@ function loadSaved() {
     cb.checked = savedDefault ? savedDefault.includes(cb.value) : true;
   });
   // 추가 기능: features에서 기본 기능 값 제외
-  const defaultVals = ['project_setup','routing','responsive_layout','error_handling','env_setup','manual','copyright','patent','svg_sitemap','chatbot'];
+  const defaultVals = ['project_setup','routing','responsive_layout','error_handling','env_setup','manual','copyright','patent','svg_sitemap','chatbot','white_premium_theme','ontology_methodology'];
   document.querySelectorAll('#extraFeatArea input').forEach(cb => {
     cb.checked = (p.features || []).includes(cb.value);
   });
