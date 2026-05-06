@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VCOS — 시스템 구조도</title>
+<meta name="author" content="심재우(Shim Jaewoo)"><meta name="description" content="VCOS 시스템 구조도"><meta name="copyright" content="Copyright 2026 심재우. All rights reserved.">
 <link rel="stylesheet" href="../vcos.css">
 <style>
 /* 구조도 페이지 전용 */
@@ -44,6 +45,47 @@
 .info-card-icon  { font-size:22px;margin-bottom:6px }
 .info-card-title { font-size:12.5px;font-weight:700;color:var(--text) }
 .info-card-desc  { font-size:11px;color:var(--text3);margin-top:4px;line-height:1.55 }
+
+/* PDF 다운로드 버튼 */
+.pdf-download-btn {
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 16px;border-radius:var(--r-full);
+  background:linear-gradient(135deg,#dc2626,#b91c1c);
+  color:#fff;font-size:13px;font-weight:700;
+  border:none;cursor:pointer;transition:all .2s;
+  box-shadow:0 2px 8px rgba(220,38,38,.3);
+}
+.pdf-download-btn:hover { transform:translateY(-2px);box-shadow:0 4px 16px rgba(220,38,38,.4) }
+.pdf-download-btn svg { width:16px;height:16px;fill:currentColor }
+
+/* ── @media print ── */
+@media print {
+  * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; color-adjust:exact !important }
+  html, body { margin:0; padding:0; font-size:10pt; background:#fff !important; color:#000 !important }
+
+  .vcos-header, #footerArea, .page-nav, .pdf-download-btn, .svg-toolbar, .tab-bar { display:none !important }
+
+  .container, .page-body { max-width:100% !important; padding:0 !important; margin:0 !important }
+
+  /* 탭 콘텐츠 모두 표시 */
+  #tab-sitemap, #tab-architecture { display:block !important }
+
+  /* SVG 컨테이너 */
+  .svg-container { border:1px solid #ddd !important; box-shadow:none !important; page-break-inside:avoid }
+  .svg-wrap { overflow:visible !important }
+  .svg-wrap svg, .svg-wrap img { width:100% !important; height:auto !important; transform:none !important }
+
+  /* 정보 카드 그리드 */
+  .info-grid { grid-template-columns:repeat(3,1fr) !important; gap:8px !important }
+  .info-card { page-break-inside:avoid; box-shadow:none !important; border:1px solid #ddd !important }
+
+  /* 카드 */
+  .card { page-break-inside:avoid; border:1px solid #ddd !important }
+
+  a[href]::after { content:none !important }
+
+  @page { margin:12mm; size:A4 }
+}
 </style>
 </head>
 <body>
@@ -59,6 +101,10 @@
   <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">
     <button class="btn btn-secondary btn-sm" onclick="downloadSvg('sitemap')">⬇️ 구조도 SVG 다운로드</button>
     <button class="btn btn-secondary btn-sm" onclick="downloadSvg('architecture')">⬇️ 아키텍처 SVG 다운로드</button>
+    <button class="pdf-download-btn" onclick="downloadPDF()">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2l5 5h-5V4zm-1 13l-4-4h3V9h2v4h3l-4 4z"/></svg>
+      PDF 다운로드
+    </button>
   </div>
 </div>
 
@@ -405,6 +451,13 @@ function applyZoom() {
   img.style.transform = 'scale(' + zoomLevel + ')';
   img.style.transformOrigin = 'top left';
   document.getElementById('zoomLabel').textContent = Math.round(zoomLevel * 100) + '%';
+}
+
+function downloadPDF() {
+  const origTitle = document.title;
+  document.title = 'VCOS_시스템구조도';
+  window.print();
+  document.title = origTitle;
 }
 
 function downloadSvg(tab) {

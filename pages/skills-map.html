@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VCOS — 25 Skills 구조도</title>
+<meta name="author" content="심재우(Shim Jaewoo)"><meta name="description" content="VCOS 25 Skills 구조도"><meta name="copyright" content="Copyright 2026 심재우. All rights reserved.">
 <link rel="stylesheet" href="../vcos.css">
 <style>
 .page-num { background:linear-gradient(135deg,#7c3aed,#6d28d9);box-shadow:0 3px 12px rgba(124,58,237,.4) }
@@ -43,6 +44,41 @@ svg { display:block;margin:0 auto; }
 .phase-card-item::before {
   content:'◆';font-size:8px;
 }
+
+/* PDF 다운로드 버튼 */
+.pdf-download-btn {
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 16px;border-radius:var(--r-full);
+  background:linear-gradient(135deg,#dc2626,#b91c1c);
+  color:#fff;font-size:13px;font-weight:700;
+  border:none;cursor:pointer;transition:all .2s;
+  box-shadow:0 2px 8px rgba(220,38,38,.3);
+}
+.pdf-download-btn:hover { transform:translateY(-2px);box-shadow:0 4px 16px rgba(220,38,38,.4) }
+.pdf-download-btn svg { width:16px;height:16px;fill:currentColor }
+
+/* ── @media print ── */
+@media print {
+  * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; color-adjust:exact !important }
+  html, body { margin:0; padding:0; font-size:10pt; background:#fff !important; color:#000 !important }
+
+  .vcos-header, #footerArea, .page-nav, .pdf-download-btn, .progress-steps { display:none !important }
+
+  .container, .page-body { max-width:100% !important; padding:0 !important; margin:0 !important }
+
+  /* SVG 구조도 */
+  .svg-wrap { border:1px solid #ddd !important; padding:10px !important; overflow:visible !important; page-break-inside:avoid }
+  .svg-wrap svg { width:100% !important; height:auto !important }
+
+  /* Phase 카드 */
+  .phase-cards { display:grid !important; grid-template-columns:1fr 1fr !important; gap:12px !important }
+  .phase-card { page-break-inside:avoid; padding:16px !important; box-shadow:none !important }
+
+  /* 링크 URL 안 보이게 */
+  a[href]::after { content:none !important }
+
+  @page { margin:10mm; size:A4 landscape }
+}
 </style>
 </head>
 <body>
@@ -58,6 +94,10 @@ svg { display:block;margin:0 auto; }
     <div class="page-eng">VCOS Skill Catalogue — P1 빌드 + P2 SAL-Grid + P3 디버그 루프 + P4 고도화</div>
   </div>
   <div class="page-badge">25 SKILLS</div>
+  <button class="pdf-download-btn" onclick="downloadPDF()" style="margin-left:auto">
+    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2l5 5h-5V4zm-1 13l-4-4h3V9h2v4h3l-4 4z"/></svg>
+    PDF 다운로드
+  </button>
 </div>
 
 <div class="notice" style="margin-bottom:16px">
@@ -502,6 +542,13 @@ svg { display:block;margin:0 auto; }
 <script>
 document.getElementById('navArea').innerHTML = buildNav('', false);
 document.getElementById('footerArea').innerHTML = buildFooter(false);
+
+function downloadPDF() {
+  const origTitle = document.title;
+  document.title = 'VCOS_25Skills_구조도';
+  window.print();
+  document.title = origTitle;
+}
 </script>
 </body>
 </html>

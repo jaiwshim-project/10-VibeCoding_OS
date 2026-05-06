@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VCOS — 06 Claude Code 명령어 생성</title>
+<meta name="author" content="심재우(Shim Jaewoo)"><meta name="description" content="VCOS Claude Code 명령어 자동 생성"><meta name="copyright" content="Copyright 2026 심재우. All rights reserved.">
 <link rel="stylesheet" href="../vcos.css">
 <script src="../vcos-skills.js"></script>
 <style>
@@ -135,9 +136,18 @@ function buildCollabNotes() {
 
 const cmd = _baseCmd + buildCollabNotes();
 
+function buildFeatureCommands(features) {
+  if (!features || !features.length || typeof FEATURE_COMMANDS === 'undefined') return '';
+  const cmds = features
+    .filter(f => FEATURE_COMMANDS[f])
+    .map(f => `### ${FEATURE_LABELS[f]||f}\n\n${FEATURE_COMMANDS[f]}`);
+  return cmds.length ? `\n\n## 📋 기본 포함 기능 상세 명령어\n\n${cmds.join('\n\n---\n\n')}` : '';
+}
+
 function buildFallbackCommand(p, c) {
   const type = getProjectType(c.total);
   const feats = (p.features||[]).map(f => `- ${FEATURE_LABELS[f]||f}`).join('\n') || '- (기능 목록)';
+  const featCmds = buildFeatureCommands(p.defaultFeatures || p.features);
   const squadCmd = (c.total < 16) ? '/platoon-formation-v1' : '/platoon-formation-v2';
   return `## 🚀 VCOS — VIBE CODING COMMAND
 
@@ -162,7 +172,7 @@ ${feats}
 1. ${squadCmd} 실행
 2. 핵심 기능 순서대로 구현
 3. 완성 후 /review-evaluate 최소 3회 실행
-4. ${rs.v4}점 달성 시 프로덕션 배포`;
+4. ${rs.v4}점 달성 시 프로덕션 배포${featCmds}`;
 }
 
 let activeTab = 'full';
@@ -264,7 +274,7 @@ ${skillList}
 1. ${squadCmd} 실행
 2. 핵심 기능 순서대로 구현
 3. 완성 후 /review-evaluate 최소 3회 실행
-4. ${rs.v4}점 달성 시 프로덕션 배포`;
+4. ${rs.v4}점 달성 시 프로덕션 배포${buildFeatureCommands(p.defaultFeatures || p.features)}`;
   } catch(e) { return '데이터 로드 오류: ' + e.message; }
 }
 
